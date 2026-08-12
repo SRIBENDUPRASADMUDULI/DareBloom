@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🌸 DARE BLOOM — Flower Drawing Game & Dare Challenge</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;cursor:none!important;}
+:root{--pk:#FF006E;--vi:#8338EC;--cy:#06D6A0;--am:#FFB703;--bg:#030008;--br:rgba(255,0,110,.2);--flame:#FF3B00;}
+html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);}
+body{font-family:'Space Grotesk',system-ui,sans-serif;}
+#cur{position:fixed;width:26px;height:26px;border:2px solid var(--pk);border-radius:50%;pointer-events:none;z-index:99999;left:0;top:0;transform:translate(-50%,-50%);transition:width .15s,height .15s,background .15s;mix-blend-mode:screen;}
+#cur.ck{width:14px;height:14px;background:var(--pk);}
+#cdot{position:fixed;width:4px;height:4px;background:#fff;border-radius:50%;pointer-events:none;z-index:99999;left:0;top:0;transform:translate(-50%,-50%);}
+#video{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1);z-index:0;}
+#canvas{position:fixed;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;}
+#vig{position:fixed;inset:0;z-index:2;pointer-events:none;background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.5) 100%);}
+.screen{position:fixed;inset:0;z-index:50;display:none;flex-direction:column;align-items:center;justify-content:center;overflow-y:auto;padding:20px;}
+.screen.on{display:flex;}
+#sLoad{background:var(--bg);}
+.ring{width:52px;height:52px;border:3px solid rgba(255,0,110,.12);border-top-color:var(--pk);border-radius:50%;animation:spin .9s linear infinite;margin:0 auto 1.2em;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ltxt{font-family:'Space Mono',monospace;font-size:.72rem;color:rgba(255,255,255,.25);letter-spacing:.1em;}
+#sMenu{background:linear-gradient(160deg,#030008 0%,#0d0022 40%,#050015 100%);overflow:hidden;}
+#sMenu::before,#sMenu::after{content:'';position:absolute;border-radius:50%;filter:blur(130px);opacity:.28;pointer-events:none;}
+#sMenu::before{width:700px;height:700px;background:radial-gradient(circle,#FF006E44,#8338EC22,transparent);top:-200px;left:-200px;animation:orb 12s ease-in-out infinite alternate;}
+#sMenu::after{width:600px;height:600px;background:radial-gradient(circle,#06D6A033,#8338EC22,transparent);bottom:-150px;right:-150px;animation:orb 15s ease-in-out infinite alternate-reverse;}
+@keyframes orb{0%{transform:translate(0,0) scale(1)}100%{transform:translate(60px,40px) scale(1.2)}}
+.min{position:relative;z-index:1;text-align:center;max-width:540px;padding:20px;}
+.badge{display:inline-block;font-size:.62rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--pk);border:1px solid rgba(255,0,110,.3);background:rgba(255,0,110,.07);padding:5px 16px;border-radius:20px;margin-bottom:1.2em;}
+.logo{font-size:clamp(3.8rem,9vw,7rem);font-weight:700;background:linear-gradient(135deg,var(--pk) 0%,var(--vi) 40%,var(--cy) 70%,var(--am) 100%);background-size:200% 200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:grad 5s ease-in-out infinite;letter-spacing:-.04em;line-height:.9;margin-bottom:.15em;}
+@keyframes grad{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.lsub{font-family:'Space Mono',monospace;font-size:.68rem;color:rgba(255,255,255,.3);letter-spacing:.12em;margin-bottom:1.4em;}
+.best{font-size:.75rem;color:rgba(255,255,255,.35);margin-bottom:1.8em;font-family:'Space Mono',monospace;letter-spacing:.05em;display:flex;gap:16px;justify-content:center;}
+.best span{color:var(--cy);font-weight:700;}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:16px 44px;font-family:'Space Grotesk',sans-serif;font-size:.92rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#fff;background:linear-gradient(135deg,var(--pk),var(--vi));border:none;border-radius:60px;cursor:none;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;box-shadow:0 0 40px rgba(255,0,110,.35);}
+.btn::before{content:'';position:absolute;inset:-2px;border-radius:62px;background:linear-gradient(135deg,var(--pk),var(--vi),var(--cy),var(--pk));background-size:300%;z-index:-1;animation:grad 3s linear infinite;filter:blur(8px);opacity:.5;}
+.btn:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 0 60px rgba(255,0,110,.55);}
+.btn:active{transform:scale(.97);}
+.btn2{display:inline-flex;align-items:center;gap:6px;padding:12px 26px;font-family:'Space Grotesk',sans-serif;font-size:.82rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.6);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:60px;cursor:none;transition:all .2s;}
+.btn2:hover{background:rgba(255,255,255,.09);color:rgba(255,255,255,.85);border-color:rgba(255,255,255,.2);}
+.btn-dare{background:linear-gradient(135deg,#FF3B00,#FF006E);border:1px solid rgba(255,59,0,.6);color:#fff;box-shadow:0 0 25px rgba(255,59,0,.4);}
+.btn-dare:hover{box-shadow:0 0 40px rgba(255,59,0,.7);transform:translateY(-2px) scale(1.03);}
+
+#sShapes{background:rgba(3,0,8,.97);backdrop-filter:blur(20px);}
+.stitle{font-size:clamp(1.4rem,3.5vw,2.2rem);font-weight:700;color:#fff;margin-bottom:.3em;}
+.ssub{font-size:.72rem;font-family:'Space Mono',monospace;color:rgba(255,255,255,.25);margin-bottom:1.8em;letter-spacing:.05em;}
+.sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:540px;}
+.scard{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:22px 16px;text-align:center;cursor:none;transition:all .2s;}
+.scard:hover{background:rgba(255,0,110,.07);border-color:rgba(255,0,110,.3);transform:translateY(-4px);box-shadow:0 10px 35px rgba(255,0,110,.12);}
+.scard .em{font-size:2.6rem;margin-bottom:.4em;}
+.scard .nm{font-size:.85rem;font-weight:600;color:rgba(255,255,255,.8);}
+.scard .df{font-size:.6rem;font-family:'Space Mono',monospace;margin-top:4px;letter-spacing:.08em;}
+.de{color:var(--cy);}.dm{color:var(--am);}.dh{color:var(--pk);}
+
+#sCount{background:rgba(3,0,8,.9);backdrop-filter:blur(12px);}
+.cnum{font-size:clamp(6rem,20vw,14rem);font-weight:700;background:linear-gradient(135deg,var(--pk),var(--vi));-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:cpulse 1s ease-in-out forwards;line-height:1;}
+@keyframes cpulse{0%{opacity:0;transform:scale(1.6)}60%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(.75)}}
+.csh{font-size:1.1rem;color:rgba(255,255,255,.4);margin-top:1em;font-family:'Space Mono',monospace;letter-spacing:.1em;}
+
+#hud{position:fixed;top:16px;left:16px;z-index:20;display:none;}
+#hud.on{display:block;}
+.hcard{background:rgba(3,0,12,.75);backdrop-filter:blur(20px);border:1px solid var(--br);border-radius:18px;padding:14px 18px;min-width:210px;box-shadow:0 0 28px rgba(255,0,110,.06);}
+.hlb{font-size:.56rem;font-family:'Space Mono',monospace;letter-spacing:.2em;color:rgba(255,0,110,.6);text-transform:uppercase;margin-bottom:2px;display:flex;justify-content:space-between;}
+.hsc{font-size:2.8rem;font-weight:700;line-height:1;background:linear-gradient(135deg,var(--pk),var(--vi),var(--cy));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hgr{display:inline-block;font-size:.85rem;font-weight:700;padding:2px 10px;border-radius:20px;margin:5px 0 8px;}
+.hbars{display:flex;flex-direction:column;gap:5px;}
+.brow{display:flex;align-items:center;gap:7px;font-size:.58rem;font-family:'Space Mono',monospace;color:rgba(255,255,255,.25);}
+.bbg{flex:1;height:4px;background:rgba(255,255,255,.06);border-radius:4px;overflow:hidden;}
+.bfl{height:100%;border-radius:4px;transition:width .35s ease;}
+.bacc{background:linear-gradient(90deg,var(--pk),var(--vi));}
+.bcov{background:linear-gradient(90deg,var(--cy),var(--vi));}
+.bvl{min-width:26px;text-align:right;color:rgba(255,255,255,.4);}
+
+#tWrap{position:fixed;top:16px;right:16px;z-index:20;display:none;}
+#tWrap.on{display:block;}
+#rds{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:20;display:none;gap:8px;align-items:center;}
+#rds.on{display:flex;}
+.rdot{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.18);transition:all .35s;}
+.rdot.done{background:var(--cy);border-color:var(--cy);box-shadow:0 0 8px var(--cy);}
+.rdot.cur{background:var(--pk);border-color:var(--pk);box-shadow:0 0 12px var(--pk);}
+
+#gbtn{position:fixed;bottom:24px;right:20px;z-index:25;font-size:.72rem;padding:10px 18px;}
+#phint{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:25;font-family:'Space Mono',monospace;font-size:.58rem;color:rgba(255,255,255,.22);letter-spacing:.1em;text-transform:uppercase;pointer-events:none;white-space:nowrap;}
+
+.gS{background:rgba(255,215,0,.12);color:#FFD700;border:1px solid rgba(255,215,0,.35);}
+.gA{background:rgba(6,214,160,.12);color:var(--cy);border:1px solid rgba(6,214,160,.35);}
+.gB{background:rgba(131,56,236,.15);color:#a570ff;border:1px solid rgba(131,56,236,.35);}
+.gC{background:rgba(255,183,3,.12);color:var(--am);border:1px solid rgba(255,183,3,.35);}
+.gD{background:rgba(255,0,110,.12);color:var(--pk);border:1px solid rgba(255,0,110,.35);}
+
+#sRes{background:rgba(3,0,8,.88);backdrop-filter:blur(18px);}
+.rcard{background:linear-gradient(160deg,rgba(7,3,18,.99),rgba(14,5,28,.99));border:1px solid rgba(255,0,110,.25);border-radius:28px;padding:32px 36px;text-align:center;max-width:460px;width:92vw;box-shadow:0 30px 80px rgba(0,0,0,.6);position:relative;overflow:hidden;animation:cIn .55s cubic-bezier(.34,1.56,.64,1) forwards;}
+@keyframes cIn{from{opacity:0;transform:scale(.78) translateY(40px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.rsh{font-size:.6rem;font-family:'Space Mono',monospace;color:rgba(255,0,110,.55);letter-spacing:.2em;text-transform:uppercase;margin-bottom:.4em;}
+.rsc{font-size:5.5rem;font-weight:700;line-height:1;background:linear-gradient(135deg,var(--pk),var(--vi),var(--cy));-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:cIn .8s cubic-bezier(.34,1.56,.64,1),glitch .4s ease infinite alternate;}
+@keyframes glitch{0%{text-shadow:2px 0 rgba(255,0,110,.3),-2px 0 rgba(6,214,160,.3)}100%{text-shadow:-2px 0 rgba(255,0,110,.3),2px 0 rgba(6,214,160,.3)}}
+.rgr{font-size:1.6rem;font-weight:700;padding:3px 18px;border-radius:30px;display:inline-block;margin:.2em 0 .5em;}
+.rmsg{font-size:.85rem;color:rgba(255,255,255,.5);line-height:1.55;margin-bottom:1.2em;font-weight:500;}
+.rsts{display:flex;gap:0;margin-bottom:1.2em;border:1px solid rgba(255,255,255,.05);border-radius:12px;overflow:hidden;}
+.rst{flex:1;padding:10px 4px;text-align:center;border-right:1px solid rgba(255,255,255,.05);}
+.rst:last-child{border-right:none;}
+.rst b{font-size:1.15rem;font-weight:700;color:var(--cy);display:block;}
+.rst small{font-size:.55rem;font-family:'Space Mono',monospace;color:rgba(255,255,255,.22);letter-spacing:.07em;text-transform:uppercase;margin-top:2px;display:block;}
+
+/* DARE CARD DESIGN */
+.dare-box{background:linear-gradient(145deg,rgba(255,59,0,.12),rgba(255,0,110,.08));border:1px solid rgba(255,59,0,.35);border-radius:18px;padding:16px 18px;margin-bottom:1.4em;text-align:left;position:relative;overflow:hidden;}
+.dare-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--flame),var(--pk),var(--am));}
+.dare-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.dare-lvl{font-family:'Space Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;padding:3px 10px;border-radius:12px;}
+.lvl-mild{background:rgba(6,214,160,.15);color:var(--cy);border:1px solid rgba(6,214,160,.3);}
+.lvl-spicy{background:rgba(255,183,3,.15);color:var(--am);border:1px solid rgba(255,183,3,.3);}
+.lvl-hard{background:rgba(255,0,110,.18);color:var(--pk);border:1px solid rgba(255,0,110,.4);}
+.lvl-chaos{background:linear-gradient(90deg,rgba(255,59,0,.3),rgba(255,0,110,.3));color:#FFF;border:1px solid #FF3B00;animation:flamePulse 1.5s infinite alternate;}
+@keyframes flamePulse{from{box-shadow:0 0 10px rgba(255,59,0,.4)}to{box-shadow:0 0 25px rgba(255,0,110,.8)}}
+.dare-pts{font-family:'Space Mono',monospace;font-size:.68rem;color:var(--am);font-weight:700;}
+.dare-content{position:relative;border-radius:12px;overflow:hidden;margin-top:4px;}
+.dare-txt{font-size:.88rem;font-weight:600;color:rgba(255,255,255,.92);line-height:1.5;padding:12px 14px;background:rgba(0,0,0,.35);border-radius:12px;margin-bottom:0;min-height:58px;}
+/* SCRATCH CARD OVERLAY */
+#scratchWrap{position:relative;border-radius:12px;overflow:hidden;margin-top:4px;margin-bottom:12px;}
+#scratchCanvas{position:absolute;top:0;left:0;width:100%;height:100%;border-radius:12px;cursor:crosshair!important;z-index:10;touch-action:none;}
+.scratch-hint{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;z-index:5;}
+.scratch-hand{font-size:2rem;animation:scratchAnim 1.2s ease-in-out infinite;display:block;}
+@keyframes scratchAnim{0%{transform:translate(-10px,-4px) rotate(-20deg)}40%{transform:translate(10px,4px) rotate(10deg)}100%{transform:translate(-10px,-4px) rotate(-20deg)}}
+.scratch-lbl{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-top:6px;}
+.dare-acts{display:flex;gap:8px;}
+.btn-d-done{flex:1;padding:9px 12px;font-size:.74rem;background:linear-gradient(135deg,#06D6A0,#00b887);border:none;border-radius:10px;color:#000;font-weight:700;cursor:none;transition:transform .15s,opacity .3s;}
+.btn-d-done:hover{transform:scale(1.02);}
+.btn-d-done:disabled{opacity:.5;cursor:not-allowed!important;}
+.btn-d-skip{padding:9px 12px;font-size:.74rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:rgba(255,255,255,.5);font-weight:600;cursor:none;}
+.btn-d-skip:hover{background:rgba(255,255,255,.1);color:#fff;}
+.dare-scratch-msg{font-family:'Space Mono',monospace;font-size:.6rem;color:rgba(255,183,3,.7);letter-spacing:.08em;text-align:center;margin-bottom:8px;display:none;}
+
+.rbtns{display:flex;gap:10px;justify-content:center;}
+#sCar{background:rgba(3,0,8,.96);backdrop-filter:blur(22px);}
+.ccrd{text-align:center;max-width:500px;padding:20px;animation:cIn .6s cubic-bezier(.34,1.56,.64,1) forwards;}
+.ctot{font-size:.6rem;font-family:'Space Mono',monospace;color:rgba(255,0,110,.45);letter-spacing:.22em;margin-bottom:.4em;}
+.csc{font-size:7rem;font-weight:700;background:linear-gradient(135deg,var(--pk),var(--vi),var(--cy),var(--am));background-size:200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:grad 3s linear infinite,glitch .5s ease infinite alternate;line-height:1;}
+.cgr{font-size:2.2rem;font-weight:700;padding:5px 24px;border-radius:40px;display:inline-block;margin:.3em 0 .5em;}
+.cmsg{font-size:.88rem;color:rgba(255,255,255,.45);margin-bottom:1.2em;font-weight:500;line-height:1.55;}
+.chips{display:flex;gap:8px;justify-content:center;margin-bottom:1.4em;flex-wrap:wrap;}
+.chip{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:8px 14px;font-size:.75rem;color:rgba(255,255,255,.4);}
+.chip b{color:var(--cy);display:block;font-size:1rem;}
+</style>
+</head>
+<body>
+<div id="cur"></div>
+<div id="cdot"></div>
+<video id="video" autoplay playsinline muted></video>
+<canvas id="canvas"></canvas>
+<div id="vig"></div>
+<div class="screen on" id="sLoad"><div style="text-align:center"><div class="ring"></div><div class="ltxt">loading hand tracking...</div></div></div>
+<div class="screen" id="sMenu">
+  <div class="min">
+    <div class="badge">✦ bloom · party dare edition ✦</div>
+    <div class="logo">DARE BLOOM</div>
+    <div class="lsub">// draw shapes with ur finger · complete dares or face chaos 💀</div>
+    <div class="best">
+      <div>BEST SCORE: <span id="bestD">—</span></div>
+      <div>DARES COMPLETED: <span id="daresDoneD">0</span> 🔥</div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:center;margin-bottom:1.2em;flex-wrap:wrap;">
+      <button class="btn" id="careerBtn">🎮 Play Career Mode</button>
+      <button class="btn2" id="freeBtn">✏️ Shape Select</button>
+    </div>
+    <div>
+      <button class="btn2 btn-dare" id="toggleDareBtn">🔥 Dare Mode: ACTIVE</button>
+    </div>
+  </div>
+</div>
+<div class="screen" id="sShapes">
+  <div style="text-align:center;max-width:560px;padding:20px;">
+    <div class="stitle">choose ur shape</div>
+    <div class="ssub">// pick one · or career mode for all 6 shapes</div>
+    <div class="sgrid" id="sgrid"></div>
+    <div style="margin-top:1.5em;"><button class="btn2" id="backBtn">← back</button></div>
+  </div>
+</div>
+<div class="screen" id="sCount">
+  <div class="cnum" id="cnum">3</div>
+  <div class="csh" id="csh"></div>
+</div>
+<div id="hud">
+  <div class="hcard">
+    <div class="hlb">
+      <span id="hSN">HEART</span>
+      <span id="hStreak">🔥 STREAK: 0</span>
+    </div>
+    <div class="hsc" id="hSC">0</div>
+    <div class="hgr gD" id="hGR">D</div>
+    <div class="hbars">
+      <div class="brow"><span>ACC</span><div class="bbg"><div class="bfl bacc" id="bAcc" style="width:0%"></div></div><span class="bvl" id="vAcc">0%</span></div>
+      <div class="brow"><span>COV</span><div class="bbg"><div class="bfl bcov" id="bCov" style="width:0%"></div></div><span class="bvl" id="vCov">0%</span></div>
+    </div>
+  </div>
+</div>
+<div id="tWrap"><canvas id="tcan" width="80" height="80"></canvas></div>
+<div id="rds"></div>
+<button class="btn2" id="gbtn">❤️ guide</button>
+<div id="phint">☝️ index finger = draw · 🖐 open palm = reset · ❤️ toggle guide</div>
+<div class="screen" id="sRes">
+  <div class="rcard">
+    <div class="rsh" id="rSN">HEART ❤️</div>
+    <div class="rsc" id="rSC">0</div>
+    <div class="rgr gD" id="rGR">D</div>
+    <div class="rmsg" id="rMsg"></div>
+    <div class="rsts">
+      <div class="rst"><b id="rAcc">0%</b><small>accuracy</small></div>
+      <div class="rst"><b id="rCov">0%</b><small>coverage</small></div>
+      <div class="rst"><b id="rHits">0</b><small>on-path 🌸</small></div>
+    </div>
+
+    <!-- DARE SECTION -->
+    <div class="dare-box" id="dareContainer">
+      <div class="dare-hdr">
+        <div class="dare-lvl lvl-mild" id="dareBadge">LEVEL 1: MILD DARE</div>
+        <div class="dare-pts" id="darePts">+50 BONUS PTS</div>
+      </div>
+      <!-- Scratch card area -->
+      <div id="scratchWrap">
+        <div class="dare-txt" id="dareTxt">Your dare is hidden here...</div>
+        <canvas id="scratchCanvas"></canvas>
+        <div class="scratch-hint" id="scratchHint">
+          <span class="scratch-hand">✋</span>
+          <span class="scratch-lbl">scratch to reveal dare</span>
+        </div>
+      </div>
+      <div class="dare-scratch-msg" id="dareScratchMsg">🔓 DARE REVEALED — now face the consequences!</div>
+      <div class="dare-acts">
+        <button class="btn-d-done" id="dareDoneBtn" disabled>🔥 I DID THE DARE!</button>
+        <button class="btn-d-skip" id="dareSkipBtn">🙈 Skip Dare</button>
+      </div>
+    </div>
+
+    <div class="rbtns">
+      <button class="btn" id="nextBtn">Next →</button>
+      <button class="btn2" id="retryBtn">↩ Retry</button>
+    </div>
+  </div>
+</div>
+<div class="screen" id="sCar">
+  <div class="ccrd">
+    <div class="ctot">// FINAL CAREER & DARES SUMMARY</div>
+    <div class="csc" id="cSC">0</div>
+    <div class="cgr gD" id="cGR">D</div>
+    <div class="cmsg" id="cMsg"></div>
+    <div class="chips" id="chipList"></div>
+    <button class="btn" id="againBtn">🌸 Play Again</button>
+  </div>
+</div>
+<script type="module">
+import{HandLandmarker,FilesetResolver}from"https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/vision_bundle.mjs";
+const HIT=42,COV=60,TIME=25,SEGS=80,MXF=700,MXS=500,MXT=350;
+const SHP={
+ heart:{name:'Heart',emoji:'❤️',diff:'medium',gen(cx,cy,sz){const p=[];for(let i=0;i<=360;i++){const t=i*Math.PI/180;p.push([cx+sz*.04*16*Math.pow(Math.sin(t),3),cy-sz*.04*(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))]);}return p;}},
+ star:{name:'Star',emoji:'⭐',diff:'hard',gen(cx,cy,sz){const p=[],O=sz*.45,I=sz*.18,tot=10;for(let i=0;i<=360;i++){const f=i/360,x=f*tot,s=Math.floor(x),r=(s%2===0)?O-(O-I)*(x-s):I+(O-I)*(x-s),a1=s/tot*Math.PI*2-Math.PI/2,a2=(s+1)/tot*Math.PI*2-Math.PI/2,a=a1+(a2-a1)*(x-s);p.push([cx+r*Math.cos(a),cy+r*Math.sin(a)]);}return p;}},
+ circle:{name:'Circle',emoji:'⭕',diff:'easy',gen(cx,cy,sz){const p=[],r=sz*.43;for(let i=0;i<=360;i++){const t=i*Math.PI/180;p.push([cx+r*Math.cos(t-Math.PI/2),cy+r*Math.sin(t-Math.PI/2)]);}return p;}},
+ infinity:{name:'Infinity',emoji:'♾️',diff:'hard',gen(cx,cy,sz){const p=[],a=sz*.42;for(let i=0;i<=360;i++){const t=i*Math.PI/180,d=1+Math.sin(t)*Math.sin(t);p.push([cx+a*Math.cos(t)/d,cy+a*Math.sin(t)*Math.cos(t)/d]);}return p;}},
+ spiral:{name:'Spiral',emoji:'🌀',diff:'medium',gen(cx,cy,sz){const p=[],R=sz*.43,tot=3*360;for(let i=0;i<=tot;i++){const t=i*Math.PI/180,r=R*(i/tot);p.push([cx+r*Math.cos(t-Math.PI/2),cy+r*Math.sin(t-Math.PI/2)]);}return p;}},
+ wave:{name:'Wave',emoji:'〰️',diff:'easy',gen(cx,cy,sz){const p=[],w=sz*.9,A=sz*.25;for(let i=0;i<=360;i++){const f=i/360;p.push([cx-w/2+w*f,cy+A*Math.sin(f*Math.PI*5)]);}return p;}}
+};
+const KEYS=Object.keys(SHP);
+
+// DARE TIERS SYSTEM — 100 DARES (Higher Score = More Extreme & Spicy!)
+// LEVEL 1: MILD (score 0-44) — Silly, awkward, harmless fun
+// LEVEL 2: SPICY (score 45-64) — Cringey social dares
+// LEVEL 3: EXTREME (score 65-79) — Bold, embarrassing, hard to back out of
+// LEVEL 4: CHAOS (score 80+) — Ex/crush nuclear dares 💀
+const DARES = {
+ mild: [
+  "🌸 Send a 💀 emoji to your 3rd recent WhatsApp contact with ZERO context and wait for their reply.",
+  "🌸 Do 10 jumping jacks while staring directly into your webcam without blinking.",
+  "🌸 Say 'I am a blooming flower and I will not apologize for it' out loud 5 times dramatically.",
+  "🌸 Change your WhatsApp/Insta status to '🌸 Flower Master Supreme' for the next 1 hour.",
+  "🌸 Hold your breath for 20 seconds while making the most intense face you can at the camera.",
+  "🌸 Send a random 'good morning bestie 🌸' to the 5th person in your contact list right now.",
+  "🌸 Do your best impression of a flower slowly blooming — full body, in front of the camera.",
+  "🌸 Narrate everything you're doing in a dramatic documentary voice for the next 2 minutes.",
+  "🌸 Set your phone wallpaper to a flower for the next 24 hours. Screenshot as proof.",
+  "🌸 Text someone 'I just drew a perfect heart with my bare finger. No cap.' and wait for their reaction.",
+  "🌸 Do 5 push-ups right now. If you can't, do 5 knee push-ups. No excuses.",
+  "🌸 Send a flower emoji bouquet (🌸🌺🌻🌹🌷💐) to your mom or dad RIGHT NOW.",
+  "🌸 Sing 'Happy Birthday' to yourself out loud, full volume, at least 2 lines.",
+  "🌸 Take the most unflattering selfie possible and set it as your profile pic for 10 minutes.",
+  "🌸 Open your recent chats and reply to someone you haven't talked to in 3+ days.",
+  "🌸 Do a 10-second freestyle rap about flowers. Record it. Play it back without cringing.",
+  "🌸 Put your phone on the floor, do 3 circles around it saying 'I am the flower champion'.",
+  "🌸 Text a random friend: 'Rate me 1-10 honestly' and post their reply in the game chat.",
+  "🌸 Change your ringtone to the most embarrassing song on your phone for 30 minutes.",
+  "🌸 Do your best robot dance for 15 full seconds — don't stop, don't look away from camera.",
+  "🌸 Call someone and say 'Hey I just wanted to say you're kind of a flower person too' then hang up.",
+  "🌸 Eat something weird from your kitchen right now (ketchup straight from bottle counts).",
+  "🌸 Stand up, spin around 5 times, then try to draw a straight line in the air. Fail gracefully.",
+  "🌸 Say 'I love flowers more than I love most people' loudly enough that someone in your house hears.",
+  "🌸 Text your group chat: 'Which one of you would fight a bee for me?' and await chaos."
+ ],
+ spicy: [
+  "🌶️ Text your best friend or crush: 'We SERIOUSLY need to talk... it's about flowers 🌸' — don't explain.",
+  "🌶️ Post an IG/Snap story: 'I draw flowers with my bare hands. Judge me.' No explanation. Zero context.",
+  "🌶️ Call a friend RIGHT NOW and speak ONLY in whispers for the ENTIRE call. If they ask why, whisper 'I can't explain.'",
+  "🌶️ Send a 10-second voice note of you singing your favorite song AS BADLY AS POSSIBLE to 2 different people.",
+  "🌶️ Set your bio/status to 'Currently accepting applications for my flower empire 🌸 DM for details'.",
+  "🌶️ Text 3 different friends the same message: 'Do you think I'm a flower person?' at the exact same time.",
+  "🌶️ Post on your story: 'I just unlocked a hidden talent. Ask me about it.' then ghost everyone who asks.",
+  "🌶️ Call someone from your contacts and ask them to describe you in exactly 3 words. Accept whatever they say.",
+  "🌶️ Send a voice note to your best friend saying 'I've been thinking about you a lot lately... mostly about flowers tho.'",
+  "🌶️ Text the last person who called you: 'Hey, random question — do you like me as a person?' and wait.",
+  "🌶️ Post a story with just the text 'Some of you are lucky I'm not your therapist' and see who DMs you.",
+  "🌶️ Send your funniest contact a photo of a flower with the caption 'This is literally you' — no more explanation.",
+  "🌶️ Text someone you haven't talked to in 6+ months: 'Hey, I randomly thought about you today. How are you?'",
+  "🌶️ Change your display name in any group chat to 'Flower Hands ✋🌸' for the next hour.",
+  "🌶️ Leave a random 1-star review on an app and write 'Not enough flowers. Disappointed.' as the reason.",
+  "🌶️ Text the 7th person in your contacts: 'Be honest — have you ever lowkey judged my vibe?' then wait.",
+  "🌶️ Post a 5-second video of you waving dramatically and say 'To whoever needed to see this today — hi.'",
+  "🌶️ Open Instagram/Twitter and like the oldest post on someone's page. Don't unlike it. Commit.",
+  "🌶️ Text a friend: 'I need your honest opinion. Do I give off chaotic energy or healing energy?' Accept the answer.",
+  "🌶️ Call someone and say 'I just did something crazy. Don't ask. Just support me.' then hang up after 5 seconds.",
+  "🌶️ Text 2 people: 'If we were both flowers, what kind would you be and what kind would I be?' — mandatory replies.",
+  "🌶️ Go outside your room, say 'THE FLOWER KING/QUEEN HAS ARRIVED' loud enough for someone to hear, come back.",
+  "🌶️ Post a selfie with the caption 'Sorry I've been distant. I was perfecting my flower-drawing technique 🌸'.",
+  "🌶️ Text someone who has a crush on you (or had one): 'Hey, how have you actually been?' and mean it.",
+  "🌶️ Send a voice note to your closest friend saying 'I just want you to know I'd fight a bee for you. That's it. Bye.'"
+ ],
+ hard: [
+  "🔥 Text your ex or old classmate RIGHT NOW: 'I dreamt about flowers and for some reason it made me think of you 💀'",
+  "🔥 Call a random contact and ask: 'Genuine question — did you know roses literally feel pain?' Stay silent 8 seconds after.",
+  "🔥 Send your most unflattering selfie to your family group chat with the caption 'Peak performance.'",
+  "🔥 Hand your phone to the person nearest you. Let them text ANYONE in your contact list ONE message of their choice.",
+  "🔥 Call your best friend and convince them (keep a straight voice) that you just adopted 5 stray kittens and need help.",
+  "🔥 Text your ex or someone from your past: 'Hey do you still have [something you definitely left there]?' — Be specific.",
+  "🔥 Text your 3 closest friends the same message: 'I need to tell you something but I don't know how to start.' Ghost for 2 min.",
+  "🔥 Post on your story: 'POV you just found out your friend secretly draws flowers for fun' and tag one specific person.",
+  "🔥 Voice call someone you haven't spoken to in over a year. When they answer, say 'I was literally just thinking about you.'",
+  "🔥 Text the last person you argued with: 'Hey. I don't want any beef. Flowers only 🌸.' Send it. No takebacks.",
+  "🔥 Let a friend scroll through your search history for 15 seconds. They must find at least one embarrassing thing.",
+  "🔥 Send a voice note to your crush or someone you like that says 'Okay but hypothetically... if I told you something wild?'",
+  "🔥 Tell the person next to you right now the most embarrassing thing that happened to you this year. Full eye contact.",
+  "🔥 Text someone you ghosted: 'Hey I know I went MIA. Are you good?' — No excuses. Just send it.",
+  "🔥 Post a story that says 'Ask me something you've always wanted to know. I'll answer honestly.' Open it. Answer 3 DMs.",
+  "🔥 Call your mom/dad/sibling and sing them at least 4 lines of a song completely off-tune. Don't stop when they judge you.",
+  "🔥 Text your best friend: 'Okay real talk — what's one thing I do that secretly annoys you?' Accept the answer with grace.",
+  "🔥 Screen record your camera roll thumbnail strip and post it to your story. No cropping. The world sees the chaos.",
+  "🔥 Call someone you've been avoiding and speak to them for at least 3 full minutes like nothing happened.",
+  "🔥 Text 4 people: 'On a scale 1-10 how would you rate me as a friend, honestly?' Show all replies publicly.",
+  "🔥 Record a 5-second video of yourself doing the most dramatic slow-motion walk you can. Post it. Caption: 'This is who I am.'",
+  "🔥 Text your crush 'Not to be weird but I low-key think about what you're doing sometimes.' Then immediately go offline.",
+  "🔥 Change your WhatsApp profile photo to your worst selfie ever. Keep it there for 2 full hours. No sneaky changes.",
+  "🔥 Text a family member: 'Okay so hypothetically... if I did something embarrassing today, would you still love me?'",
+  "🔥 Give your phone to a friend. They get to reply to the next 2 incoming messages as if they were you. No interference."
+ ],
+ chaos: [
+  "💀☠️ ULTIMATE CHAOS: Call your EX right NOW and say 'Hey I just wanted to say... I miss your [pet/friend/vibe].' Stay silent 10 full seconds.",
+  "💀🔥 NUCLEAR DARE: Text your EX or crush 'My hands have actual magical powers now. Don't ask how. You might want to know.' Zero explanation.",
+  "💀☠️ CHAOS MODE: Call your EX or crush and after they say hello, ask 'Do you still have feelings for me — or just for flowers?' Hang up.",
+  "💀🔥 EXTREME DARE: Send a voice note to your EX or the last person who broke your heart singing 'I Will Always Love You' — at LEAST 10 seconds.",
+  "💀☠️ THE NUCLEAR OPTION: Text your EX: 'I dreamt about us in a flower field. It was actually beautiful. Weird right 😭' Then turn off your phone.",
+  "💀🔥 CHAOS DARE: Text 3 of your exes or situationship people the same message: 'No reason. Just hope you're doing okay 🌸' at the same time.",
+  "💀☠️ FULL SEND: Call your most recent ex. When they answer, say 'I'm not calling for a reason. Just wanted to hear your voice for 5 seconds.' Then hang up.",
+  "💀🔥 SCORCHED EARTH: Text your crush: 'I know this is random but do you ever think about what we could have been?' Hit send. Do NOT unsend.",
+  "💀☠️ CHAOS UNLOCK: Send your ex a reel or meme about missing people with the caption 'no reason lol' and go completely offline.",
+  "💀🔥 ABSOLUTE CHAOS: Text the last person who rejected you: 'Hey. No hard feelings from my end 🌸. Just wanted you to know.' Full stop.",
+  "💀☠️ CERTIFIED UNHINGED: Record a voice note to your ex saying 'I still think about [a specific memory] sometimes. Is that weird?' Send it.",
+  "💀🔥 MEGA DARE: Call your ex or situationship person and when they pick up, say 'I drew your face as a flower today. It was flattering. Bye.'",
+  "💀☠️ CHAOS FINAL FORM: Text the person who last left you on read: 'Okay I need closure. Just tell me — was it something I said?' Wait.",
+  "💀🔥 UNHINGED ELITE: Text your EX: 'Do you still have the [specific item you gave them/photo/thing]? I thought about it today.' No context given.",
+  "💀☠️ APOCALYPSE DARE: Call your EX right now. When they pick up, breathe dramatically and say 'I just needed to hear that you're okay.' Then hang up.",
+  "💀🔥 CHAOS GOD TIER: Repost an old photo with you and an ex or a person you had feelings for and caption it 'that era was something 🌸' publicly.",
+  "💀☠️ FINAL BOSS DARE: Text your EX or someone you still have feelings for: 'Okay weird question. Do you still think about me sometimes?' Do NOT unsend.",
+  "💀🔥 MAXIMUM CHAOS: Send your ex a flower bouquet emoji 💐 with the text 'just because' at midnight exactly. Zero other context.",
+  "💀☠️ CHAOS INCARNATE: Text the person you liked most recently: 'I'm in my feelings tonight 🌸. Miss you if I'm being honest.' Send. Don't explain.",
+  "💀🔥 DESTROY THE TIMELINE: Call someone you had a thing with, let it ring twice, then hang up. When they call back, say 'must have butt-dialed, hi tho.'",
+  "💀☠️ SCORCHED EARTH FINAL: Post a public story with a cute flower 🌸 and tag your EX directly with caption 'still think flowers suit you.'",
+  "💀🔥 THE CHAOS SPECIAL: Send a voice note to your last 3 'what-ifs' saying exactly this: 'Hey. You just crossed my mind. That's it. That's the message.'",
+  "💀☠️ ABSOLUTE UNHINGED RARE DARE: Text your ex: 'Okay don't make this weird but I kind of won a game because of a memory of you. Thank you I guess?'",
+  "💀🔥 LEGENDARY CHAOS DARE: Call your EX right now. When they pick up, say 'I just drew a perfect heart with my bare hands. You were my inspiration. Bye.' Hang up.",
+  "💀☠️💥 THE GOD-TIER CHAOS DARE: Text your biggest what-if ever — the person you never said anything to: 'Hey. I always wondered what would have happened. Still do 🌸'"
+ ]
+};
+
+const MSGS={
+ S:["💅 understood the assignment COMPLETELY. ate and left zero crumbs bestie","💀 this is actually illegal. no one draws this well with bare hands bro","🔥 MAIN CHARACTER era with these flowers no cap fr fr","✨ picasso's hotter younger sibling has entered the chat"],
+ A:["😤 fine. kinda that guy/girl ngl. KINDA. don't get delulu","🙄 A grade? cute. try again and you'll probably fumble it","👀 lowkey ate but highkey could've been MORE unhinged","🎯 almost a slay. the 'almost' lives rent free in ur head"],
+ B:["😐 mid. i said what i said. chronically, devastatingly mid.","🧢 B grade = showed up but didn't show OUT","💤 average enjoyer arc detected. not in flop era rn","😭 really said 'good enough' and clocked out. audacity."],
+ C:["💀 bestie what IS this. not a shape, this is abstract trauma","🥔 drew a potato and had the NERVE to call it art. respect","😭 my 5yo cousin draws better. feet. blindfolded. no wifi.","🤡 thought they cooked. microwaved leftovers at best."],
+ D:["🤓 you needed specs ig. book an optician appointment NOW","💀 ratio'd by a dotted line. touch grass and retry.","😭 more trauma than a taylor swift album and a half","🔥 managed to miss the ENTIRE shape. backwards talent bro","👀 drawing with your elbow?? be so fr with me rn","🌚 flowers are bussin tho! shame about... everything else lmaooo"]
+};
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function grade(s){if(s>=90)return{g:'S',c:'gS'};if(s>=75)return{g:'A',c:'gA'};if(s>=58)return{g:'B',c:'gB'};if(s>=40)return{g:'C',c:'gC'};return{g:'D',c:'gD'};}
+
+let AC=null;
+const eAC=()=>{if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();};
+function tone(f,t,d,v=.08,dl=0){eAC();const o=AC.createOscillator(),g=AC.createGain();o.connect(g);g.connect(AC.destination);o.type=t;o.frequency.value=f;const T=AC.currentTime+dl;g.gain.setValueAtTime(0,T);g.gain.linearRampToValueAtTime(v,T+.01);g.gain.exponentialRampToValueAtTime(.001,T+d);o.start(T);o.stop(T+d+.01);}
+function sfxSp(h){if(Math.random()>.07)return;tone(h?523+Math.random()*300:150+Math.random()*80,'sine',h?.18:.1,h?.05:.02);}
+function sfxC(n){tone(n>0?440:880,'sine',.3,.15);}
+function sfxOK(){[523,659,784,1047].forEach((f,i)=>tone(f,'sine',.45,.1,i*.13));}
+function sfxSc(){for(let i=0;i<6;i++)tone(250+Math.random()*700,'sine',.2,.05,i*.04);}
+function sfxT(){tone(220,'sine',.15,.06);}
+function sfxDareDone(){[300,500,800,1200].forEach((f,i)=>tone(f,'triangle',.5,.15,i*.1));}
+function sfxSkip(){tone(150,'sawtooth',.4,.1);}
+
+const cv=document.getElementById('canvas'),cx=cv.getContext('2d');
+const vid=document.getElementById('video');
+const tc=document.getElementById('tcan'),tcx=tc.getContext('2d');
+let W,H;
+function rsz(){W=cv.width=window.innerWidth;H=cv.height=window.innerHeight;}
+window.addEventListener('resize',rsz);rsz();
+
+const PH=[{o:[80,240,180],m:[120,255,210],i:[170,255,235],c:[255,255,255],h:[255,255,255]},{o:[50,210,160],m:[90,235,190],i:[140,255,218],c:[255,255,255],h:[255,255,255]}];
+const PM=[{o:[255,70,110],m:[255,110,145],i:[255,155,180],c:[255,255,255],h:[255,255,255]},{o:[255,50,90],m:[255,90,130],i:[255,140,165],c:[255,255,255],h:[255,255,255]}];
+const PF=[{o:[255,170,200],m:[255,200,225],i:[255,230,245],c:[255,210,100],h:[255,255,255]},{o:[200,175,255],m:[225,200,255],i:[245,225,255],c:[255,200,100],h:[255,255,255]},{o:[140,200,255],m:[175,220,255],i:[210,240,255],c:[255,255,255],h:[255,210,100]},{o:[140,235,225],m:[175,248,242],i:[215,255,250],c:[255,210,100],h:[255,255,255]},{o:[255,235,150],m:[255,242,180],i:[255,250,215],c:[215,170,255],h:[255,255,255]}];
+const eEl=t=>{const c=Math.PI*2/3;return t===0?0:t===1?1:Math.pow(2,-10*t)*Math.sin((t*10-.75)*c)+1;};
+const eC3=t=>1-(1-t)**3;
+const fls=[],sps=[],trs=[];
+
+function spFl(x,y,isH=null){
+ if(fls.length>=MXF)return;
+ let p=isH===true?PH[fls.length%PH.length]:isH===false?PM[fls.length%PM.length]:PF[fls.length%PF.length];
+ sfxSp(isH);
+ fls.push({x,y,sz:13+Math.random()*18,p,pt:5+(Math.random()<.3?1:0),r:Math.random()*6.283,sc:.01,gt:0,a:0,st:0,vx:0,vy:0,ds:0,dd:0,wp:Math.random()*6.283,ss:1.5+Math.random()*4});
+}
+function spSp(x,y,h){if(sps.length>=MXS)return;sps.push({x,y,vx:(Math.random()-.5)*3.5,vy:-1.5-Math.random()*3,a:1,sz:1.5+Math.random()*3,h});}
+function spTr(x,y,col){if(trs.length>=MXT)return;trs.push({x,y,a:.7,sz:4+Math.random()*8,col});}
+
+function explodeFlowers(cnt=60){
+ for(let i=0;i<cnt;i++){
+  spFl(W/2+(Math.random()-.5)*400, H/2+(Math.random()-.5)*300, true);
+ }
+}
+
+function dpet(px,py,len,wid,ang){cx.save();cx.translate(px,py);cx.rotate(ang);cx.beginPath();cx.moveTo(0,0);cx.bezierCurveTo(wid,-len*.3,wid,-len*.7,0,-len);cx.bezierCurveTo(-wid,-len*.7,-wid,-len*.3,0,0);cx.fill();cx.restore();}
+function dfl(f){
+ const{x,y,sz,p,pt,r,sc,a}=f;if(a<=.02)return;
+ cx.save();cx.globalAlpha=a;
+ const g=cx.createRadialGradient(x,y,0,x,y,sz*2.4);
+ g.addColorStop(0,`rgba(${p.h},${a*.22})`);g.addColorStop(1,'transparent');
+ cx.fillStyle=g;cx.beginPath();cx.arc(x,y,sz*2.4,0,6.283);cx.fill();
+ const rl=sz*sc,pW=rl*.38;
+ cx.fillStyle=`rgb(${p.m})`;for(let i=0;i<pt;i++)dpet(x,y,rl,pW,r+i*(6.283/pt));
+ cx.fillStyle=`rgb(${p.i})`;for(let i=0;i<pt;i++)dpet(x,y,rl*.65,pW*.55,r+(i+.5)*(6.283/pt));
+ const cg=cx.createRadialGradient(x,y,0,x,y,rl*.42);cg.addColorStop(0,`rgb(${p.c})`);cg.addColorStop(1,`rgb(${p.o})`);
+ cx.fillStyle=cg;cx.beginPath();cx.arc(x,y,rl*.4,0,6.283);cx.fill();
+ cx.restore();
+}
+
+let gSt='menu',cMd=false,cRd=0,cOr=[],cScs=[];
+let curS=null,covM=[];
+let hits=0,miss=0,rSt=0,tLeft=TIME,isDiss=false,palSince=0,showG=true,dash=0,lTick=-1;
+let dareModeActive=true, dareStreak=0, totalDaresCompleted=0, curDareBonus=0, curDareObj=null;
+const pH={},sH={};
+const SMN=.12,SMX=.38,SPT=45;
+
+function bldS(k){
+ const d=SHP[k],sz=Math.min(W,H)*.38,pts=d.gen(W/2,H/2,sz);
+ covM=new Array(SEGS).fill(false);hits=0;miss=0;
+ curS={k,d,pts};
+}
+function d2p(x,y){
+ let mD=Infinity,mI=0;const pts=curS.pts;
+ for(let i=0;i<pts.length;i++){const d=Math.hypot(x-pts[i][0],y-pts[i][1]);if(d<mD){mD=d;mI=i;}}
+ return{dist:mD,idx:mI};
+}
+function mCov(pi){const s=Math.min(SEGS-1,Math.floor(pi/(curS.pts.length/SEGS)));covM[s]=true;}
+const gAcc=()=>{const t=hits+miss;return t>0?hits/t*100:0;};
+const gCov=()=>covM.filter(Boolean).length/covM.length*100;
+const gSc=()=>Math.round(gAcc()*.55+gCov()*.45);
+
+function dGuide(){
+ if(!showG||!curS)return;dash=(dash+1.8)%60;
+ const pts=curS.pts,sl=Math.floor(pts.length/SEGS);
+ cx.save();
+ for(let sg=0;sg<SEGS;sg++){
+  const s=sg*sl,e=Math.min(pts.length-1,(sg+1)*sl);
+  cx.beginPath();cx.moveTo(pts[s][0],pts[s][1]);
+  for(let i=s+1;i<=e;i++)cx.lineTo(pts[i][0],pts[i][1]);
+  if(covM[sg]){cx.setLineDash([]);cx.strokeStyle='rgba(6,214,160,.55)';cx.lineWidth=4;cx.shadowColor='#06D6A0';cx.shadowBlur=12;}
+  else{cx.setLineDash([12,9]);cx.lineDashOffset=-dash;cx.strokeStyle='rgba(255,0,110,.3)';cx.lineWidth=3;cx.shadowBlur=0;}
+  cx.stroke();
+ }
+ cx.setLineDash([]);cx.shadowBlur=0;
+ if(pts.length>0){const m=pts[Math.floor(pts.length*.2)];cx.fillStyle='rgba(255,0,110,.35)';cx.font='bold 11px Space Mono';cx.textAlign='center';cx.fillText(curS.d.emoji+' trace this ☝️',m[0],m[1]-28);}
+ cx.restore();
+}
+
+function dTimer(t){
+ const cx2=40,cy2=40,r=32;tcx.clearRect(0,0,80,80);
+ tcx.beginPath();tcx.arc(cx2,cy2,r,0,Math.PI*2);tcx.strokeStyle='rgba(255,255,255,.05)';tcx.lineWidth=5;tcx.stroke();
+ const f=t/TIME,col=f>.4?'#06D6A0':f>.2?'#FFB703':'#FF006E';
+ tcx.beginPath();tcx.arc(cx2,cy2,r,-Math.PI/2,-Math.PI/2+f*Math.PI*2);tcx.strokeStyle=col;tcx.lineWidth=5;tcx.lineCap='round';tcx.shadowColor=col;tcx.shadowBlur=10;tcx.stroke();tcx.shadowBlur=0;
+ tcx.fillStyle=f>.4?'rgba(255,255,255,.9)':col;tcx.font='bold 20px Space Grotesk';tcx.textAlign='center';tcx.textBaseline='middle';tcx.fillText(Math.ceil(t),cx2,cy2);
+ const sc=Math.ceil(t);if(sc!==lTick&&sc<=5&&sc>0){lTick=sc;sfxT();}
+}
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));if(id)document.getElementById(id).classList.add('on');}
+
+function uHUD(){
+ if(gSt!=='drawing')return;
+ const sc=gSc(),ac=Math.round(gAcc()),co=Math.round(gCov());
+ const{g,c}=grade(sc);
+ document.getElementById('hSC').textContent=sc;
+ document.getElementById('hStreak').textContent='🔥 STREAK: '+dareStreak;
+ const ge=document.getElementById('hGR');ge.textContent=g;ge.className='hgr '+c;
+ document.getElementById('bAcc').style.width=ac+'%';document.getElementById('vAcc').textContent=ac+'%';
+ document.getElementById('bCov').style.width=co+'%';document.getElementById('vCov').textContent=co+'%';
+}
+
+function uRds(){
+ const w=document.getElementById('rds');
+ if(!cMd){w.classList.remove('on');return;}
+ w.classList.add('on');w.innerHTML='';
+ for(let i=0;i<cOr.length;i++){const d=document.createElement('div');d.className='rdot'+(i<cRd?' done':i===cRd?' cur':'');w.appendChild(d);}
+}
+
+// ============================================================
+// MODULE: SCRATCH CARD ENGINE
+// Isolated from the RAF game loop. Handles canvas overlay,
+// destination-out erasing, throttled pixel sampling (60fps safe),
+// and smooth auto-reveal when 55% threshold is crossed.
+// ============================================================
+let scratchCtx=null, scratchRevealed=false, scratchDrawing=false;
+let _lastSampleTs=0; // throttle getImageData to max 5×/sec
+
+/**
+ * initScratchCard(dareText, tier)
+ * Resets and redraws the metallic scratch overlay on the canvas.
+ * Called after the result card animation completes (700ms delay).
+ */
+function initScratchCard(dareText, tier){
+ const wrap   = document.getElementById('scratchWrap');
+ const canvas = document.getElementById('scratchCanvas');
+ const hint   = document.getElementById('scratchHint');
+ const msg    = document.getElementById('dareScratchMsg');
+ const doneBtn= document.getElementById('dareDoneBtn');
+ const skipBtn= document.getElementById('dareSkipBtn');
+
+ // Write dare text into the layer BELOW the canvas
+ document.getElementById('dareTxt').textContent = dareText;
+
+ // Reset all scratch state
+ scratchRevealed = false;
+ scratchDrawing  = false;
+ _lastSampleTs   = 0;
+ hint.style.display  = 'flex';
+ hint.style.opacity  = '1';
+ msg.style.display   = 'none';
+ doneBtn.disabled    = true;
+ doneBtn.textContent = '🔒 Scratch to unlock dare';
+ skipBtn.style.display = 'inline-block';
+
+ // Use rAF so layout is complete before reading offsetWidth/Height
+ requestAnimationFrame(()=>{
+  const dpr = window.devicePixelRatio || 1;
+  const w   = wrap.offsetWidth;
+  const h   = Math.max(wrap.offsetHeight, 82); // min height guard
+
+  // Resize canvas (reuses existing element — no GC pressure)
+  canvas.width  = Math.round(w * dpr);
+  canvas.height = Math.round(h * dpr);
+  canvas.style.width  = w + 'px';
+  canvas.style.height = h + 'px';
+
+  scratchCtx = canvas.getContext('2d');
+  scratchCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  // ── Tier-specific color themes ──────────────────────────────
+  const TIER_COLORS = {
+   'lvl-mild' : { bg:['#0b3328','#053d27'], shine:'#06D6A0', text:'#06D6A0' },
+   'lvl-spicy': { bg:['#3a2400','#4a2e00'], shine:'#FFB703', text:'#FFB703' },
+   'lvl-hard' : { bg:['#38001a','#4a0022'], shine:'#FF006E', text:'#FF006E' },
+   'lvl-chaos': { bg:['#380600','#200000'], shine:'#FF3B00', text:'#FFB703' },
+  };
+  const theme = TIER_COLORS[tier] || TIER_COLORS['lvl-mild'];
+
+  // ── Draw base gradient ───────────────────────────────────────
+  const grd = scratchCtx.createLinearGradient(0, 0, w, h);
+  grd.addColorStop(0,   theme.bg[0]);
+  grd.addColorStop(0.45, theme.shine + '40');
+  grd.addColorStop(0.55, theme.bg[1]);
+  grd.addColorStop(1,   theme.bg[0]);
+  scratchCtx.fillStyle = grd;
+  scratchCtx.fillRect(0, 0, w, h);
+
+  // ── Diagonal shimmer lines (gives metallic look) ─────────────
+  scratchCtx.save();
+  scratchCtx.globalAlpha = 0.08;
+  scratchCtx.strokeStyle = '#fff';
+  scratchCtx.lineWidth   = 9;
+  for(let i = -h; i < w + h; i += 22){
+   scratchCtx.beginPath();
+   scratchCtx.moveTo(i, 0);
+   scratchCtx.lineTo(i + h, h);
+   scratchCtx.stroke();
+  }
+  scratchCtx.restore();
+
+  // ── Center instruction text ──────────────────────────────────
+  scratchCtx.fillStyle    = 'rgba(255,255,255,0.88)';
+  scratchCtx.font         = `bold ${Math.round(w*.032)+10}px Space Mono, monospace`;
+  scratchCtx.textAlign    = 'center';
+  scratchCtx.textBaseline = 'middle';
+  scratchCtx.shadowColor  = theme.shine;
+  scratchCtx.shadowBlur   = 14;
+  scratchCtx.fillText('✋  SCRATCH TO REVEAL YOUR DARE', w/2, h/2);
+  scratchCtx.shadowBlur   = 0;
+ });
+}
+
+/**
+ * doScratch(x, y)
+ * Erases a circular area from the canvas overlay using destination-out.
+ * Radius = 28px — balanced between usability and precision.
+ * Performance: one arc + fill per pointer event (~0.2ms on modern GPU).
+ */
+function doScratch(x, y){
+ if(!scratchCtx || scratchRevealed) return;
+ scratchCtx.globalCompositeOperation = 'destination-out';
+ scratchCtx.beginPath();
+ scratchCtx.arc(x, y, 28, 0, Math.PI * 2);
+ scratchCtx.fill();
+ scratchCtx.globalCompositeOperation = 'source-over';
+ // Throttle pixel sampling to max 5×/sec (200ms gate)
+ // getImageData is expensive (~3ms). Without throttling at 60fps
+ // it would consume 180ms/sec of frame budget.
+ const now = performance.now();
+ if(now - _lastSampleTs > 200){
+  _lastSampleTs = now;
+  _checkScratchPercent();
+ }
+}
+
+/**
+ * _checkScratchPercent() — PRIVATE
+ * Samples every 4th pixel's alpha channel for speed.
+ * Full-res sampling would be 4× slower with identical accuracy.
+ */
+function _checkScratchPercent(){
+ const canvas = document.getElementById('scratchCanvas');
+ if(!scratchCtx || !canvas.width) return;
+ const data = scratchCtx.getImageData(0, 0, canvas.width, canvas.height).data;
+ let cleared = 0, total = 0;
+ // Sample every 4th pixel (stride = 4 channels × 4 pixels = 16)
+ for(let i = 3; i < data.length; i += 16){ total++; if(data[i] < 128) cleared++; }
+ const pct = (cleared / total) * 100;
+ if(pct > 55 && !scratchRevealed) _autoReveal();
+}
+
+/**
+ * _autoReveal() — PRIVATE
+ * Triggers when > 55% of overlay is cleared.
+ * Fades out canvas, plays reveal sound, enables dare buttons.
+ */
+function _autoReveal(){
+ scratchRevealed = true;
+ const canvas  = document.getElementById('scratchCanvas');
+ const hint    = document.getElementById('scratchHint');
+ const msg     = document.getElementById('dareScratchMsg');
+ const doneBtn = document.getElementById('dareDoneBtn');
+
+ // CSS transition fade-out (GPU composited, zero JS per-frame cost)
+ canvas.style.transition = 'opacity 0.45s ease';
+ canvas.style.opacity = '0';
+ setTimeout(()=>{ canvas.style.display='none'; hint.style.display='none'; }, 460);
+
+ // Unlock dare UI with reveal sound
+ setTimeout(()=>{
+  msg.style.display   = 'block';
+  doneBtn.disabled    = false;
+  doneBtn.textContent = '🔥 I DID THE DARE!';
+  // 3-note reveal chord
+  [380, 570, 860].forEach((f, i) => tone(f, 'sine', .38, .13, i * .09));
+ }, 350);
+}
+
+/** Returns [x, y] from mouse or touch event relative to canvas */
+function _getScratchPos(canvas, e){
+ const rect = canvas.getBoundingClientRect();
+ const src  = e.touches ? e.touches[0] : e;
+ return [src.clientX - rect.left, src.clientY - rect.top];
+}
+
+/**
+ * setupScratchListeners()
+ * Attaches pointer events to the scratch canvas.
+ * Uses .onXxx assignment (not addEventListener) so re-calling
+ * this function safely replaces old handlers without leaks.
+ */
+function setupScratchListeners(){
+ const canvas = document.getElementById('scratchCanvas');
+ const start  = e => { scratchDrawing=true;  const [x,y]=_getScratchPos(canvas,e); doScratch(x,y); };
+ const move   = e => { if(!scratchDrawing) return; const [x,y]=_getScratchPos(canvas,e); doScratch(x,y); };
+ const end    = () => { scratchDrawing=false; };
+ canvas.onmousedown  = start;
+ canvas.onmousemove  = move;
+ canvas.onmouseup    = end;
+ canvas.onmouseleave = end;
+ canvas.ontouchstart = e => { e.preventDefault(); start(e); };
+ canvas.ontouchmove  = e => { e.preventDefault(); move(e);  };
+ canvas.ontouchend   = end;
+}
+// ============================================================
+// END MODULE: SCRATCH CARD ENGINE
+// ============================================================
+
+// ============================================================
+// MODULE: DARE SYSTEM
+// Score-to-tier mapping + anti-repetition pickDare() using
+// per-tier localStorage bitmasks. Guarantees no dare repeats
+// until the full pool of 25 per tier is exhausted.
+// ============================================================
+
+/**
+ * pickDare(tier)
+ * Returns a non-repeated dare string from the given tier pool.
+ * Tracks seen dares in localStorage['bloomDareSeen_<tier>'].
+ * Resets automatically when all dares in the tier are exhausted.
+ */
+function pickDare(tier){
+ const pool    = DARES[tier.replace('lvl-','')] || DARES.mild;
+ const storeKey= 'bloomDareSeen_' + tier;
+ let seen;
+ try { seen = JSON.parse(localStorage.getItem(storeKey) || '[]'); }
+ catch(e){ seen = []; }
+
+ // Find indices not yet seen
+ let unseen = pool.map((_,i)=>i).filter(i=>!seen[i]);
+
+ // Full cycle complete — reset and reshuffle
+ if(unseen.length === 0){
+  seen   = [];
+  unseen = pool.map((_,i)=>i);
+ }
+
+ // Pick a random unseen dare
+ const idx  = unseen[Math.floor(Math.random() * unseen.length)];
+ seen[idx]  = true;
+ try { localStorage.setItem(storeKey, JSON.stringify(seen)); } catch(e){}
+ return pool[idx];
+}
+
+/**
+ * getDareForScore(score)
+ * Maps game score to dare tier and metadata.
+ * Score thresholds: 0-44 mild | 45-64 spicy | 65-79 hard | 80+ chaos
+ */
+function getDareForScore(score){
+ if(score >= 80) return { tier:'lvl-chaos', badge:'LEVEL 4: ULTIMATE CHAOS 💀', pts:100, pool:'chaos' };
+ if(score >= 65) return { tier:'lvl-hard',  badge:'LEVEL 3: EXTREME DARE 🔥',   pts:75,  pool:'hard'  };
+ if(score >= 45) return { tier:'lvl-spicy', badge:'LEVEL 2: SPICY DARE 🌶️',    pts:50,  pool:'spicy' };
+ return                  { tier:'lvl-mild',  badge:'LEVEL 1: MILD DARE 🌸',       pts:30,  pool:'mild'  };
+}
+
+function showRes(){
+ const sc=gSc(),ac=Math.round(gAcc()),co=Math.round(gCov());
+ const{g,c}=grade(sc);
+ document.getElementById('rSN').textContent=curS.d.name.toUpperCase()+' '+curS.d.emoji;
+ document.getElementById('rSC').textContent=sc;
+ const rg=document.getElementById('rGR');rg.textContent=g;rg.className='rgr '+c;
+ document.getElementById('rMsg').textContent=pick(MSGS[g]);
+ document.getElementById('rAcc').textContent=ac+'%';
+ document.getElementById('rCov').textContent=co+'%';
+ document.getElementById('rHits').textContent=hits;
+ 
+ // DARE CONTAINER SETUP with scratch card
+ const dareBox = document.getElementById('dareContainer');
+ if(dareModeActive){
+  dareBox.style.display = 'block';
+  curDareObj = getDareForScore(sc);
+  document.getElementById('dareBadge').className = 'dare-lvl ' + curDareObj.tier;
+  document.getElementById('dareBadge').textContent = curDareObj.badge;
+  document.getElementById('darePts').textContent = '+' + curDareObj.pts + ' BONUS PTS';
+  // Reset canvas visibility for clean re-init
+  const canvas = document.getElementById('scratchCanvas');
+  canvas.style.transition = 'none';
+  canvas.style.display = 'block';
+  canvas.style.opacity = '1';
+  // Init scratch card after result card animation finishes (700ms)
+  setTimeout(()=>{ initScratchCard(pickDare(curDareObj.tier), curDareObj.tier); setupScratchListeners(); }, 700);
+ } else {
+  dareBox.style.display = 'none';
+ }
+
+ cScs.push({k:curS.k,sc,em:curS.d.emoji,nm:curS.d.name});
+ gSt='results';
+ document.getElementById('hud').classList.remove('on');
+ document.getElementById('tWrap').classList.remove('on');
+ document.getElementById('rds').classList.remove('on');
+ show('sRes');sfxOK();
+}
+
+function showCar(){
+ const avg=Math.round(cScs.reduce((s,r)=>s+r.sc,0)/cScs.length);
+ const best=parseInt(localStorage.getItem('bloomBest')||'0');
+ if(avg>best){localStorage.setItem('bloomBest',avg);document.getElementById('bestD').textContent=avg;}
+ const{g,c}=grade(avg);
+ document.getElementById('cSC').textContent=avg;
+ const cg=document.getElementById('cGR');cg.textContent=g;cg.className='cgr '+c;
+ document.getElementById('cMsg').textContent=pick(MSGS[g]) + ` (Total Dares Completed: ${totalDaresCompleted} 🔥)`;
+ const li=document.getElementById('chipList');li.innerHTML='';
+ cScs.forEach(r=>{const ch=document.createElement('div');ch.className='chip';ch.innerHTML=`<b>${r.sc}</b>${r.em} ${r.nm}`;li.appendChild(ch);});
+ gSt='careerEnd';show('sCar');sfxOK();
+}
+
+function startCD(k){
+ bldS(k);fls.length=0;sps.length=0;trs.length=0;isDiss=false;palSince=0;lTick=-1;
+ document.getElementById('csh').textContent='// '+curS.d.emoji+' '+curS.d.name;
+ show('sCount');gSt='countdown';
+ let n=3;
+ const tick=()=>{sfxC(n);if(n===0){show(null);startDraw();return;}
+  document.getElementById('cnum').textContent=n;
+  const el=document.getElementById('cnum');el.style.animation='none';el.offsetHeight;el.style.animation='cpulse 1s ease-in-out forwards';
+  n--;setTimeout(tick,1000);};
+ tick();
+}
+
+function startDraw(){
+ gSt='drawing';rSt=performance.now();tLeft=TIME;showG=true;
+ document.getElementById('hSN').textContent=curS.d.name.toUpperCase()+' '+curS.d.emoji;
+ document.getElementById('hud').classList.add('on');
+ document.getElementById('tWrap').classList.add('on');
+ document.getElementById('gbtn').textContent='❤️ guide';
+ uRds();uHUD();
+}
+
+function dissAll(){
+ if(isDiss)return;isDiss=true;sfxSc();
+ const ocx=W/2,ocy=H/2,mD=Math.hypot(W,H)/2;
+ fls.forEach(p=>{const d=Math.hypot(p.x-ocx,p.y-ocy);p.st=2;p.dd=(d/mD)*150;p.ds=performance.now();const fa=-Math.PI*.1-Math.random()*Math.PI*.8,sp=7+Math.random()*8;p.vy=Math.sin(fa)*sp;p.vx=Math.cos(fa)*sp*(Math.random()<.5?-1:1);});
+ setTimeout(()=>{fls.length=0;isDiss=false;},2500);
+}
+
+function isOpen(lm){
+ const w=lm[0];let ext=0;
+ [[8,6],[12,10],[16,14],[20,18]].forEach(([ti,mi])=>{const dt=Math.hypot(lm[ti].x-w.x,lm[ti].y-w.y),dm=Math.hypot(lm[mi].x-w.x,lm[mi].y-w.y);if(dt>dm*1.2)ext++;});
+ return ext>=4&&Math.hypot(lm[4].x-w.x,lm[4].y-w.y)>Math.hypot(lm[3].x-w.x,lm[3].y-w.y)*1.1;
+}
+
+let HL=null,run=false;
+async function loop(ts){
+ if(!run)return;requestAnimationFrame(loop);
+ cx.clearRect(0,0,W,H);
+ if(gSt==='drawing'){
+  tLeft=Math.max(0,TIME-(ts-rSt)/1000);dTimer(tLeft);
+  if(tLeft<=0){gSt='done';document.getElementById('tWrap').classList.remove('on');setTimeout(showRes,600);}
+ }
+ if(gSt==='drawing'&&showG)dGuide();
+ if(HL&&vid.readyState>=2&&(gSt==='drawing'||gSt==='freeplay')){
+  const res=HL.detectForVideo(vid,ts);let op=0;
+  if(res.landmarks&&res.landmarks.length>0){
+   for(let i=0;i<res.landmarks.length;i++){
+    const lm=res.landmarks[i];
+    if(isOpen(lm)){op++;continue;}
+    const tip=lm[8];
+    let rx=(1-tip.x)*W,ry=tip.y*H;
+    rx=Math.max(0,Math.min(W,rx));ry=Math.max(0,Math.min(H,ry));
+    const k='h'+i;
+    if(sH[k]){const[sx,sy]=sH[k];const rd=Math.hypot(rx-sx,ry-sy);const sr=Math.min(1,rd/SPT);const sf=SMX-(SMX-SMN)*sr;rx=sx+(rx-sx)*sf;ry=sy+(ry-sy)*sf;}
+    sH[k]=[rx,ry];
+    const fg=cx.createRadialGradient(rx,ry,0,rx,ry,22);fg.addColorStop(0,'rgba(255,255,255,.85)');fg.addColorStop(.4,'rgba(255,0,110,.2)');fg.addColorStop(1,'transparent');
+    cx.save();cx.fillStyle=fg;cx.beginPath();cx.arc(rx,ry,22,0,6.283);cx.fill();cx.restore();
+    if(pH[k]&&!isDiss){
+     const[px,py]=pH[k];const dist=Math.hypot(rx-px,ry-py);
+     if(dist>1){
+      const steps=Math.max(1,(dist/3)|0);
+      for(let s=0;s<steps;s++){
+       const t=s/steps,ix=px+(rx-px)*t,iy=py+(ry-py)*t;
+       let iH=null,tc='rgba(131,56,236,.4)';
+       if(gSt==='drawing'&&curS){const{dist:d,idx:pi}=d2p(ix,iy);iH=d<=HIT;if(d<=COV)mCov(pi);if(iH)hits++;else miss++;uHUD();tc=iH?'rgba(6,214,160,.5)':'rgba(255,0,110,.35)';}
+       if(Math.random()<.88)spFl(ix+(Math.random()-.5)*4,iy+(Math.random()-.5)*4,iH);
+       if(Math.random()<.28)spSp(ix,iy,iH===true?155:iH===false?340:290);
+       if(Math.random()<.42)spTr(ix,iy,tc);
+      }
+     }
+    }
+    pH[k]=[rx,ry];
+   }
+  }else{for(const k in pH)delete pH[k];}
+  if(op>=1){if(palSince===0)palSince=ts;}else{palSince=0;}
+  if(palSince>0&&ts-palSince>600&&!isDiss){palSince=0;dissAll();if(gSt==='drawing'){hits=0;miss=0;covM.fill(false);uHUD();}}
+ }
+ for(let i=trs.length-1;i>=0;i--){const t=trs[i];t.a=Math.max(0,t.a-.03);t.sz*=.95;if(t.a<=.02){trs.splice(i,1);continue;}cx.save();cx.globalAlpha=t.a;cx.fillStyle=t.col;cx.shadowColor=t.col;cx.shadowBlur=8;cx.beginPath();cx.arc(t.x,t.y,t.sz,0,6.283);cx.fill();cx.restore();}
+ for(let i=fls.length-1;i>=0;i--){
+  const p=fls[i];p.r+=p.ss*.012;
+  if(p.st===0){p.gt=Math.min(1,p.gt+.05);p.sc=Math.max(.01,Math.min(1.15,eEl(p.gt)));p.a=Math.min(1,eC3(p.gt)*1.2);if(p.gt>=1){p.st=1;p.sc=1;p.a=1;}}
+  else if(p.st===2){const el=ts-p.ds;if(el<p.dd)continue;const td=(el-p.dd)*.001;p.vy-=.16;p.y+=p.vy;p.x+=p.vx;p.vx*=.993;p.x+=Math.sin(td*2.8+p.wp)*3;p.r+=p.ss*.05;p.a=Math.max(0,p.a-.03);p.sc*=.975;if(Math.random()<.05&&p.a>.1)spSp(p.x,p.y,310);if(p.a<=.02||p.y>H+120){fls.splice(i,1);continue;}}
+  dfl(p);
+ }
+ for(let i=sps.length-1;i>=0;i--){const s=sps[i];s.x+=s.vx;s.y+=s.vy;s.vy+=.08;s.a=Math.max(0,s.a-.026);if(s.a<=.02){sps.splice(i,1);continue;}cx.save();cx.globalAlpha=s.a;cx.fillStyle=`hsl(${s.h},100%,72%)`;cx.shadowColor=`hsl(${s.h},100%,55%)`;cx.shadowBlur=7;cx.beginPath();cx.arc(s.x,s.y,s.sz,0,6.283);cx.fill();cx.restore();}
+}
+
+const curEl=document.getElementById('cur'),cdEl=document.getElementById('cdot');
+let mx=0,my=0,cx3=0,cy3=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cdEl.style.left=mx+'px';cdEl.style.top=my+'px';});
+document.addEventListener('mousedown',()=>curEl.classList.add('ck'));
+document.addEventListener('mouseup',()=>curEl.classList.remove('ck'));
+(function aC(){cx3+=(mx-cx3)*.13;cy3+=(my-cy3)*.13;curEl.style.left=cx3+'px';curEl.style.top=cy3+'px';requestAnimationFrame(aC);})();
+
+async function init(){
+ const gr=document.getElementById('sgrid');
+ KEYS.forEach(k=>{const d=SHP[k];const c=document.createElement('div');c.className='scard';c.innerHTML=`<div class="em">${d.emoji}</div><div class="nm">${d.name}</div><div class="df d${d.diff[0]}">${d.diff}</div>`;c.addEventListener('click',()=>{eAC();cMd=false;cScs=[];startCD(k);});gr.appendChild(c);});
+ const b=localStorage.getItem('bloomBest');if(b)document.getElementById('bestD').textContent=b;
+ const dCnt=localStorage.getItem('bloomDaresCount')||'0';
+ totalDaresCompleted=parseInt(dCnt);
+ document.getElementById('daresDoneD').textContent=totalDaresCompleted;
+
+ const v=await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/wasm");
+ HL=await HandLandmarker.createFromOptions(v,{baseOptions:{modelAssetPath:"https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",delegate:"GPU"},numHands:1,runningMode:"VIDEO",minHandDetectionConfidence:.2,minHandPresenceConfidence:.2,minTrackingConfidence:.2});
+ const st=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:1280},height:{ideal:720},facingMode:'user'}});
+ vid.srcObject=st;await vid.play();
+ run=true;requestAnimationFrame(loop);show('sMenu');gSt='menu';
+}
+
+document.getElementById('careerBtn').addEventListener('click',()=>{eAC();cMd=true;cRd=0;cScs=[];cOr=[...KEYS].sort(()=>Math.random()-.5);startCD(cOr[0]);});
+document.getElementById('freeBtn').addEventListener('click',()=>{eAC();show('sShapes');});
+document.getElementById('backBtn').addEventListener('click',()=>show('sMenu'));
+
+// DARE ACTION LISTENERS
+document.getElementById('dareDoneBtn').addEventListener('click',()=>{
+ eAC(); sfxDareDone();
+ explodeFlowers(80);
+ dareStreak++;
+ totalDaresCompleted++;
+ localStorage.setItem('bloomDaresCount', totalDaresCompleted);
+ document.getElementById('daresDoneD').textContent = totalDaresCompleted;
+ const btn = document.getElementById('dareDoneBtn');
+ btn.textContent = '✅ DARE COMPLETED! (+BONUS)';
+ btn.disabled = true;
+ document.getElementById('dareSkipBtn').style.display = 'none';
+});
+
+document.getElementById('dareSkipBtn').addEventListener('click',()=>{
+ eAC(); sfxSkip();
+ dareStreak = 0;
+ document.getElementById('dareTxt').textContent = '🐔 CHICKENED OUT! No bonus points! (Your ex is laughing right now 💀)';
+ document.getElementById('dareDoneBtn').style.display = 'none';
+ document.getElementById('dareSkipBtn').style.display = 'none';
+});
+
+document.getElementById('toggleDareBtn').addEventListener('click',()=>{
+ eAC();
+ dareModeActive = !dareModeActive;
+ const btn = document.getElementById('toggleDareBtn');
+ btn.textContent = dareModeActive ? '🔥 Dare Mode: ACTIVE' : '👁 Dare Mode: OFF';
+ btn.className = dareModeActive ? 'btn2 btn-dare' : 'btn2';
+});
+
+document.getElementById('nextBtn').addEventListener('click',()=>{eAC();if(cMd){cRd++;fls.length=0;sps.length=0;trs.length=0;if(cRd>=cOr.length)showCar();else startCD(cOr[cRd]);}else show('sShapes');});
+document.getElementById('retryBtn').addEventListener('click',()=>{eAC();fls.length=0;sps.length=0;trs.length=0;startCD(curS.k);});
+document.getElementById('againBtn').addEventListener('click',()=>{eAC();show('sMenu');gSt='menu';});
+document.getElementById('gbtn').addEventListener('click',()=>{eAC();showG=!showG;document.getElementById('gbtn').textContent=showG?'❤️ guide':'👁 off';});
+init().catch(console.error);
+</script>
+</body>
+</html>
