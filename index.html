@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🌸 DARE BLOOM — Flower Drawing Game & Dare Challenge</title>
+<meta name="description" content="DARE BLOOM — Draw flowers with your finger and complete wild party dares! Created by Sribendu Prasad Muduli.">
+<meta name="author" content="Sribendu Prasad Muduli">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;cursor:none!important;}
@@ -153,9 +155,10 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;}
 <div class="screen on" id="sLoad"><div style="text-align:center"><div class="ring"></div><div class="ltxt">loading hand tracking...</div></div></div>
 <div class="screen" id="sMenu">
   <div class="min">
-    <div class="badge">✦ bloom · party dare edition ✦</div>
+    <div class="badge">✦ dare bloom · party dare edition ✦</div>
     <div class="logo">DARE BLOOM</div>
     <div class="lsub">// draw shapes with ur finger · complete dares or face chaos 💀</div>
+    <div style="font-family:'Space Mono',monospace;font-size:.55rem;color:rgba(255,255,255,.22);letter-spacing:.18em;text-transform:uppercase;margin-bottom:.8em;">Created by <span style="color:var(--cy);">Sribendu Prasad Muduli</span></div>
     <div class="best">
       <div>BEST SCORE: <span id="bestD">—</span></div>
       <div>DARES COMPLETED: <span id="daresDoneD">0</span> 🔥</div>
@@ -247,8 +250,10 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;}
     <div class="cmsg" id="cMsg"></div>
     <div class="chips" id="chipList"></div>
     <button class="btn" id="againBtn">🌸 Play Again</button>
+    <div style="margin-top:1.2em;font-family:'Space Mono',monospace;font-size:.5rem;color:rgba(255,255,255,.18);letter-spacing:.15em;text-transform:uppercase;">DARE BLOOM · Created by <span style="color:var(--cy);">🌸 Sribendu Prasad Muduli</span></div>
   </div>
 </div>
+<div style="position:fixed;bottom:10px;left:50%;transform:translateX(-50%);z-index:999;font-family:'Space Mono',monospace;font-size:.48rem;color:rgba(255,255,255,.12);letter-spacing:.2em;text-transform:uppercase;pointer-events:none;white-space:nowrap;">🌸 DARE BLOOM &nbsp;&bull;&nbsp; CREATED BY SRIBENDU PRASAD MUDULI</div>
 <script type="module">
 import{HandLandmarker,FilesetResolver}from"https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/vision_bundle.mjs";
 const HIT=65,COV=90,TIME=35,SEGS=80,MXF=700,MXS=500,MXT=350;
