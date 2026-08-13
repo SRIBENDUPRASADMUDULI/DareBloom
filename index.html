@@ -964,18 +964,28 @@ document.addEventListener('mouseup',()=>curEl.classList.remove('ck'));
 (function aC(){cx3+=(mx-cx3)*.13;cy3+=(my-cy3)*.13;curEl.style.left=cx3+'px';curEl.style.top=cy3+'px';requestAnimationFrame(aC);})();
 
 async function init(){
- const gr=document.getElementById('sgrid');
- KEYS.forEach(k=>{const d=SHP[k];const c=document.createElement('div');c.className='scard';c.innerHTML=`<div class="em">${d.emoji}</div><div class="nm">${d.name}</div><div class="df d${d.diff[0]}">${d.diff}</div>`;c.addEventListener('click',()=>{eAC();cMd=false;cScs=[];startCD(k);});gr.appendChild(c);});
- const b=localStorage.getItem('bloomBest');if(b)document.getElementById('bestD').textContent=b;
- const dCnt=localStorage.getItem('bloomDaresCount')||'0';
- totalDaresCompleted=parseInt(dCnt);
- document.getElementById('daresDoneD').textContent=totalDaresCompleted;
+ try {
+  const gr=document.getElementById('sgrid');
+  KEYS.forEach(k=>{const d=SHP[k];const c=document.createElement('div');c.className='scard';c.innerHTML=`<div class="em">${d.emoji}</div><div class="nm">${d.name}</div><div class="df d${d.diff[0]}">${d.diff}</div>`;c.addEventListener('click',()=>{eAC();cMd=false;cScs=[];startCD(k);});gr.appendChild(c);});
+  const b=localStorage.getItem('bloomBest');if(b)document.getElementById('bestD').textContent=b;
+  const dCnt=localStorage.getItem('bloomDaresCount')||'0';
+  totalDaresCompleted=parseInt(dCnt);
+  document.getElementById('daresDoneD').textContent=totalDaresCompleted;
 
- const v=await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/wasm");
- HL=await HandLandmarker.createFromOptions(v,{baseOptions:{modelAssetPath:"https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",delegate:"GPU"},numHands:1,runningMode:"VIDEO",minHandDetectionConfidence:.2,minHandPresenceConfidence:.2,minTrackingConfidence:.2});
- const st=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:1280},height:{ideal:720},facingMode:'user'}});
- vid.srcObject=st;await vid.play();
- run=true;requestAnimationFrame(loop);show('sMenu');gSt='menu';
+  const v=await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/wasm");
+  HL=await HandLandmarker.createFromOptions(v,{baseOptions:{modelAssetPath:"https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",delegate:"GPU"},numHands:1,runningMode:"VIDEO",minHandDetectionConfidence:.2,minHandPresenceConfidence:.2,minTrackingConfidence:.2});
+  const st=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:1280},height:{ideal:720},facingMode:'user'}});
+  vid.srcObject=st;await vid.play();
+  run=true;requestAnimationFrame(loop);show('sMenu');gSt='menu';
+ } catch(err) {
+  const loadEl = document.getElementById('sLoad');
+  loadEl.innerHTML = `<div style="color:#FF0022; max-width:80%; text-align:center; font-family:'Space Mono', monospace;">
+    <strong>ERROR LOADING TRACKING</strong><br><br>
+    ${err.message || err}<br><br>
+    Please ensure you are allowing camera permissions!
+  </div>`;
+  console.error(err);
+ }
 }
 
 document.getElementById('careerBtn').addEventListener('click',()=>{eAC();cMd=true;cRd=0;cScs=[];cOr=[...KEYS].sort(()=>Math.random()-.5);startCD(cOr[0]);});
