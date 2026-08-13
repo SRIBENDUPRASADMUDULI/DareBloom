@@ -574,7 +574,7 @@ function dTimer(t){
  tcx.fillStyle=f>.4?'rgba(255,255,255,.9)':col;tcx.font='bold 20px Space Grotesk';tcx.textAlign='center';tcx.textBaseline='middle';tcx.fillText(Math.ceil(t),cx2,cy2);
  const sc=Math.ceil(t);if(sc!==lTick&&sc<=5&&sc>0){lTick=sc;sfxT();}
 }
-function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));if(id)document.getElementById(id).classList.add('on');}
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));if(id)document.getElementById(id).classList.add('on');document.getElementById('hud').classList.remove('on');document.getElementById('tWrap').classList.remove('on');document.getElementById('rds').classList.remove('on');try{document.getElementById('inGameMenuBtn').style.display='none';document.getElementById('inGameRestartBtn').style.display='none';}catch(e){}if(id==='sMenu'){try{document.getElementById('crdCnt').innerHTML='';}catch(e){}}}
 
 function uHUD(){
  if(gSt!=='drawing')return;
@@ -835,16 +835,7 @@ function getDareForScore(){
  return options[Math.floor(Math.random() * options.length)];
 }
 
-function show(id){
- document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
- if(id) document.getElementById(id).classList.add('on');
- document.getElementById('hud').classList.remove('on');
- document.getElementById('tWrap').classList.remove('on');
- document.getElementById('rds').classList.remove('on');
- document.getElementById('inGameMenuBtn').style.display='none';
- document.getElementById('inGameRestartBtn').style.display='none';
- if(id==='sMenu'){document.getElementById('crdCnt').innerHTML='';}
-}
+
 
 function showRes(){
  const sc=gSc(),ac=Math.round(gAcc()),co=Math.round(gCov());
