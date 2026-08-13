@@ -269,6 +269,7 @@ const SHP={
  spiral:{name:'Spiral',emoji:'🌀',diff:'medium',gen(cx,cy,sz){const p=[],R=sz*.43,tot=3*360;for(let i=0;i<=tot;i++){const t=i*Math.PI/180,r=R*(i/tot);p.push([cx+r*Math.cos(t-Math.PI/2),cy+r*Math.sin(t-Math.PI/2)]);}return p;}},
  wave:{name:'Wave',emoji:'〰️',diff:'easy',gen(cx,cy,sz){const p=[],w=sz*.9,A=sz*.25;for(let i=0;i<=360;i++){const f=i/360;p.push([cx-w/2+w*f,cy+A*Math.sin(f*Math.PI*5)]);}return p;}}
 };
+const KEYS = Object.keys(SHP);
 
 // DARE TIERS SYSTEM — 160 DARES (Higher Score = More Extreme & Spicy!)
 // LEVEL 1: MILD (score 0-44) — Silly, awkward, harmless fun
