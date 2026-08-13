@@ -156,6 +156,18 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;}
 <canvas id="canvas"></canvas>
 <div id="vig"></div>
 <div class="screen on" id="sLoad"><div style="text-align:center"><div class="ring"></div><div class="ltxt">loading hand tracking...</div></div></div>
+<div class="screen" id="sIntro">
+  <div class="min" style="max-width:600px;">
+    <div class="badge">✦ WELCOME TO DARE BLOOM ✦</div>
+    <div class="logo" style="font-size:clamp(3rem,8vw,5rem); margin-bottom:0.5em;">HOW TO PLAY</div>
+    <div style="text-align:left; font-family:'Space Grotesk',sans-serif; font-size:1rem; color:rgba(255,255,255,0.8); line-height:1.6; margin-bottom:2em;">
+      <p style="margin-bottom:1em;"><strong>☝️ Draw with your index finger:</strong> Hold your index finger up to draw the shapes shown on screen.</p>
+      <p style="margin-bottom:1em;"><strong>✋ Reset with open palm:</strong> If you make a mistake, open your hand fully to erase and start over.</p>
+      <p style="margin-bottom:1em;"><strong>😈 The Dare System:</strong> Get a high score (S or A rank) to unlock extreme party dares. Scratch the card with your hand to reveal your fate!</p>
+    </div>
+    <button class="btn" id="introContinueBtn">Enter the Nightmare →</button>
+  </div>
+</div>
 <div class="screen" id="sMenu">
   <div class="min">
     <div class="badge">✦ dare bloom · party dare edition ✦</div>
@@ -204,6 +216,10 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;}
 <div id="tWrap"><canvas id="tcan" width="80" height="80"></canvas></div>
 <div id="rds"></div>
 <button class="btn2" id="gbtn">❤️ guide</button>
+<div style="position:fixed; top:24px; right:20px; z-index:25; display:flex; gap:10px;">
+  <button class="btn2" id="inGameRestartBtn" style="display:none; padding:8px 16px; font-size:0.7rem; background:rgba(255,183,3,0.15); color:var(--am); border-color:rgba(255,183,3,0.3);">🔄 Restart Shape</button>
+  <button class="btn2" id="inGameMenuBtn" style="display:none; padding:8px 16px; font-size:0.7rem; background:rgba(255,0,110,0.15); color:var(--pk); border-color:rgba(255,0,110,0.3);">✖ Quit to Menu</button>
+</div>
 <div id="phint">☝️ index finger = draw · 🖐 open palm = reset · ❤️ toggle guide</div>
 <div class="screen" id="sRes">
   <div class="rcard">
@@ -819,6 +835,17 @@ function getDareForScore(){
  return options[Math.floor(Math.random() * options.length)];
 }
 
+function show(id){
+ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+ if(id) document.getElementById(id).classList.add('on');
+ document.getElementById('hud').classList.remove('on');
+ document.getElementById('tWrap').classList.remove('on');
+ document.getElementById('rds').classList.remove('on');
+ document.getElementById('inGameMenuBtn').style.display='none';
+ document.getElementById('inGameRestartBtn').style.display='none';
+ if(id==='sMenu'){document.getElementById('crdCnt').innerHTML='';}
+}
+
 function showRes(){
  const sc=gSc(),ac=Math.round(gAcc()),co=Math.round(gCov());
  const{g,c}=grade(sc);
@@ -873,20 +900,23 @@ function showCar(){
 function startCD(k){
  bldS(k);fls.length=0;sps.length=0;trs.length=0;isDiss=false;palSince=0;lTick=-1;
  document.getElementById('csh').textContent='// '+curS.d.emoji+' '+curS.d.name;
+ document.getElementById('inGameMenuBtn').style.display='flex';
  show('sCount');gSt='countdown';
  let n=3;
- const tick=()=>{sfxC(n);if(n===0){show(null);startDraw();return;}
+ const tick=()=>{sfxC(n);if(n===0){show(null);startG();return;}
   document.getElementById('cnum').textContent=n;
   const el=document.getElementById('cnum');el.style.animation='none';el.offsetHeight;el.style.animation='cpulse 1s ease-in-out forwards';
   n--;setTimeout(tick,1000);};
  tick();
 }
 
-function startDraw(){
+function startG(){
  gSt='drawing';rSt=performance.now();tLeft=TIME;showG=true;
  document.getElementById('hSN').textContent=curS.d.name.toUpperCase()+' '+curS.d.emoji;
- document.getElementById('hud').classList.add('on');
  document.getElementById('tWrap').classList.add('on');
+ document.getElementById('inGameMenuBtn').style.display='flex';
+ document.getElementById('inGameRestartBtn').style.display='flex';
+ document.getElementById('hud').classList.add('on');
  document.getElementById('gbtn').textContent='❤️ guide';
  uRds();uHUD();
 }
@@ -977,7 +1007,7 @@ async function init(){
   HL=await HandLandmarker.createFromOptions(v,{baseOptions:{modelAssetPath:"https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",delegate:"GPU"},numHands:1,runningMode:"VIDEO",minHandDetectionConfidence:.2,minHandPresenceConfidence:.2,minTrackingConfidence:.2});
   const st=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:1280},height:{ideal:720},facingMode:'user'}});
   vid.srcObject=st;await vid.play();
-  run=true;requestAnimationFrame(loop);show('sMenu');gSt='menu';
+  run=true;requestAnimationFrame(loop);show('sIntro');gSt='intro';
  } catch(err) {
   const loadEl = document.getElementById('sLoad');
   loadEl.innerHTML = `<div style="color:#FF0022; max-width:80%; text-align:center; font-family:'Space Mono', monospace;">
@@ -1027,7 +1057,12 @@ document.getElementById('nextBtn').addEventListener('click',()=>{eAC();if(cMd){c
 document.getElementById('retryBtn').addEventListener('click',()=>{eAC();fls.length=0;sps.length=0;trs.length=0;startCD(curS.k);});
 document.getElementById('againBtn').addEventListener('click',()=>{eAC();show('sMenu');gSt='menu';});
 document.getElementById('gbtn').addEventListener('click',()=>{eAC();showG=!showG;document.getElementById('gbtn').textContent=showG?'❤️ guide':'👁 off';});
+document.getElementById('introContinueBtn').addEventListener('click', ()=>{eAC();show('sMenu');gSt='menu';});
+document.getElementById('inGameMenuBtn').addEventListener('click', ()=>{eAC();show('sMenu');gSt='menu';});
+document.getElementById('inGameRestartBtn').addEventListener('click', ()=>{eAC();startCD(curS.k);});
+
+// INITIALIZE
 init().catch(console.error);
 </script>
 </body>
-</html>
+</html>
