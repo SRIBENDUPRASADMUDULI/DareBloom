@@ -132,6 +132,9 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;}
 .btn-d-done:disabled{opacity:.5;cursor:not-allowed!important;}
 .btn-d-skip{padding:9px 12px;font-size:.74rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:rgba(255,255,255,.5);font-weight:600;cursor:none;}
 .btn-d-skip:hover{background:rgba(255,255,255,.1);color:#fff;}
+.btn-d-change{padding:9px 12px;font-size:.74rem;background:rgba(255,183,3,.12);border:1px solid rgba(255,183,3,.35);border-radius:10px;color:var(--am);font-weight:700;cursor:none;transition:transform .15s,opacity .3s;}
+.btn-d-change:hover{background:rgba(255,183,3,.22);transform:scale(1.02);}
+.btn-d-change:disabled{opacity:.35;cursor:not-allowed!important;}
 .dare-scratch-msg{font-family:'Space Mono',monospace;font-size:.6rem;color:rgba(255,183,3,.7);letter-spacing:.08em;text-align:center;margin-bottom:8px;display:none;}
 
 .rbtns{display:flex;gap:10px;justify-content:center;}
@@ -232,6 +235,7 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;}
       <div class="dare-scratch-msg" id="dareScratchMsg">🔓 DARE REVEALED — now face the consequences!</div>
       <div class="dare-acts">
         <button class="btn-d-done" id="dareDoneBtn" disabled>🔥 I DID THE DARE!</button>
+        <button class="btn-d-change" id="dareChangeBtn">🔄 Change Dare</button>
         <button class="btn-d-skip" id="dareSkipBtn">🙈 Skip Dare</button>
       </div>
     </div>
@@ -265,13 +269,12 @@ const SHP={
  spiral:{name:'Spiral',emoji:'🌀',diff:'medium',gen(cx,cy,sz){const p=[],R=sz*.43,tot=3*360;for(let i=0;i<=tot;i++){const t=i*Math.PI/180,r=R*(i/tot);p.push([cx+r*Math.cos(t-Math.PI/2),cy+r*Math.sin(t-Math.PI/2)]);}return p;}},
  wave:{name:'Wave',emoji:'〰️',diff:'easy',gen(cx,cy,sz){const p=[],w=sz*.9,A=sz*.25;for(let i=0;i<=360;i++){const f=i/360;p.push([cx-w/2+w*f,cy+A*Math.sin(f*Math.PI*5)]);}return p;}}
 };
-const KEYS=Object.keys(SHP);
 
-// DARE TIERS SYSTEM — 100 DARES (Higher Score = More Extreme & Spicy!)
+// DARE TIERS SYSTEM — 160 DARES (Higher Score = More Extreme & Spicy!)
 // LEVEL 1: MILD (score 0-44) — Silly, awkward, harmless fun
 // LEVEL 2: SPICY (score 45-64) — Cringey social dares
 // LEVEL 3: EXTREME (score 65-79) — Bold, embarrassing, hard to back out of
-// LEVEL 4: CHAOS (score 80+) — Ex/crush nuclear dares 💀
+// LEVEL 4: CHAOS (score 80+) — Nuclear chaos dares 💀
 const DARES = {
  mild: [
   "🌸 Send a 💀 emoji to your 3rd recent WhatsApp contact with ZERO context and wait for their reply.",
@@ -298,7 +301,22 @@ const DARES = {
   "🌸 Eat something weird from your kitchen right now (ketchup straight from bottle counts).",
   "🌸 Stand up, spin around 5 times, then try to draw a straight line in the air. Fail gracefully.",
   "🌸 Say 'I love flowers more than I love most people' loudly enough that someone in your house hears.",
-  "🌸 Text your group chat: 'Which one of you would fight a bee for me?' and await chaos."
+  "🌸 Text your group chat: 'Which one of you would fight a bee for me?' and await chaos.",
+  "🌸 Put ice cubes inside your shirt and hold them there for 10 full seconds without screaming.",
+  "🌸 Do a dramatic soap opera death scene on camera for 20 seconds. Full acting. Zero shame.",
+  "🌸 Open Google and search 'am I a flower' — screenshot the results and send to your best friend.",
+  "🌸 Call someone's number and sing the first 10 seconds of a Bollywood song before saying anything else.",
+  "🌸 Lick your elbow for 30 seconds. Yes, it's impossible. Try anyway. Record the attempt.",
+  "🌸 Text the last person who called you: 'Sorry I missed you, I was busy being a flower. Carry on.'",
+  "🌸 Set a 1-minute timer and hold the most ridiculous yoga pose you can attempt. Don't fall.",
+  "🌸 Open your front camera and spend 60 seconds making only facial expressions — no words allowed.",
+  "🌸 Write your full name in the air with your nose 3 times. Someone must watch and judge.",
+  "🌸 Fake a phone call to yourself for 45 seconds acting like it's the most important call of your life.",
+  "🌸 Ask the nearest person to slap your wrist as hard as they dare. Accept the consequence silently.",
+  "🌸 Close your eyes and try to pour a glass of water perfectly without spilling. One attempt only.",
+  "🌸 Do 15 seconds of continuous beatboxing into your phone's voice memo. Play it back for everyone.",
+  "🌸 Text the 10th person in your contacts 'I choose you' with a Pokéball emoji and nothing else.",
+  "🌸 Stand on one leg for 30 seconds while reciting the alphabet backwards. No cheating."
  ],
  spicy: [
   "🌶️ Text your best friend or crush: 'We SERIOUSLY need to talk... it's about flowers 🌸' — don't explain.",
@@ -324,22 +342,34 @@ const DARES = {
   "🌶️ Text 2 people: 'If we were both flowers, what kind would you be and what kind would I be?' — mandatory replies.",
   "🌶️ Go outside your room, say 'THE FLOWER KING/QUEEN HAS ARRIVED' loud enough for someone to hear, come back.",
   "🌶️ Post a selfie with the caption 'Sorry I've been distant. I was perfecting my flower-drawing technique 🌸'.",
-  "🌶️ Text someone who has a crush on you (or had one): 'Hey, how have you actually been?' and mean it.",
-  "🌶️ Send a voice note to your closest friend saying 'I just want you to know I'd fight a bee for you. That's it. Bye.'"
+  "🌶️ Send a voice note to your closest friend saying 'I just want you to know I'd fight a bee for you. That's it. Bye.'",
+  "🌶️ Go LIVE on Instagram for exactly 30 seconds. Just stare into the camera. Say nothing. End it. Post nothing.",
+  "🌶️ Text your most responsible friend: 'Don't panic but I think I've developed a superpower.' Then describe your finger-drawing.",
+  "🌶️ DM a celebrity or public figure you follow with 'No context, but I just drew a heart with my finger. Thought you should know.'",
+  "🌶️ Send a voice note to 3 people saying 'I rated you a 9/10 in my head today. Don't ask why.' Zero explanation.",
+  "🌶️ Post a story of your hands with the caption 'These hands are dangerous now 🌸' — let people wonder.",
+  "🌶️ Text someone: 'Bro if you had to describe my vibe as a flower, what would it be and why is it a cactus.'",
+  "🌶️ Forward your own voice memo of you screaming to 3 people with 'sorry for the spam 🌸' — no other context.",
+  "🌶️ Text the last person who rejected a plan with you: 'Okay but hypothetically if we had gone, would it have been fun?'",
+  "🌶️ Put your phone on speaker and call someone, then speak only in questions for the entire call.",
+  "🌶️ Post a selfie taken from the WORST possible angle with the caption 'peak performance, carry on.'",
+  "🌶️ Text 5 people at once: 'Quick poll: am I more of a villain or a main character? Be honest.' Tally results live.",
+  "🌶️ Reply to someone's story you've been ignoring for over a week with just '🌸' and let the chaos unfold.",
+  "🌶️ Record yourself speaking an entire sentence backwards, send it to your best friend, and deny all knowledge of it.",
+  "🌶️ Text your mom: 'Hypothetically... if I had a secret talent, would you want to know?' Then describe this game.",
+  "🌶️ Go to your most recent Instagram post and reply to every comment with only a flower emoji. No words. Just 🌸.",
+  "🌶️ Call a friend, say 'I've been doing a lot of thinking' then list 5 completely random observations about the world. Hang up."
  ],
  hard: [
-  "🔥 Text your ex or old classmate RIGHT NOW: 'I dreamt about flowers and for some reason it made me think of you 💀'",
   "🔥 Call a random contact and ask: 'Genuine question — did you know roses literally feel pain?' Stay silent 8 seconds after.",
   "🔥 Send your most unflattering selfie to your family group chat with the caption 'Peak performance.'",
   "🔥 Hand your phone to the person nearest you. Let them text ANYONE in your contact list ONE message of their choice.",
   "🔥 Call your best friend and convince them (keep a straight voice) that you just adopted 5 stray kittens and need help.",
-  "🔥 Text your ex or someone from your past: 'Hey do you still have [something you definitely left there]?' — Be specific.",
   "🔥 Text your 3 closest friends the same message: 'I need to tell you something but I don't know how to start.' Ghost for 2 min.",
   "🔥 Post on your story: 'POV you just found out your friend secretly draws flowers for fun' and tag one specific person.",
   "🔥 Voice call someone you haven't spoken to in over a year. When they answer, say 'I was literally just thinking about you.'",
   "🔥 Text the last person you argued with: 'Hey. I don't want any beef. Flowers only 🌸.' Send it. No takebacks.",
   "🔥 Let a friend scroll through your search history for 15 seconds. They must find at least one embarrassing thing.",
-  "🔥 Send a voice note to your crush or someone you like that says 'Okay but hypothetically... if I told you something wild?'",
   "🔥 Tell the person next to you right now the most embarrassing thing that happened to you this year. Full eye contact.",
   "🔥 Text someone you ghosted: 'Hey I know I went MIA. Are you good?' — No excuses. Just send it.",
   "🔥 Post a story that says 'Ask me something you've always wanted to know. I'll answer honestly.' Open it. Answer 3 DMs.",
@@ -349,37 +379,69 @@ const DARES = {
   "🔥 Call someone you've been avoiding and speak to them for at least 3 full minutes like nothing happened.",
   "🔥 Text 4 people: 'On a scale 1-10 how would you rate me as a friend, honestly?' Show all replies publicly.",
   "🔥 Record a 5-second video of yourself doing the most dramatic slow-motion walk you can. Post it. Caption: 'This is who I am.'",
-  "🔥 Text your crush 'Not to be weird but I low-key think about what you're doing sometimes.' Then immediately go offline.",
   "🔥 Change your WhatsApp profile photo to your worst selfie ever. Keep it there for 2 full hours. No sneaky changes.",
   "🔥 Text a family member: 'Okay so hypothetically... if I did something embarrassing today, would you still love me?'",
-  "🔥 Give your phone to a friend. They get to reply to the next 2 incoming messages as if they were you. No interference."
+  "🔥 Give your phone to a friend. They get to reply to the next 2 incoming messages as if they were you. No interference.",
+  "🔥 FaceTime someone without warning. Stare at them silently for 5 full seconds before saying a single word.",
+  "🔥 Text your entire contact list 'this is a test, please reply with your favorite color' and compile the results.",
+  "🔥 Take a photo of yourself right now — no filter, no angle tricks — and post it publicly. Caption: 'unfiltered 🌸'.",
+  "🔥 Text your crush: 'Not to be weird but I low-key think about what you're doing sometimes.' Then immediately go offline.",
+  "🔥 Send a voice note to your crush saying 'Okay but hypothetically... if I told you something wild, could you handle it?' Don't follow up.",
+  "🔥 Go on Instagram, find someone you secretly admire, and leave a genuine compliment on their most recent post. No emojis.",
+  "🔥 Text the last 5 people who called you: 'Hey. I just wanted to say you matter. That's it. Weird? Maybe. True? Absolutely.'",
+  "🔥 Open your contacts and call the person you've been meaning to call for the longest time. No script. Just wing it.",
+  "🔥 Share your location live with 3 friends at once for 10 minutes. When they ask why, say 'I needed witnesses.'",
+  "🔥 Text your oldest friend something you've never told them. It doesn't have to be deep, but it has to be honest.",
+  "🔥 Confess something mildly embarrassing to the person next to you. Like, genuinely mildly embarrassing. Right now.",
+  "🔥 Text the person who knows you best: 'What's something I'm really bad at but think I'm good at?' Read it. Sit with it.",
+  "🔥 Post a story of your handwriting spelling out 'I am going through my flower era' and tag 5 people to join you.",
+  "🔥 Call the last person you had a falling out with and say 'Hey. No drama. Just wanted to know how you're doing.' Mean it.",
+  "🔥 Text your most judgmental friend your most recent embarrassing search and dare them to not roast you.",
+  "🔥 Send a voice note to 5 friends rating them 1-10 as 'adventure partners' with full brutally honest justifications.",
+  "🔥 Post a BeReal/story right now. Whatever is happening. No staging. No delay. Just real life. Caption: 'caught in 4K 🌸'.",
+  "🔥 Text the person you trust most: 'Bro what do people actually think of me. Be so real with me right now.'",
+  "🔥 Text your crush or someone you like right now: 'Hypothetically — and I stress hypothetically — would you date someone like me?'"
  ],
  chaos: [
-  "💀☠️ ULTIMATE CHAOS: Call your EX right NOW and say 'Hey I just wanted to say... I miss your [pet/friend/vibe].' Stay silent 10 full seconds.",
-  "💀🔥 NUCLEAR DARE: Text your EX or crush 'My hands have actual magical powers now. Don't ask how. You might want to know.' Zero explanation.",
-  "💀☠️ CHAOS MODE: Call your EX or crush and after they say hello, ask 'Do you still have feelings for me — or just for flowers?' Hang up.",
-  "💀🔥 EXTREME DARE: Send a voice note to your EX or the last person who broke your heart singing 'I Will Always Love You' — at LEAST 10 seconds.",
-  "💀☠️ THE NUCLEAR OPTION: Text your EX: 'I dreamt about us in a flower field. It was actually beautiful. Weird right 😭' Then turn off your phone.",
-  "💀🔥 CHAOS DARE: Text 3 of your exes or situationship people the same message: 'No reason. Just hope you're doing okay 🌸' at the same time.",
-  "💀☠️ FULL SEND: Call your most recent ex. When they answer, say 'I'm not calling for a reason. Just wanted to hear your voice for 5 seconds.' Then hang up.",
-  "💀🔥 SCORCHED EARTH: Text your crush: 'I know this is random but do you ever think about what we could have been?' Hit send. Do NOT unsend.",
-  "💀☠️ CHAOS UNLOCK: Send your ex a reel or meme about missing people with the caption 'no reason lol' and go completely offline.",
-  "💀🔥 ABSOLUTE CHAOS: Text the last person who rejected you: 'Hey. No hard feelings from my end 🌸. Just wanted you to know.' Full stop.",
-  "💀☠️ CERTIFIED UNHINGED: Record a voice note to your ex saying 'I still think about [a specific memory] sometimes. Is that weird?' Send it.",
-  "💀🔥 MEGA DARE: Call your ex or situationship person and when they pick up, say 'I drew your face as a flower today. It was flattering. Bye.'",
-  "💀☠️ CHAOS FINAL FORM: Text the person who last left you on read: 'Okay I need closure. Just tell me — was it something I said?' Wait.",
-  "💀🔥 UNHINGED ELITE: Text your EX: 'Do you still have the [specific item you gave them/photo/thing]? I thought about it today.' No context given.",
-  "💀☠️ APOCALYPSE DARE: Call your EX right now. When they pick up, breathe dramatically and say 'I just needed to hear that you're okay.' Then hang up.",
-  "💀🔥 CHAOS GOD TIER: Repost an old photo with you and an ex or a person you had feelings for and caption it 'that era was something 🌸' publicly.",
-  "💀☠️ FINAL BOSS DARE: Text your EX or someone you still have feelings for: 'Okay weird question. Do you still think about me sometimes?' Do NOT unsend.",
-  "💀🔥 MAXIMUM CHAOS: Send your ex a flower bouquet emoji 💐 with the text 'just because' at midnight exactly. Zero other context.",
-  "💀☠️ CHAOS INCARNATE: Text the person you liked most recently: 'I'm in my feelings tonight 🌸. Miss you if I'm being honest.' Send. Don't explain.",
-  "💀🔥 DESTROY THE TIMELINE: Call someone you had a thing with, let it ring twice, then hang up. When they call back, say 'must have butt-dialed, hi tho.'",
-  "💀☠️ SCORCHED EARTH FINAL: Post a public story with a cute flower 🌸 and tag your EX directly with caption 'still think flowers suit you.'",
-  "💀🔥 THE CHAOS SPECIAL: Send a voice note to your last 3 'what-ifs' saying exactly this: 'Hey. You just crossed my mind. That's it. That's the message.'",
-  "💀☠️ ABSOLUTE UNHINGED RARE DARE: Text your ex: 'Okay don't make this weird but I kind of won a game because of a memory of you. Thank you I guess?'",
-  "💀🔥 LEGENDARY CHAOS DARE: Call your EX right now. When they pick up, say 'I just drew a perfect heart with my bare hands. You were my inspiration. Bye.' Hang up.",
-  "💀☠️💥 THE GOD-TIER CHAOS DARE: Text your biggest what-if ever — the person you never said anything to: 'Hey. I always wondered what would have happened. Still do 🌸'"
+  "💣💀 ULTIMATE CHAOS: Call your EX right NOW and say 'Hey I just wanted to say... I miss your [pet/friend/vibe].' Stay silent 10 full seconds.",
+  "💣🔥 NUCLEAR DARE: Text your EX or crush 'My hands have actual magical powers now. Don't ask how. You might want to know.' Zero explanation.",
+  "💣☠️ CHAOS MODE: Call your EX or crush and after they say hello, ask 'Do you still have feelings for me — or just for flowers?' Hang up.",
+  "💣🔥 EXTREME DARE: Send a voice note to your EX or the last person who broke your heart singing 'I Will Always Love You' — at LEAST 10 seconds.",
+  "💣☠️ THE NUCLEAR OPTION: Text your EX: 'I dreamt about us in a flower field. It was actually beautiful. Weird right 😭' Then turn off your phone.",
+  "💣🔥 CHAOS DARE: Text 3 of your situationship people the same message: 'No reason. Just hope you're doing okay 🌸' at the same time.",
+  "💣☠️ FULL SEND: Call your most recent ex. When they answer, say 'I'm not calling for a reason. Just wanted to hear your voice for 5 seconds.' Then hang up.",
+  "💣🔥 SCORCHED EARTH: Text your crush: 'I know this is random but do you ever think about what we could have been?' Hit send. Do NOT unsend.",
+  "💣☠️ CHAOS UNLOCK: Send your ex a reel or meme about missing people with the caption 'no reason lol' and go completely offline.",
+  "💣🔥 ABSOLUTE CHAOS: Text the last person who rejected you: 'Hey. No hard feelings from my end 🌸. Just wanted you to know.' Full stop.",
+  "💣☠️ CERTIFIED UNHINGED: Record a voice note to your ex saying 'I still think about [a specific memory] sometimes. Is that weird?' Send it.",
+  "💣🔥 MEGA DARE: Call your ex or situationship person and when they pick up, say 'I drew your face as a flower today. It was flattering. Bye.'",
+  "💣☠️ CHAOS FINAL FORM: Text the person who last left you on read: 'Okay I need closure. Just tell me — was it something I said?' Wait.",
+  "💣🔥 APOCALYPSE DARE: Call your EX right now. When they pick up, breathe dramatically and say 'I just needed to hear that you're okay.' Then hang up.",
+  "💣☠️ CHAOS GOD TIER: Repost an old throwback photo of yourself from 5+ years ago and caption it 'the glow-up was for ME, not you 🌸' publicly.",
+  "💣🔥 FINAL BOSS DARE: Text someone you still have feelings for: 'Okay weird question. Do you still think about me sometimes?' Do NOT unsend.",
+  "💣☠️ MAXIMUM CHAOS: Send your ex a flower bouquet emoji 💐 with the text 'just because' at midnight exactly. Zero other context.",
+  "💣🔥 CHAOS INCARNATE: Text the person you liked most recently: 'I'm in my feelings tonight 🌸. Miss you if I'm being honest.' Send. Don't explain.",
+  "💣☠️ DESTROY THE TIMELINE: Call someone you had a thing with, let it ring twice, then hang up. When they call back, say 'must have butt-dialed, hi tho.'",
+  "💣🔥 SCORCHED EARTH FINAL: Post a public story and tag the person who last broke your heart with caption 'no bad vibes, hope you're well 🌸'.",
+  "💣☠️ THE CHAOS SPECIAL: Send a voice note to your last 3 'what-ifs' saying exactly this: 'Hey. You just crossed my mind. That's it. That's the message.'",
+  "💣🔥 LEGENDARY CHAOS DARE: Call your EX right now. When they pick up, say 'I just drew a perfect heart with my bare hands. You were my inspiration. Bye.' Hang up.",
+  "💣☠️💥 THE GOD-TIER CHAOS DARE: Text your biggest what-if ever — the person you never said anything to: 'Hey. I always wondered what would have happened. Still do 🌸'",
+  "💣🔥 NO-EX CHAOS: Post a story that says 'I've decided I'm THAT person now. No context.' Go offline for 1 hour immediately after.",
+  "💣☠️ SOCIAL NUCLEAR: Change your Instagram bio right now to 'Currently in my villain era 🌸 swipe left.' Keep it for 24 hours.",
+  "💣🔥 UNHINGED CHAOS: Text 5 different people 'I know what you did.' Say nothing else. Don't respond to follow-ups for 2 hours.",
+  "💣☠️ CHAOS PREMIUM: Call someone at random from your contacts. When they answer, say 'I need you to listen carefully. The flowers are not what they seem.' Hang up.",
+  "💣🔥 NUCLEAR FRIEND DARE: Send a voice note to your best friend saying 'I need to tell you something and I've been holding it back for months.' Then say 'I genuinely think you're the funniest person I know.' Hang up.",
+  "💣☠️ CHAOS UNLEASHED: Text your family group chat: 'I have an announcement to make. I've discovered my true calling. I draw flowers with my bare hands. 🌸 Thank you for coming to my TED talk.'",
+  "💣🔥 ABSOLUTE UNHINGED: Text the last person who cancelled plans with you: 'Hypothetically — if I forgave you, what would you do differently?' Don't send a follow-up for 20 minutes.",
+  "💣☠️ CHAOS INCARNATE LEVEL 2: Go live on ALL social platforms simultaneously for 60 seconds. Just hold up a flower and say nothing. End all streams.",
+  "💣🔥 REALITY DESTROYER: Text the wisest person you know: 'I need genuine life advice. What is one thing you wish someone had told you earlier?' And actually listen.",
+  "💣☠️ FRIENDSHIP NUCLEAR: Text your 3 closest friends: 'I just want you to know that if I won the lottery tomorrow I'd split it with you. No cap. Anyway, how's your day?' Act completely normal after.",
+  "💣🔥 MOST UNHINGED DARE: Post a completely blank white image to your story with the caption 'you know what you did 🌸' and watch the panic unfold.",
+  "💣☠️ TIMELINE DESTROYER: Ask the most serious person you know to rate your life choices 1-10. Sit with their answer. No defending yourself.",
+  "💣🔥 CHAOS GRANDMASTER: Text someone you admire but never speak to: 'Hey, this is genuinely random, but I've always thought you were really cool. That's it. Bye.'",
+  "💣☠️ SCORCHED SOUL DARE: Record a 15-second video of yourself listing 5 things you're genuinely proud of. Post it publicly. No irony. No jokes.",
+  "💣🔥 CHAOS PINNACLE: Text your entire friend group: 'Unpopular opinion about each of you in my head. Want to hear? Reply with your name if you're brave.'",
+  "💣☠️ THE ULTIMATE CHAOS: Call the last person you were awkward with. Say 'Hey. I think we're both being weird about something that doesn't matter. Can we just be normal again?' Wait."
  ]
 };
 
