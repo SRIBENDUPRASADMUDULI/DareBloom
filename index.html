@@ -8,13 +8,11 @@
 <meta name="author" content="Sribendu Prasad Muduli">
 <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;cursor:none!important;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M5 3l14 9-6 1.5L10 20z' fill='%23FF0022' stroke='%23000' stroke-width='1'/%3E%3C/svg%3E") 5 3, auto;}
 :root{--pk:#FF0022;--vi:#4A0000;--cy:#8A0303;--am:#FF3300;--bg:#050000;--br:rgba(255,0,34,.2);--flame:#FF0000;}
 html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);}
 body{font-family:'Space Grotesk',system-ui,sans-serif;}
-#cur{position:fixed;width:26px;height:26px;border:2px solid var(--pk);border-radius:50%;pointer-events:none;z-index:99999;left:0;top:0;transform:translate(-50%,-50%);transition:width .15s,height .15s,background .15s;mix-blend-mode:screen;}
-#cur.ck{width:14px;height:14px;background:var(--pk);}
-#cdot{position:fixed;width:4px;height:4px;background:#fff;border-radius:50%;pointer-events:none;z-index:99999;left:0;top:0;transform:translate(-50%,-50%);}
+
 #video{position:fixed;inset:0;width:100%;height:100%;object-fit:cover;transform:scaleX(-1);z-index:0;}
 #canvas{position:fixed;inset:0;width:100%;height:100%;z-index:1;pointer-events:none;}
 #vig{position:fixed;inset:0;z-index:2;pointer-events:none;background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.5) 100%);}
@@ -36,11 +34,11 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;}
 .lsub{font-family:'Space Mono',monospace;font-size:.68rem;color:rgba(255,255,255,.3);letter-spacing:.12em;margin-bottom:1.4em;}
 .best{font-size:.75rem;color:rgba(255,255,255,.35);margin-bottom:1.8em;font-family:'Space Mono',monospace;letter-spacing:.05em;display:flex;gap:16px;justify-content:center;}
 .best span{color:var(--cy);font-weight:700;}
-.btn{display:inline-flex;align-items:center;gap:8px;padding:16px 44px;font-family:'Space Grotesk',sans-serif;font-size:.92rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#fff;background:linear-gradient(135deg,var(--pk),var(--vi));border:none;border-radius:60px;cursor:none;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;box-shadow:0 0 40px rgba(255,0,110,.35);}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:16px 44px;font-family:'Space Grotesk',sans-serif;font-size:.92rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#fff;background:linear-gradient(135deg,var(--pk),var(--vi));border:none;border-radius:60px;cursor:inherit;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;box-shadow:0 0 40px rgba(255,0,110,.35);}
 .btn::before{content:'';position:absolute;inset:-2px;border-radius:62px;background:linear-gradient(135deg,var(--pk),var(--vi),var(--cy),var(--pk));background-size:300%;z-index:-1;animation:grad 3s linear infinite;filter:blur(8px);opacity:.5;}
 .btn:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 0 60px rgba(255,0,110,.55);}
 .btn:active{transform:scale(.97);}
-.btn2{display:inline-flex;align-items:center;gap:6px;padding:12px 26px;font-family:'Space Grotesk',sans-serif;font-size:.82rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.6);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:60px;cursor:none;transition:all .2s;}
+.btn2{display:inline-flex;align-items:center;gap:6px;padding:12px 26px;font-family:'Space Grotesk',sans-serif;font-size:.82rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.6);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:60px;cursor:inherit;transition:all .2s;}
 .btn2:hover{background:rgba(255,255,255,.09);color:rgba(255,255,255,.85);border-color:rgba(255,255,255,.2);}
 .btn-dare{background:linear-gradient(135deg,#FF3B00,#FF006E);border:1px solid rgba(255,59,0,.6);color:#fff;box-shadow:0 0 25px rgba(255,59,0,.4);}
 .btn-dare:hover{box-shadow:0 0 40px rgba(255,59,0,.7);transform:translateY(-2px) scale(1.03);}
@@ -49,7 +47,7 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;}
 .stitle{font-family:'Creepster',cursive;font-size:clamp(2rem,4.5vw,3.2rem);font-weight:400;color:var(--pk);margin-bottom:.3em;text-shadow: 0 0 15px var(--vi);}
 .ssub{font-size:.72rem;font-family:'Space Mono',monospace;color:rgba(255,255,255,.25);margin-bottom:1.8em;letter-spacing:.05em;}
 .sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:540px;}
-.scard{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:22px 16px;text-align:center;cursor:none;transition:all .2s;}
+.scard{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:22px 16px;text-align:center;cursor:inherit;transition:all .2s;}
 .scard:hover{background:rgba(255,0,110,.07);border-color:rgba(255,0,110,.3);transform:translateY(-4px);box-shadow:0 10px 35px rgba(255,0,110,.12);}
 .scard .em{font-size:2.6rem;margin-bottom:.4em;}
 .scard .nm{font-size:.85rem;font-weight:600;color:rgba(255,255,255,.8);}
@@ -127,12 +125,12 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;}
 @keyframes scratchAnim{0%{transform:translate(-10px,-4px) rotate(-20deg)}40%{transform:translate(10px,4px) rotate(10deg)}100%{transform:translate(-10px,-4px) rotate(-20deg)}}
 .scratch-lbl{font-family:'Space Mono',monospace;font-size:.58rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.55);margin-top:6px;}
 .dare-acts{display:flex;gap:8px;}
-.btn-d-done{flex:1;padding:9px 12px;font-size:.74rem;background:linear-gradient(135deg,#06D6A0,#00b887);border:none;border-radius:10px;color:#000;font-weight:700;cursor:none;transition:transform .15s,opacity .3s;}
+.btn-d-done{flex:1;padding:9px 12px;font-size:.74rem;background:linear-gradient(135deg,#06D6A0,#00b887);border:none;border-radius:10px;color:#000;font-weight:700;cursor:inherit;transition:transform .15s,opacity .3s;}
 .btn-d-done:hover{transform:scale(1.02);}
 .btn-d-done:disabled{opacity:.5;cursor:not-allowed!important;}
-.btn-d-skip{padding:9px 12px;font-size:.74rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:rgba(255,255,255,.5);font-weight:600;cursor:none;}
+.btn-d-skip{padding:9px 12px;font-size:.74rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:rgba(255,255,255,.5);font-weight:600;cursor:inherit;}
 .btn-d-skip:hover{background:rgba(255,255,255,.1);color:#fff;}
-.btn-d-change{padding:9px 12px;font-size:.74rem;background:rgba(255,183,3,.12);border:1px solid rgba(255,183,3,.35);border-radius:10px;color:var(--am);font-weight:700;cursor:none;transition:transform .15s,opacity .3s;}
+.btn-d-change{padding:9px 12px;font-size:.74rem;background:rgba(255,183,3,.12);border:1px solid rgba(255,183,3,.35);border-radius:10px;color:var(--am);font-weight:700;cursor:inherit;transition:transform .15s,opacity .3s;}
 .btn-d-change:hover{background:rgba(255,183,3,.22);transform:scale(1.02);}
 .btn-d-change:disabled{opacity:.35;cursor:not-allowed!important;}
 .dare-scratch-msg{font-family:'Space Mono',monospace;font-size:.6rem;color:rgba(255,183,3,.7);letter-spacing:.08em;text-align:center;margin-bottom:8px;display:none;}
@@ -147,11 +145,31 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;}
 .chips{display:flex;gap:8px;justify-content:center;margin-bottom:1.4em;flex-wrap:wrap;}
 .chip{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:8px 14px;font-size:.75rem;color:rgba(255,255,255,.4);}
 .chip b{color:var(--cy);display:block;font-size:1rem;}
+
+/* LEADERBOARD */
+.lb-table{width:100%;border-collapse:collapse;font-family:'Space Grotesk',sans-serif;}
+.lb-table th{font-family:'Space Mono',monospace;font-size:.55rem;color:rgba(255,255,255,.3);letter-spacing:.15em;text-transform:uppercase;padding:8px 6px;border-bottom:1px solid rgba(255,255,255,.08);text-align:left;}
+.lb-table td{font-size:.82rem;color:rgba(255,255,255,.7);padding:10px 6px;border-bottom:1px solid rgba(255,255,255,.04);}
+.lb-table tr:nth-child(1) td{color:#FFD700;font-weight:700;}
+.lb-table tr:nth-child(2) td{color:#C0C0C0;font-weight:600;}
+.lb-table tr:nth-child(3) td{color:#CD7F32;font-weight:600;}
+.lb-table .lb-me{background:rgba(255,0,34,.08);border-left:3px solid var(--pk);}
+.lb-rank{font-weight:700;width:36px;text-align:center;}
+.lb-name{font-weight:600;}
+.lb-score{font-family:'Space Mono',monospace;color:var(--cy);font-weight:700;text-align:right;}
+.lb-bonus{font-family:'Space Mono',monospace;color:var(--am);font-size:.7rem;text-align:right;}
+/* NAME INPUT */
+#playerNameInput::placeholder{color:rgba(255,255,255,.2);}
+/* PROOF BUTTONS */
+.btn-d-proof{flex:1;padding:9px 12px;font-size:.72rem;background:linear-gradient(135deg,#FFD700,#FF8C00);border:none;border-radius:10px;color:#000;font-weight:700;cursor:inherit;transition:transform .15s;}
+.btn-d-proof:hover{transform:scale(1.02);}
+.btn-d-claim{flex:1;padding:9px 12px;font-size:.72rem;background:rgba(6,214,160,.15);border:1px solid rgba(6,214,160,.3);border-radius:10px;color:var(--cy);font-weight:700;cursor:inherit;transition:transform .15s;}
+.btn-d-claim:hover{transform:scale(1.02);background:rgba(6,214,160,.25);}
+.proof-thumb{width:60px;height:60px;border-radius:8px;object-fit:cover;border:2px solid var(--am);margin-top:8px;box-shadow:0 0 15px rgba(255,140,0,.3);}
 </style>
 </head>
 <body>
-<div id="cur"></div>
-<div id="cdot"></div>
+
 <video id="video" autoplay playsinline muted></video>
 <canvas id="canvas"></canvas>
 <div id="vig"></div>
@@ -160,12 +178,18 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;}
   <div class="min" style="max-width:600px;">
     <div class="badge">✦ WELCOME TO DARE BLOOM ✦</div>
     <div class="logo" style="font-size:clamp(3rem,8vw,5rem); margin-bottom:0.5em;">HOW TO PLAY</div>
-    <div style="text-align:left; font-family:'Space Grotesk',sans-serif; font-size:1rem; color:rgba(255,255,255,0.8); line-height:1.6; margin-bottom:2em;">
-      <p style="margin-bottom:1em;"><strong>☝️ Draw with your index finger:</strong> Hold your index finger up to draw the shapes shown on screen.</p>
-      <p style="margin-bottom:1em;"><strong>✋ Reset with open palm:</strong> If you make a mistake, open your hand fully to erase and start over.</p>
-      <p style="margin-bottom:1em;"><strong>😈 The Dare System:</strong> Get a high score (S or A rank) to unlock extreme party dares. Scratch the card with your hand to reveal your fate!</p>
+    <div style="text-align:left; font-family:'Space Grotesk',sans-serif; font-size:.95rem; color:rgba(255,255,255,0.7); line-height:1.5; margin-bottom:1.5em;">
+      <p style="margin-bottom:.8em;">☝️ <strong>Draw with your index finger</strong> to trace shapes on screen.</p>
+      <p style="margin-bottom:.8em;">✋ <strong>Open palm</strong> to erase and start over.</p>
+      <p style="margin-bottom:.8em;">😈 <strong>Dare System:</strong> Complete dares & upload proof for bonus points!</p>
+      <p style="margin-bottom:.8em;">📸 <strong>Proof = More Points:</strong> Upload proof for FULL bonus, claim without for half, skip for zero.</p>
     </div>
-    <button class="btn" id="introContinueBtn">Enter the Nightmare →</button>
+    <div style="margin-bottom:1.5em; text-align:center;">
+      <label style="font-family:'Space Mono',monospace; font-size:.65rem; color:rgba(255,255,255,.4); letter-spacing:.15em; text-transform:uppercase; display:block; margin-bottom:.5em;">ENTER YOUR NAME TO PLAY</label>
+      <input type="text" id="playerNameInput" placeholder="Your name..." maxlength="20" autocomplete="off" style="width:100%; max-width:320px; padding:14px 20px; font-family:'Space Grotesk',sans-serif; font-size:1.1rem; font-weight:600; color:#fff; background:rgba(255,0,34,.08); border:2px solid rgba(255,0,34,.3); border-radius:14px; outline:none; text-align:center; letter-spacing:.05em; transition:border-color .2s, box-shadow .2s;" onfocus="this.style.borderColor='var(--pk)';this.style.boxShadow='0 0 20px rgba(255,0,34,.25)';" onblur="this.style.borderColor='rgba(255,0,34,.3)';this.style.boxShadow='none';">
+      <div id="nameError" style="font-family:'Space Mono',monospace; font-size:.6rem; color:var(--pk); margin-top:.5em; opacity:0; transition:opacity .3s;">Please enter your name to continue!</div>
+    </div>
+    <button class="btn" id="introContinueBtn" style="opacity:.5; pointer-events:none;">Enter the Nightmare →</button>
   </div>
 </div>
 <div class="screen" id="sMenu">
@@ -978,12 +1002,8 @@ async function loop(ts){
  for(let i=sps.length-1;i>=0;i--){const s=sps[i];s.x+=s.vx;s.y+=s.vy;s.vy+=.08;s.a=Math.max(0,s.a-.026);if(s.a<=.02){sps.splice(i,1);continue;}cx.save();cx.globalAlpha=s.a;cx.fillStyle=`hsl(${s.h},100%,72%)`;cx.shadowColor=`hsl(${s.h},100%,55%)`;cx.shadowBlur=7;cx.beginPath();cx.arc(s.x,s.y,s.sz,0,6.283);cx.fill();cx.restore();}
 }
 
-const curEl=document.getElementById('cur'),cdEl=document.getElementById('cdot');
-let mx=0,my=0,cx3=0,cy3=0;
-document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cdEl.style.left=mx+'px';cdEl.style.top=my+'px';});
-document.addEventListener('mousedown',()=>curEl.classList.add('ck'));
-document.addEventListener('mouseup',()=>curEl.classList.remove('ck'));
-(function aC(){cx3+=(mx-cx3)*.13;cy3+=(my-cy3)*.13;curEl.style.left=cx3+'px';curEl.style.top=cy3+'px';requestAnimationFrame(aC);})();
+
+
 
 async function init(){
  try {
@@ -1048,7 +1068,133 @@ document.getElementById('nextBtn').addEventListener('click',()=>{eAC();if(cMd){c
 document.getElementById('retryBtn').addEventListener('click',()=>{eAC();fls.length=0;sps.length=0;trs.length=0;startCD(curS.k);});
 document.getElementById('againBtn').addEventListener('click',()=>{eAC();show('sMenu');gSt='menu';});
 document.getElementById('gbtn').addEventListener('click',()=>{eAC();showG=!showG;document.getElementById('gbtn').textContent=showG?'❤️ guide':'👁 off';});
-document.getElementById('introContinueBtn').addEventListener('click', ()=>{eAC();show('sMenu');gSt='menu';});
+// ============ NAME GATE ============
+let playerName = localStorage.getItem('bloomPlayerName') || '';
+const nameInput = document.getElementById('playerNameInput');
+const introBtn = document.getElementById('introContinueBtn');
+if(playerName) { nameInput.value = playerName; introBtn.style.opacity='1'; introBtn.style.pointerEvents='auto'; }
+nameInput.addEventListener('input', ()=>{
+  const v = nameInput.value.trim();
+  if(v.length >= 1){
+    introBtn.style.opacity='1'; introBtn.style.pointerEvents='auto';
+    document.getElementById('nameError').style.opacity='0';
+  } else {
+    introBtn.style.opacity='.5'; introBtn.style.pointerEvents='none';
+  }
+});
+document.getElementById('introContinueBtn').addEventListener('click', ()=>{
+  const v = nameInput.value.trim();
+  if(!v){ document.getElementById('nameError').style.opacity='1'; return; }
+  playerName = v;
+  localStorage.setItem('bloomPlayerName', playerName);
+  eAC();show('sMenu');gSt='menu';
+});
+
+// ============ LEADERBOARD ============
+function getLeaderboard(){
+  try { return JSON.parse(localStorage.getItem('bloomLeaderboard') || '[]'); } catch(e){ return []; }
+}
+function saveToLeaderboard(name, baseScore, dareBonus){
+  const lb = getLeaderboard();
+  const total = baseScore + dareBonus;
+  // Check if player exists, update best score
+  const existing = lb.find(e => e.name.toLowerCase() === name.toLowerCase());
+  if(existing){
+    if(total > existing.total){ existing.total = total; existing.base = baseScore; existing.bonus = dareBonus; existing.date = Date.now(); }
+  } else {
+    lb.push({ name, base: baseScore, bonus: dareBonus, total, date: Date.now() });
+  }
+  lb.sort((a,b) => b.total - a.total);
+  localStorage.setItem('bloomLeaderboard', JSON.stringify(lb.slice(0, 50)));
+}
+function renderLeaderboard(){
+  const lb = getLeaderboard();
+  const top10 = lb.slice(0,10);
+  const pInfo = document.getElementById('lbPlayerInfo');
+  const myEntry = lb.find(e => e.name.toLowerCase() === playerName.toLowerCase());
+  const myRank = myEntry ? lb.indexOf(myEntry) + 1 : '-';
+  pInfo.innerHTML = playerName ? 'Playing as: <span style="color:var(--pk);font-weight:700;">'+playerName+'</span> | Your Rank: <span style="color:var(--cy);font-weight:700;">#'+myRank+'</span>' : '';
+  
+  if(top10.length === 0){
+    document.getElementById('leaderboardTable').innerHTML = '<div style="color:rgba(255,255,255,.3);font-family:\'Space Mono\',monospace;font-size:.7rem;padding:2em;">No scores yet. Play a round!</div>';
+    return;
+  }
+  let t = '<table class="lb-table"><tr><th>#</th><th>Player</th><th>Score</th><th>Bonus</th></tr>';
+  top10.forEach((e,i) => {
+    const isMe = playerName && e.name.toLowerCase() === playerName.toLowerCase();
+    const medals = ['\ud83e\udd47','\ud83e\udd48','\ud83e\udd49'];
+    const rank = i < 3 ? medals[i] : (i+1);
+    t += '<tr class="'+(isMe?'lb-me':'')+'"><td class="lb-rank">'+rank+'</td><td class="lb-name">'+e.name+'</td><td class="lb-score">'+e.total+'</td><td class="lb-bonus">+'+(e.bonus||0)+'</td></tr>';
+  });
+  t += '</table>';
+  document.getElementById('leaderboardTable').innerHTML = t;
+}
+document.getElementById('leaderboardBtn').addEventListener('click', ()=>{ eAC(); renderLeaderboard(); show('sLeaderboard'); });
+document.getElementById('lbBackBtn').addEventListener('click', ()=>{ eAC(); show('sMenu'); });
+
+// ============ DARE PROOF SYSTEM ============
+let lastDareBonus = 0;
+let lastBaseScore = 0;
+
+document.getElementById('dareProofBtn').addEventListener('click', ()=>{
+  document.getElementById('proofFileInput').click();
+});
+document.getElementById('proofFileInput').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    document.getElementById('proofThumb').src = ev.target.result;
+    document.getElementById('dareProofResult').style.display = 'block';
+    document.getElementById('dareActsMain').style.display = 'none';
+    // Full bonus
+    lastDareBonus = curDareObj ? curDareObj.pts : 30;
+    totalDaresCompleted++;
+    dareStreak++;
+    localStorage.setItem('bloomDaresCount', totalDaresCompleted);
+    document.getElementById('daresDoneD').textContent = totalDaresCompleted;
+    saveToLeaderboard(playerName, lastBaseScore, lastDareBonus);
+    sfxDareDone();
+    explodeFlowers(80);
+  };
+  reader.readAsDataURL(file);
+  e.target.value = '';
+});
+document.getElementById('dareClaimBtn').addEventListener('click', ()=>{
+  eAC(); sfxDareDone();
+  // Half bonus
+  lastDareBonus = curDareObj ? Math.floor(curDareObj.pts / 2) : 15;
+  totalDaresCompleted++;
+  dareStreak++;
+  localStorage.setItem('bloomDaresCount', totalDaresCompleted);
+  document.getElementById('daresDoneD').textContent = totalDaresCompleted;
+  document.getElementById('dareActsMain').innerHTML = '<div style="font-family:\'Space Mono\',monospace;font-size:.7rem;color:var(--cy);text-align:center;padding:8px;">\u2705 CLAIMED! +' + lastDareBonus + ' BONUS (half — no proof)</div>';
+  saveToLeaderboard(playerName, lastBaseScore, lastDareBonus);
+  explodeFlowers(40);
+});
+
+document.getElementById('dareSkipBtn').addEventListener('click',()=>{
+  eAC(); sfxClick();
+  dareStreak = 0;
+  lastDareBonus = 0;
+  document.getElementById('dareActsMain').innerHTML = '<div style="font-family:\'Space Mono\',monospace;font-size:.7rem;color:rgba(255,255,255,.3);text-align:center;padding:8px;">\ud83d\udc14 SKIPPED — 0 bonus points</div>';
+  saveToLeaderboard(playerName, lastBaseScore, 0);
+});
+
+document.getElementById('dareChangeBtn').addEventListener('click', ()=>{
+  eAC(); sfxClick();
+  const container = document.getElementById('scratchWrap');
+  const activeLvl = Array.from(document.getElementById('dareBadge').classList).find(c=>c.startsWith('lvl-'));
+  const tier = activeLvl ? activeLvl.split('-')[1] : 'mild';
+  const pool = DARES[tier] || DARES.mild;
+  const dareText = pool[Math.floor(Math.random()*pool.length)];
+  document.getElementById('dareTxt').textContent = dareText;
+  initScratchCard(container.offsetWidth, container.offsetHeight);
+  document.getElementById('dareScratchMsg').style.display = 'none';
+  document.getElementById('dareProofBtn').disabled = true;
+  document.getElementById('dareClaimBtn').disabled = true;
+});
+
 document.getElementById('inGameMenuBtn').addEventListener('click', ()=>{eAC();show('sMenu');gSt='menu';});
 document.getElementById('inGameRestartBtn').addEventListener('click', ()=>{eAC();startCD(curS.k);});
 
