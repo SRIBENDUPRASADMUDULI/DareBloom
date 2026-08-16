@@ -166,7 +166,20 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;}
 .btn-d-claim{flex:1;padding:9px 12px;font-size:.72rem;background:rgba(6,214,160,.15);border:1px solid rgba(6,214,160,.3);border-radius:10px;color:var(--cy);font-weight:700;cursor:inherit;transition:transform .15s;}
 .btn-d-claim:hover{transform:scale(1.02);background:rgba(6,214,160,.25);}
 .proof-thumb{width:60px;height:60px;border-radius:8px;object-fit:cover;border:2px solid var(--am);margin-top:8px;box-shadow:0 0 15px rgba(255,140,0,.3);}
+
+/* GOOGLE SIGN IN */
+.g-signin-btn{display:inline-flex;align-items:center;gap:10px;padding:12px 24px;background:#fff;border:none;border-radius:12px;font-family:'Space Grotesk',sans-serif;font-size:.9rem;font-weight:600;color:#333;cursor:inherit;transition:transform .15s,box-shadow .2s;box-shadow:0 2px 8px rgba(0,0,0,.15);}
+.g-signin-btn:hover{transform:scale(1.03);box-shadow:0 4px 16px rgba(0,0,0,.25);}
+.g-signin-btn img{width:20px;height:20px;}
+.g-signout-btn{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:8px;font-family:'Space Mono',monospace;font-size:.55rem;color:rgba(255,255,255,.4);cursor:inherit;letter-spacing:.08em;}
+.g-signout-btn:hover{background:rgba(255,255,255,.12);color:#fff;}
+.g-user-info{display:flex;align-items:center;gap:8px;margin-bottom:1em;justify-content:center;}
+.g-user-info img{width:28px;height:28px;border-radius:50%;border:2px solid var(--pk);}
+.g-user-info span{font-family:'Space Mono',monospace;font-size:.65rem;color:rgba(255,255,255,.5);}
 </style>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -189,6 +202,13 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;}
       <input type="text" id="playerNameInput" placeholder="Your name..." maxlength="20" autocomplete="off" style="width:100%; max-width:320px; padding:14px 20px; font-family:'Space Grotesk',sans-serif; font-size:1.1rem; font-weight:600; color:#fff; background:rgba(255,0,34,.08); border:2px solid rgba(255,0,34,.3); border-radius:14px; outline:none; text-align:center; letter-spacing:.05em; transition:border-color .2s, box-shadow .2s;" onfocus="this.style.borderColor='var(--pk)';this.style.boxShadow='0 0 20px rgba(255,0,34,.25)';" onblur="this.style.borderColor='rgba(255,0,34,.3)';this.style.boxShadow='none';">
       <div id="nameError" style="font-family:'Space Mono',monospace; font-size:.6rem; color:var(--pk); margin-top:.5em; opacity:0; transition:opacity .3s;">Please enter your name to continue!</div>
     </div>
+    <div style="margin-bottom:1em;text-align:center;">
+      <div style="font-family:'Space Mono',monospace;font-size:.55rem;color:rgba(255,255,255,.25);letter-spacing:.12em;margin-bottom:.6em;">OR SIGN IN TO SAVE SCORES GLOBALLY</div>
+      <button class="g-signin-btn" id="googleSignInBtn"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G">Sign in with Google</button>
+      <div id="signedInInfo" style="display:none;margin-top:.8em;">
+        <div class="g-user-info"><img id="userPhoto" src="" alt=""><span id="userName"></span></div>
+      </div>
+    </div>
     <button class="btn" id="introContinueBtn" style="opacity:.5; pointer-events:none;">Enter the Nightmare →</button>
   </div>
 </div>
@@ -197,6 +217,9 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;}
     <div class="badge">✦ dare bloom · party dare edition ✦</div>
     <div class="logo">DARE BLOOM</div>
     <div class="lsub">// draw shapes with ur finger · complete dares or face chaos 💀</div>
+    <div id="menuUserInfo" style="display:none;margin-bottom:.6em;">
+      <div class="g-user-info"><img id="menuUserPhoto" src="" alt=""><span id="menuUserName"></span><button class="g-signout-btn" id="signOutBtn">Sign Out</button></div>
+    </div>
     <div style="font-family:'Space Mono',monospace;font-size:.55rem;color:rgba(255,255,255,.22);letter-spacing:.18em;text-transform:uppercase;margin-bottom:.8em;">Created by <span style="color:var(--cy);">Sribendu Prasad Muduli</span></div>
     <div class="best">
       <div>BEST SCORE: <span id="bestD">—</span></div>
@@ -317,6 +340,103 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;}
 </div>
 <div style="position:fixed;bottom:10px;left:50%;transform:translateX(-50%);z-index:999;font-family:'Space Mono',monospace;font-size:.48rem;color:rgba(255,255,255,.12);letter-spacing:.2em;text-transform:uppercase;pointer-events:none;white-space:nowrap;">🌸 DARE BLOOM &nbsp;&bull;&nbsp; CREATED BY SRIBENDU PRASAD MUDULI</div>
 <script type="module">
+// ============ FIREBASE INIT ============
+firebase.initializeApp({
+  apiKey: "AIzaSy3ee3zwZDoMKt7DipTMYkpZvT4u1xUcMCw",
+  authDomain: "dare-bloom.firebaseapp.com",
+  projectId: "dare-bloom",
+  storageBucket: "dare-bloom.firebasestorage.app",
+  messagingSenderId: "76259112393",
+  appId: "1:76259112393:web:e161464daa7e7eb62fa418"
+});
+const db = firebase.firestore();
+const auth = firebase.auth();
+let firebaseUser = null;
+
+// Google Sign-In
+document.getElementById('googleSignInBtn').addEventListener('click', async ()=>{
+  try {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    const result = await auth.signInWithPopup(provider);
+    console.log('Signed in:', result.user.displayName);
+  } catch(e) {
+    console.error('Sign-in failed:', e);
+    // Fallback: try redirect
+    if(e.code === 'auth/popup-blocked' || e.code === 'auth/popup-closed-by-user') {
+      auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider());
+    }
+  }
+});
+
+auth.onAuthStateChanged((user) => {
+  firebaseUser = user;
+  const signInBtn = document.getElementById('googleSignInBtn');
+  const signedInInfo = document.getElementById('signedInInfo');
+  const nameInput = document.getElementById('playerNameInput');
+  const introBtn = document.getElementById('introContinueBtn');
+  const menuInfo = document.getElementById('menuUserInfo');
+  
+  if(user) {
+    // Signed in
+    signInBtn.style.display = 'none';
+    signedInInfo.style.display = 'block';
+    document.getElementById('userPhoto').src = user.photoURL || '';
+    document.getElementById('userName').textContent = user.displayName || user.email;
+    nameInput.value = user.displayName || '';
+    introBtn.style.opacity = '1';
+    introBtn.style.pointerEvents = 'auto';
+    playerName = user.displayName || user.email;
+    // Menu user info
+    if(menuInfo) {
+      menuInfo.style.display = 'block';
+      document.getElementById('menuUserPhoto').src = user.photoURL || '';
+      document.getElementById('menuUserName').textContent = user.displayName || '';
+    }
+  } else {
+    signInBtn.style.display = 'inline-flex';
+    signedInInfo.style.display = 'none';
+    if(menuInfo) menuInfo.style.display = 'none';
+  }
+});
+
+document.getElementById('signOutBtn')?.addEventListener('click', async ()=>{
+  await auth.signOut();
+  firebaseUser = null;
+  show('sIntro');
+});
+
+// ============ FIRESTORE LEADERBOARD ============
+async function saveToFirestore(name, baseScore, dareBonus) {
+  if(!firebaseUser) return;
+  const total = baseScore + dareBonus;
+  const docRef = db.collection('leaderboard').doc(firebaseUser.uid);
+  const doc = await docRef.get();
+  if(doc.exists && doc.data().total >= total) return; // Only save if higher score
+  await docRef.set({
+    name: name,
+    base: baseScore,
+    bonus: dareBonus,
+    total: total,
+    photoURL: firebaseUser.photoURL || '',
+    uid: firebaseUser.uid,
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+  }, { merge: true });
+}
+
+async function loadFirestoreLeaderboard() {
+  try {
+    const snapshot = await db.collection('leaderboard')
+      .orderBy('total', 'desc')
+      .limit(10)
+      .get();
+    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  } catch(e) {
+    console.error('Firestore read error:', e);
+    return [];
+  }
+}
+
+
 import{HandLandmarker,FilesetResolver}from"https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/vision_bundle.mjs";
 const HIT=65,COV=90,TIME=35,SEGS=80,MXF=700,MXS=500,MXT=350;
 const SHP={
@@ -1101,6 +1221,7 @@ function getLeaderboard(){
   try { return JSON.parse(localStorage.getItem('bloomLeaderboard') || '[]'); } catch(e){ return []; }
 }
 function saveToLeaderboard(name, baseScore, dareBonus){
+  saveToFirestore(name, baseScore, dareBonus).catch(console.error);
   const lb = getLeaderboard();
   const total = baseScore + dareBonus;
   // Check if player exists, update best score
@@ -1113,24 +1234,37 @@ function saveToLeaderboard(name, baseScore, dareBonus){
   lb.sort((a,b) => b.total - a.total);
   localStorage.setItem('bloomLeaderboard', JSON.stringify(lb.slice(0, 50)));
 }
-function renderLeaderboard(){
-  const lb = getLeaderboard();
-  const top10 = lb.slice(0,10);
+async function renderLeaderboard(){
+  // Try Firestore first, fall back to localStorage
+  let top10 = [];
+  try {
+    const fbData = await loadFirestoreLeaderboard();
+    if(fbData.length > 0) top10 = fbData;
+  } catch(e) {}
+  
+  // Fallback to localStorage if no Firestore data
+  if(top10.length === 0) {
+    const lb = getLeaderboard();
+    top10 = lb.slice(0,10);
+  }
+  
   const pInfo = document.getElementById('lbPlayerInfo');
-  const myEntry = lb.find(e => e.name.toLowerCase() === playerName.toLowerCase());
-  const myRank = myEntry ? lb.indexOf(myEntry) + 1 : '-';
-  pInfo.innerHTML = playerName ? 'Playing as: <span style="color:var(--pk);font-weight:700;">'+playerName+'</span> | Your Rank: <span style="color:var(--cy);font-weight:700;">#'+myRank+'</span>' : '';
+  const myName = playerName || '';
+  const myEntry = top10.find(e => e.name && myName && e.name.toLowerCase() === myName.toLowerCase());
+  const myRank = myEntry ? top10.indexOf(myEntry) + 1 : '-';
+  pInfo.innerHTML = myName ? 'Playing as: <span style="color:var(--pk);font-weight:700;">'+myName+'</span> | Rank: <span style="color:var(--cy);font-weight:700;">#'+myRank+'</span>' + (firebaseUser ? ' <span style="color:#4CAF50;">\u2705 Synced</span>' : ' <span style="color:rgba(255,255,255,.3);">(local only)</span>') : '';
   
   if(top10.length === 0){
-    document.getElementById('leaderboardTable').innerHTML = '<div style="color:rgba(255,255,255,.3);font-family:\'Space Mono\',monospace;font-size:.7rem;padding:2em;">No scores yet. Play a round!</div>';
+    document.getElementById('leaderboardTable').innerHTML = '<div style="color:rgba(255,255,255,.3);font-family:monospace;font-size:.7rem;padding:2em;">No scores yet. Play a round!</div>';
     return;
   }
   let t = '<table class="lb-table"><tr><th>#</th><th>Player</th><th>Score</th><th>Bonus</th></tr>';
+  const medals = ['\ud83e\udd47','\ud83e\udd48','\ud83e\udd49'];
   top10.forEach((e,i) => {
-    const isMe = playerName && e.name.toLowerCase() === playerName.toLowerCase();
-    const medals = ['\ud83e\udd47','\ud83e\udd48','\ud83e\udd49'];
+    const isMe = myName && e.name && e.name.toLowerCase() === myName.toLowerCase();
     const rank = i < 3 ? medals[i] : (i+1);
-    t += '<tr class="'+(isMe?'lb-me':'')+'"><td class="lb-rank">'+rank+'</td><td class="lb-name">'+e.name+'</td><td class="lb-score">'+e.total+'</td><td class="lb-bonus">+'+(e.bonus||0)+'</td></tr>';
+    const photo = e.photoURL ? '<img src="'+e.photoURL+'" style="width:18px;height:18px;border-radius:50%;vertical-align:middle;margin-right:4px;">' : '';
+    t += '<tr class="'+(isMe?'lb-me':'')+'"><td class="lb-rank">'+rank+'</td><td class="lb-name">'+photo+(e.name||'Anonymous')+'</td><td class="lb-score">'+(e.total||0)+'</td><td class="lb-bonus">+'+(e.bonus||0)+'</td></tr>';
   });
   t += '</table>';
   document.getElementById('leaderboardTable').innerHTML = t;
