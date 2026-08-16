@@ -358,9 +358,13 @@ let firebaseUser = null;
 document.getElementById('googleSignInBtn').addEventListener('click', async ()=>{
   try {
     const provider = new firebase.auth.GoogleAuthProvider();
-    await auth.signInWithRedirect(provider);
+    const result = await auth.signInWithPopup(provider);
+    console.log('Signed in:', result.user.displayName);
   } catch(e) {
     console.error('Sign-in failed:', e);
+    if(e.code === 'auth/popup-blocked' || e.code === 'auth/popup-closed-by-user') {
+      auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider());
+    }
   }
 });
 
