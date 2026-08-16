@@ -673,6 +673,9 @@ function initScratchCard(dareText, tier){
  var dActsM = document.getElementById('dareActsMain');
  if(dActsM) dActsM.style.display = 'flex';
  document.getElementById('dareProofResult').style.display = 'none';
+ canvas.style.transition = 'none';
+ canvas.style.display = 'block';
+ canvas.style.opacity = '1';
 
  // Use rAF so layout is complete before reading offsetWidth/Height
  requestAnimationFrame(()=>{
