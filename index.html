@@ -341,19 +341,7 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;}
 </div>
 <div style="position:fixed;bottom:10px;left:50%;transform:translateX(-50%);z-index:999;font-family:'Space Mono',monospace;font-size:.48rem;color:rgba(255,255,255,.12);letter-spacing:.2em;text-transform:uppercase;pointer-events:none;white-space:nowrap;">🌸 DARE BLOOM &nbsp;&bull;&nbsp; CREATED BY SRIBENDU PRASAD MUDULI</div>
 <script>
-// ===== GOOGLE SIGN-IN (non-module so it always works) =====
-function doGoogleSignIn(){
-  try {
-    var provider = new firebase.auth.GoogleAuthProvider();
-    firebase.auth().signInWithRedirect(provider);
-  } catch(e) {
-    alert('Sign-in error: ' + e.message);
-    console.error(e);
-  }
-}
-</script>
-<script type="module">
-// ============ FIREBASE INIT ============
+// ===== FIREBASE INIT + GOOGLE SIGN-IN (non-module so it always works) =====
 firebase.initializeApp({
   apiKey: "AIzaSy3ee3zwZDoMKt7DipTMYkpZvT4u1xUcMCw",
   authDomain: "dare-bloom.firebaseapp.com",
@@ -362,31 +350,39 @@ firebase.initializeApp({
   messagingSenderId: "76259112393",
   appId: "1:76259112393:web:e161464daa7e7eb62fa418"
 });
-const db = firebase.firestore();
-const auth = firebase.auth();
-let firebaseUser = null;
+var db = firebase.firestore();
+var auth = firebase.auth();
+var firebaseUser = null;
+var playerName = localStorage.getItem('bloomPlayerName') || '';
 
-// Google Sign-In is handled by doGoogleSignIn() in non-module script above
+function doGoogleSignIn(){
+  try {
+    var provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithRedirect(provider);
+  } catch(e) {
+    alert('Sign-in error: ' + e.message);
+    console.error(e);
+  }
+}
 
 // Handle redirect result when user comes back from Google
-auth.getRedirectResult().then((result) => {
+auth.getRedirectResult().then(function(result) {
   if(result && result.user) {
     console.log('Signed in via redirect:', result.user.displayName);
   }
-}).catch((e) => {
+}).catch(function(e) {
   console.error('Redirect sign-in error:', e);
 });
 
-auth.onAuthStateChanged((user) => {
+auth.onAuthStateChanged(function(user) {
   firebaseUser = user;
-  const signInBtn = document.getElementById('googleSignInBtn');
-  const signedInInfo = document.getElementById('signedInInfo');
-  const nameInput = document.getElementById('playerNameInput');
-  const introBtn = document.getElementById('introContinueBtn');
-  const menuInfo = document.getElementById('menuUserInfo');
+  var signInBtn = document.getElementById('googleSignInBtn');
+  var signedInInfo = document.getElementById('signedInInfo');
+  var nameInput = document.getElementById('playerNameInput');
+  var introBtn = document.getElementById('introContinueBtn');
+  var menuInfo = document.getElementById('menuUserInfo');
   
   if(user) {
-    // Signed in
     signInBtn.style.display = 'none';
     signedInInfo.style.display = 'block';
     document.getElementById('userPhoto').src = user.photoURL || '';
@@ -395,7 +391,6 @@ auth.onAuthStateChanged((user) => {
     introBtn.style.opacity = '1';
     introBtn.style.pointerEvents = 'auto';
     playerName = user.displayName || user.email;
-    // Menu user info
     if(menuInfo) {
       menuInfo.style.display = 'block';
       document.getElementById('menuUserPhoto').src = user.photoURL || '';
@@ -408,11 +403,15 @@ auth.onAuthStateChanged((user) => {
   }
 });
 
-document.getElementById('signOutBtn')?.addEventListener('click', async ()=>{
-  await auth.signOut();
+var signOutEl = document.getElementById('signOutBtn');
+if(signOutEl) signOutEl.addEventListener('click', function(){
+  auth.signOut();
   firebaseUser = null;
-  show('sIntro');
 });
+</script>
+<script type="module">
+// Firebase is already initialized in the non-module script above
+// db, auth, firebaseUser, playerName are global variables
 
 // ============ FIRESTORE LEADERBOARD ============
 async function saveToFirestore(name, baseScore, dareBonus) {
@@ -1204,7 +1203,7 @@ document.getElementById('retryBtn').addEventListener('click',()=>{eAC();fls.leng
 document.getElementById('againBtn').addEventListener('click',()=>{eAC();show('sMenu');gSt='menu';});
 document.getElementById('gbtn').addEventListener('click',()=>{eAC();showG=!showG;document.getElementById('gbtn').textContent=showG?'❤️ guide':'👁 off';});
 // ============ NAME GATE ============
-let playerName = localStorage.getItem('bloomPlayerName') || '';
+if(!playerName) playerName = localStorage.getItem('bloomPlayerName') || '';
 const nameInput = document.getElementById('playerNameInput');
 const introBtn = document.getElementById('introContinueBtn');
 if(playerName) { nameInput.value = playerName; introBtn.style.opacity='1'; introBtn.style.pointerEvents='auto'; }
