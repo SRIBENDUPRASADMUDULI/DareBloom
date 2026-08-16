@@ -356,6 +356,7 @@ var firebaseUser = null;
 var playerName = localStorage.getItem('bloomPlayerName') || '';
 
 function doGoogleSignIn(){
+  alert('Button clicked! Starting Google Sign-In...');
   try {
     var provider = new firebase.auth.GoogleAuthProvider();
     auth.signInWithRedirect(provider);
