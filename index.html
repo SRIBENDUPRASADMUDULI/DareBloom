@@ -273,10 +273,18 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;}
         </div>
       </div>
       <div class="dare-scratch-msg" id="dareScratchMsg">🔓 DARE REVEALED — now face the consequences!</div>
-      <div class="dare-acts">
-        <button class="btn-d-done" id="dareDoneBtn" disabled>🔥 I DID THE DARE!</button>
+      <div class="dare-acts" id="dareActsMain">
+        <button class="btn-d-proof" id="dareProofBtn" disabled>📸 Upload Proof (+FULL BONUS)</button>
+        <button class="btn-d-claim" id="dareClaimBtn" disabled>🤞 Claim (+HALF BONUS)</button>
+        <button class="btn-d-skip" id="dareSkipBtn">🙈 Skip (0 PTS)</button>
+      </div>
+      <div id="dareProofResult" style="display:none;text-align:center;margin-top:8px;">
+        <img id="proofThumb" class="proof-thumb" src="" alt="proof">
+        <div style="font-family:'Space Mono',monospace;font-size:.55rem;color:var(--am);margin-top:4px;">✅ PROOF ACCEPTED</div>
+      </div>
+      <input type="file" id="proofFileInput" accept="image/*" capture="environment" style="display:none;">
+      <div class="dare-acts" style="margin-top:8px;">
         <button class="btn-d-change" id="dareChangeBtn">🔄 Change Dare</button>
-        <button class="btn-d-skip" id="dareSkipBtn">🙈 Skip Dare</button>
       </div>
     </div>
 
@@ -637,8 +645,8 @@ function initScratchCard(dareText, tier){
  const canvas = document.getElementById('scratchCanvas');
  const hint   = document.getElementById('scratchHint');
  const msg    = document.getElementById('dareScratchMsg');
- const doneBtn= document.getElementById('dareDoneBtn');
- const skipBtn= document.getElementById('dareSkipBtn');
+ const proofBtn= document.getElementById('dareProofBtn');
+ const claimBtn= document.getElementById('dareClaimBtn');
 
  // Write dare text into the layer BELOW the canvas
  document.getElementById('dareTxt').textContent = dareText;
@@ -650,9 +658,11 @@ function initScratchCard(dareText, tier){
  hint.style.display  = 'flex';
  hint.style.opacity  = '1';
  msg.style.display   = 'none';
- doneBtn.disabled    = true;
- doneBtn.textContent = '🔒 Scratch to unlock dare';
- skipBtn.style.display = 'inline-block';
+ if(proofBtn) proofBtn.disabled = true;
+ if(claimBtn) claimBtn.disabled = true;
+ var dActsM = document.getElementById('dareActsMain');
+ if(dActsM) dActsM.style.display = 'flex';
+ document.getElementById('dareProofResult').style.display = 'none';
 
  // Use rAF so layout is complete before reading offsetWidth/Height
  requestAnimationFrame(()=>{
@@ -761,7 +771,8 @@ function _autoReveal(){
  const canvas  = document.getElementById('scratchCanvas');
  const hint    = document.getElementById('scratchHint');
  const msg     = document.getElementById('dareScratchMsg');
- const doneBtn = document.getElementById('dareDoneBtn');
+ const proofBtn = document.getElementById('dareProofBtn');
+ const claimBtn = document.getElementById('dareClaimBtn');
 
  // CSS transition fade-out (GPU composited, zero JS per-frame cost)
  canvas.style.transition = 'opacity 0.45s ease';
@@ -771,8 +782,8 @@ function _autoReveal(){
  // Unlock dare UI with reveal sound
  setTimeout(()=>{
   msg.style.display   = 'block';
-  doneBtn.disabled    = false;
-  doneBtn.textContent = '🔥 I DID THE DARE!';
+  if(proofBtn) proofBtn.disabled = false;
+  if(claimBtn) claimBtn.disabled = false;
   // 3-note reveal chord
   [380, 570, 860].forEach((f, i) => tone(f, 'sine', .38, .13, i * .09));
  }, 350);
@@ -1034,27 +1045,7 @@ document.getElementById('careerBtn').addEventListener('click',()=>{eAC();cMd=tru
 document.getElementById('freeBtn').addEventListener('click',()=>{eAC();show('sShapes');});
 document.getElementById('backBtn').addEventListener('click',()=>show('sMenu'));
 
-// DARE ACTION LISTENERS
-document.getElementById('dareDoneBtn').addEventListener('click',()=>{
- eAC(); sfxDareDone();
- explodeFlowers(80);
- dareStreak++;
- totalDaresCompleted++;
- localStorage.setItem('bloomDaresCount', totalDaresCompleted);
- document.getElementById('daresDoneD').textContent = totalDaresCompleted;
- const btn = document.getElementById('dareDoneBtn');
- btn.textContent = '✅ DARE COMPLETED! (+BONUS)';
- btn.disabled = true;
- document.getElementById('dareSkipBtn').style.display = 'none';
-});
 
-document.getElementById('dareSkipBtn').addEventListener('click',()=>{
- eAC(); sfxSkip();
- dareStreak = 0;
- document.getElementById('dareTxt').textContent = '🐔 CHICKENED OUT! No bonus points! (Your ex is laughing right now 💀)';
- document.getElementById('dareDoneBtn').style.display = 'none';
- document.getElementById('dareSkipBtn').style.display = 'none';
-});
 
 document.getElementById('toggleDareBtn').addEventListener('click',()=>{
  eAC();
