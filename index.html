@@ -1186,16 +1186,15 @@ document.getElementById('dareSkipBtn').addEventListener('click',()=>{
 
 document.getElementById('dareChangeBtn').addEventListener('click', ()=>{
   eAC(); sfxClick();
-  const container = document.getElementById('scratchWrap');
   const activeLvl = Array.from(document.getElementById('dareBadge').classList).find(c=>c.startsWith('lvl-'));
-  const tier = activeLvl ? activeLvl.split('-')[1] : 'mild';
-  const pool = DARES[tier] || DARES.mild;
+  const tier = activeLvl || 'lvl-mild';
+  const pool = DARES[tier.replace('lvl-','')] || DARES.mild;
   const dareText = pool[Math.floor(Math.random()*pool.length)];
-  document.getElementById('dareTxt').textContent = dareText;
-  initScratchCard(container.offsetWidth, container.offsetHeight);
-  document.getElementById('dareScratchMsg').style.display = 'none';
-  document.getElementById('dareProofBtn').disabled = true;
-  document.getElementById('dareClaimBtn').disabled = true;
+  document.getElementById('dareProofResult').style.display = 'none';
+  var dActsM = document.getElementById('dareActsMain');
+  if(dActsM) dActsM.style.display = 'flex';
+  initScratchCard(dareText, tier);
+  setupScratchListeners();
 });
 
 document.getElementById('inGameMenuBtn').addEventListener('click', ()=>{eAC();show('sMenu');gSt='menu';});
