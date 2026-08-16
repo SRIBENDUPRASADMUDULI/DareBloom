@@ -354,18 +354,19 @@ const db = firebase.firestore();
 const auth = firebase.auth();
 let firebaseUser = null;
 
-// Google Sign-In
-document.getElementById('googleSignInBtn').addEventListener('click', async ()=>{
-  try {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    const result = await auth.signInWithPopup(provider);
-    console.log('Signed in:', result.user.displayName);
-  } catch(e) {
-    console.error('Sign-in failed:', e);
-    if(e.code === 'auth/popup-blocked' || e.code === 'auth/popup-closed-by-user') {
-      auth.signInWithRedirect(new firebase.auth.GoogleAuthProvider());
-    }
+// Google Sign-In (using redirect — more reliable than popup)
+document.getElementById('googleSignInBtn').addEventListener('click', ()=>{
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithRedirect(provider);
+});
+
+// Handle redirect result when user comes back from Google
+auth.getRedirectResult().then((result) => {
+  if(result && result.user) {
+    console.log('Signed in via redirect:', result.user.displayName);
   }
+}).catch((e) => {
+  console.error('Redirect sign-in error:', e);
 });
 
 auth.onAuthStateChanged((user) => {
