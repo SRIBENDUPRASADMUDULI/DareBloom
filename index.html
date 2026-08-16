@@ -206,9 +206,19 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;}
       <button class="btn" id="careerBtn">🎮 Play Career Mode</button>
       <button class="btn2" id="freeBtn">✏️ Shape Select</button>
     </div>
-    <div>
+    <div style="display:flex;gap:10px;justify-content:center;margin-top:.8em;flex-wrap:wrap;">
       <button class="btn2 btn-dare" id="toggleDareBtn">🔥 Dare Mode: ACTIVE</button>
+      <button class="btn2" id="leaderboardBtn" style="background:rgba(255,215,0,.08);color:#FFD700;border-color:rgba(255,215,0,.3);">🏆 Leaderboard</button>
     </div>
+  </div>
+</div>
+<div class="screen" id="sLeaderboard">
+  <div style="text-align:center;max-width:520px;padding:20px;width:100%;">
+    <div class="stitle">🏆 LEADERBOARD</div>
+    <div class="ssub">// top 10 dare bloomers</div>
+    <div id="lbPlayerInfo" style="font-family:'Space Mono',monospace;font-size:.7rem;color:rgba(255,255,255,.4);margin-bottom:1em;"></div>
+    <div id="leaderboardTable" style="width:100%;"></div>
+    <div style="margin-top:1.5em;"><button class="btn2" id="lbBackBtn">← back to menu</button></div>
   </div>
 </div>
 <div class="screen" id="sShapes">
@@ -907,6 +917,8 @@ function showRes(){
  document.getElementById('hud').classList.remove('on');
  document.getElementById('tWrap').classList.remove('on');
  document.getElementById('rds').classList.remove('on');
+ lastBaseScore=sc; lastDareBonus=0;
+ if(!dareModeActive && typeof playerName!=='undefined' && playerName) saveToLeaderboard(playerName, sc, 0);
  show('sRes');sfxOK();
 }
 
