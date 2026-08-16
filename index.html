@@ -204,7 +204,7 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;}
     </div>
     <div style="margin-bottom:1em;text-align:center;">
       <div style="font-family:'Space Mono',monospace;font-size:.55rem;color:rgba(255,255,255,.25);letter-spacing:.12em;margin-bottom:.6em;">OR SIGN IN TO SAVE SCORES GLOBALLY</div>
-      <button class="g-signin-btn" id="googleSignInBtn"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G">Sign in with Google</button>
+      <button class="g-signin-btn" id="googleSignInBtn" onclick="doGoogleSignIn()"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G">Sign in with Google</button>
       <div id="signedInInfo" style="display:none;margin-top:.8em;">
         <div class="g-user-info"><img id="userPhoto" src="" alt=""><span id="userName"></span></div>
       </div>
@@ -340,6 +340,18 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;}
   </div>
 </div>
 <div style="position:fixed;bottom:10px;left:50%;transform:translateX(-50%);z-index:999;font-family:'Space Mono',monospace;font-size:.48rem;color:rgba(255,255,255,.12);letter-spacing:.2em;text-transform:uppercase;pointer-events:none;white-space:nowrap;">🌸 DARE BLOOM &nbsp;&bull;&nbsp; CREATED BY SRIBENDU PRASAD MUDULI</div>
+<script>
+// ===== GOOGLE SIGN-IN (non-module so it always works) =====
+function doGoogleSignIn(){
+  try {
+    var provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth().signInWithRedirect(provider);
+  } catch(e) {
+    alert('Sign-in error: ' + e.message);
+    console.error(e);
+  }
+}
+</script>
 <script type="module">
 // ============ FIREBASE INIT ============
 firebase.initializeApp({
@@ -354,11 +366,7 @@ const db = firebase.firestore();
 const auth = firebase.auth();
 let firebaseUser = null;
 
-// Google Sign-In (using redirect — more reliable than popup)
-document.getElementById('googleSignInBtn').addEventListener('click', ()=>{
-  const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithRedirect(provider);
-});
+// Google Sign-In is handled by doGoogleSignIn() in non-module script above
 
 // Handle redirect result when user comes back from Google
 auth.getRedirectResult().then((result) => {
