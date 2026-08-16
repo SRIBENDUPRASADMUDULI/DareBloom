@@ -232,6 +232,7 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;}
     <div style="display:flex;gap:10px;justify-content:center;margin-top:.8em;flex-wrap:wrap;">
       <button class="btn2 btn-dare" id="toggleDareBtn">🔥 Dare Mode: ACTIVE</button>
       <button class="btn2" id="leaderboardBtn" style="background:rgba(255,215,0,.08);color:#FFD700;border-color:rgba(255,215,0,.3);">🏆 Leaderboard</button>
+      <button class="btn2" id="howToPlayBtn" style="background:rgba(255,255,255,.05);">ℹ️ How to Play</button>
     </div>
   </div>
 </div>
@@ -1270,6 +1271,7 @@ async function renderLeaderboard(){
   document.getElementById('leaderboardTable').innerHTML = t;
 }
 document.getElementById('leaderboardBtn').addEventListener('click', ()=>{ eAC(); renderLeaderboard(); show('sLeaderboard'); });
+document.getElementById('howToPlayBtn').addEventListener('click', ()=>{ eAC(); show('sIntro'); });
 document.getElementById('lbBackBtn').addEventListener('click', ()=>{ eAC(); show('sMenu'); });
 
 // ============ DARE PROOF SYSTEM ============
