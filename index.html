@@ -1235,37 +1235,68 @@ function saveToLeaderboard(name, baseScore, dareBonus){
   localStorage.setItem('bloomLeaderboard', JSON.stringify(lb.slice(0, 50)));
 }
 async function renderLeaderboard(){
+  // Show loading state
+  document.getElementById('leaderboardTable').innerHTML = '<div style="color:rgba(255,255,255,.25);font-family:monospace;font-size:.7rem;padding:2em;">Loading...</div>';
+
   // Try Firestore first, fall back to localStorage
-  let top10 = [];
+  let allScores = [];
+  let isGlobal = false;
   try {
     const fbData = await loadFirestoreLeaderboard();
-    if(fbData.length > 0) top10 = fbData;
+    if(fbData.length > 0){ allScores = fbData; isGlobal = true; }
   } catch(e) {}
-  
-  // Fallback to localStorage if no Firestore data
-  if(top10.length === 0) {
-    const lb = getLeaderboard();
-    top10 = lb.slice(0,10);
+
+  if(allScores.length === 0) {
+    allScores = getLeaderboard();
   }
-  
-  const pInfo = document.getElementById('lbPlayerInfo');
+
+  const top10 = allScores.slice(0,10);
   const myName = playerName || '';
-  const myEntry = top10.find(e => e.name && myName && e.name.toLowerCase() === myName.toLowerCase());
-  const myRank = myEntry ? top10.indexOf(myEntry) + 1 : '-';
-  pInfo.innerHTML = myName ? 'Playing as: <span style="color:var(--pk);font-weight:700;">'+myName+'</span> | Rank: <span style="color:var(--cy);font-weight:700;">#'+myRank+'</span>' + (firebaseUser ? ' <span style="color:#4CAF50;">\u2705 Synced</span>' : ' <span style="color:rgba(255,255,255,.3);">(local only)</span>') : '';
-  
+  const myUID = firebaseUser ? firebaseUser.uid : null;
+
+  // Find my entry — match by UID if signed in, else by name
+  let myRankIdx = -1;
+  let myEntry = null;
+  allScores.forEach((e, i) => {
+    if(myUID && e.uid && e.uid === myUID){ myRankIdx = i; myEntry = e; }
+    else if(!myUID && myName && e.name && e.name.toLowerCase() === myName.toLowerCase() && myRankIdx === -1){ myRankIdx = i; myEntry = e; }
+  });
+
+  // Player info bar
+  const pInfo = document.getElementById('lbPlayerInfo');
+  const photo = firebaseUser && firebaseUser.photoURL ? '<img src="'+firebaseUser.photoURL+'" style="width:22px;height:22px;border-radius:50%;vertical-align:middle;margin-right:6px;border:1.5px solid var(--pk);">' : '';
+  const syncBadge = isGlobal ? ' <span style="color:#4CAF50;font-size:.6rem;">🌐 Global</span>' : ' <span style="color:rgba(255,255,255,.25);font-size:.6rem;">(local)</span>';
+  const rankDisplay = myRankIdx >= 0 ? '#'+(myRankIdx+1) : 'Unranked';
+  pInfo.innerHTML = myName
+    ? photo+'<strong style="color:var(--pk);">'+myName+'</strong> &nbsp;|&nbsp; Rank: <strong style="color:var(--cy);">'+rankDisplay+'</strong>'+syncBadge
+    : '';
+
   if(top10.length === 0){
-    document.getElementById('leaderboardTable').innerHTML = '<div style="color:rgba(255,255,255,.3);font-family:monospace;font-size:.7rem;padding:2em;">No scores yet. Play a round!</div>';
+    document.getElementById('leaderboardTable').innerHTML = '<div style="color:rgba(255,255,255,.3);font-family:monospace;font-size:.7rem;padding:2em;text-align:center;">No scores yet. Play a round!</div>';
     return;
   }
-  let t = '<table class="lb-table"><tr><th>#</th><th>Player</th><th>Score</th><th>Bonus</th></tr>';
+
   const medals = ['\ud83e\udd47','\ud83e\udd48','\ud83e\udd49'];
+  let t = '<table class="lb-table"><tr><th>#</th><th>Player</th><th>Score</th><th>Bonus</th></tr>';
   top10.forEach((e,i) => {
-    const isMe = myName && e.name && e.name.toLowerCase() === myName.toLowerCase();
+    const isMe = (myUID && e.uid && e.uid === myUID) || (!myUID && myName && e.name && e.name.toLowerCase() === myName.toLowerCase());
     const rank = i < 3 ? medals[i] : (i+1);
-    const photo = e.photoURL ? '<img src="'+e.photoURL+'" style="width:18px;height:18px;border-radius:50%;vertical-align:middle;margin-right:4px;">' : '';
-    t += '<tr class="'+(isMe?'lb-me':'')+'"><td class="lb-rank">'+rank+'</td><td class="lb-name">'+photo+(e.name||'Anonymous')+'</td><td class="lb-score">'+(e.total||0)+'</td><td class="lb-bonus">+'+(e.bonus||0)+'</td></tr>';
+    const ep = e.photoURL ? '<img src="'+e.photoURL+'" style="width:18px;height:18px;border-radius:50%;vertical-align:middle;margin-right:4px;">' : '';
+    t += '<tr class="'+(isMe?'lb-me':'')+'"><td class="lb-rank">'+rank+'</td><td class="lb-name">'+ep+(e.name||'Anonymous')+'</td><td class="lb-score">'+(e.total||0)+'</td><td class="lb-bonus">+'+(e.bonus||0)+'</td></tr>';
   });
+
+  // If I'm NOT in top 10, add a separator and my row at bottom
+  const inTop10 = myRankIdx >= 0 && myRankIdx < 10;
+  if(!inTop10 && myEntry){
+    t += '<tr><td colspan="4" style="text-align:center;padding:4px 0;color:rgba(255,255,255,.15);font-size:.6rem;letter-spacing:.1em;">• • •</td></tr>';
+    const ep = myEntry.photoURL ? '<img src="'+myEntry.photoURL+'" style="width:18px;height:18px;border-radius:50%;vertical-align:middle;margin-right:4px;">' : '';
+    t += '<tr class="lb-me"><td class="lb-rank">#'+(myRankIdx+1)+'</td><td class="lb-name">'+ep+(myEntry.name||'You')+' 👈</td><td class="lb-score">'+(myEntry.total||0)+'</td><td class="lb-bonus">+'+(myEntry.bonus||0)+'</td></tr>';
+  } else if(!inTop10 && myName){
+    // Has name but no score saved yet
+    t += '<tr><td colspan="4" style="text-align:center;padding:4px 0;color:rgba(255,255,255,.15);font-size:.6rem;letter-spacing:.1em;">• • •</td></tr>';
+    t += '<tr class="lb-me"><td class="lb-rank">—</td><td class="lb-name">'+myName+' 👈</td><td class="lb-score">0</td><td class="lb-bonus">+0</td></tr>';
+  }
+
   t += '</table>';
   document.getElementById('leaderboardTable').innerHTML = t;
 }
