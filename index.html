@@ -166,6 +166,22 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;}
 .btn-d-claim{flex:1;padding:9px 12px;font-size:.72rem;background:rgba(6,214,160,.15);border:1px solid rgba(6,214,160,.3);border-radius:10px;color:var(--cy);font-weight:700;cursor:inherit;transition:transform .15s;}
 .btn-d-claim:hover{transform:scale(1.02);background:rgba(6,214,160,.25);}
 .proof-thumb{width:60px;height:60px;border-radius:8px;object-fit:cover;border:2px solid var(--am);margin-top:8px;box-shadow:0 0 15px rgba(255,140,0,.3);}
+/* AI VERIFICATION */
+.ai-verifying{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px;}
+.ai-spinner{width:36px;height:36px;border:3px solid rgba(255,140,0,.15);border-top-color:var(--am);border-radius:50%;animation:spin .8s linear infinite;}
+.ai-verify-txt{font-family:'Space Mono',monospace;font-size:.62rem;color:var(--am);letter-spacing:.1em;animation:aiPulse 1.2s ease-in-out infinite;}
+@keyframes aiPulse{0%,100%{opacity:.5}50%{opacity:1}}
+.ai-verdict{text-align:center;padding:10px;border-radius:10px;margin-top:8px;animation:cIn .4s ease;}
+.ai-verdict.verified{background:rgba(6,214,160,.12);border:1px solid rgba(6,214,160,.3);}
+.ai-verdict.rejected{background:rgba(255,0,34,.12);border:1px solid rgba(255,0,34,.3);}
+.ai-verdict-icon{font-size:1.8rem;margin-bottom:4px;}
+.ai-verdict-label{font-family:'Creepster',cursive;font-size:1.1rem;letter-spacing:.05em;}
+.ai-verdict.verified .ai-verdict-label{color:var(--cy);}
+.ai-verdict.rejected .ai-verdict-label{color:var(--pk);}
+.ai-verdict-reason{font-family:'Space Mono',monospace;font-size:.55rem;color:rgba(255,255,255,.5);margin-top:4px;letter-spacing:.04em;}
+.ai-verdict-bonus{font-family:'Space Mono',monospace;font-size:.72rem;font-weight:700;margin-top:6px;}
+.ai-verdict.verified .ai-verdict-bonus{color:var(--cy);}
+.ai-verdict.rejected .ai-verdict-bonus{color:var(--pk);}
 
 /* GOOGLE SIGN IN */
 .g-signin-btn{display:inline-flex;align-items:center;gap:10px;padding:12px 24px;background:#fff;border:none;border-radius:12px;font-family:'Space Grotesk',sans-serif;font-size:.9rem;font-weight:600;color:#333;cursor:inherit;transition:transform .15s,box-shadow .2s;box-shadow:0 2px 8px rgba(0,0,0,.15);}
@@ -314,7 +330,13 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;}
       </div>
       <div id="dareProofResult" style="display:none;text-align:center;margin-top:8px;">
         <img id="proofThumb" class="proof-thumb" src="" alt="proof">
-        <div style="font-family:'Space Mono',monospace;font-size:.55rem;color:var(--am);margin-top:4px;">✅ PROOF ACCEPTED</div>
+        <div id="aiVerifyArea">
+          <div class="ai-verifying" id="aiVerifying">
+            <div class="ai-spinner"></div>
+            <div class="ai-verify-txt">🤖 AI ANALYZING YOUR PROOF...</div>
+          </div>
+          <div class="ai-verdict" id="aiVerdict" style="display:none;"></div>
+        </div>
       </div>
       <input type="file" id="proofFileInput" accept="image/*" capture="environment" style="display:none;">
       <div class="dare-acts" style="margin-top:8px;">
@@ -356,13 +378,49 @@ var firebaseUser = null;
 var playerName = localStorage.getItem('bloomPlayerName') || '';
 
 function doGoogleSignIn(){
-  alert('Button clicked! Starting Google Sign-In...');
   try {
     var provider = new firebase.auth.GoogleAuthProvider();
     auth.signInWithRedirect(provider);
   } catch(e) {
     alert('Sign-in error: ' + e.message);
     console.error(e);
+  }
+}
+
+// ===== GEMINI AI DARE VERIFICATION =====
+var GEMINI_KEY = 'AQ.Ab8RN6JwKGaV42ux2H5hbv5sag0D6EXZVKwFv7jicFxGT7YWmw';
+
+async function verifyDareProof(imageBase64, dareText) {
+  try {
+    var base64Data = imageBase64.replace(/^data:image\/[a-zA-Z+]+;base64,/, '');
+    var mimeMatch = imageBase64.match(/^data:(image\/[a-zA-Z+]+);base64,/);
+    var mimeType = mimeMatch ? mimeMatch[1] : 'image/jpeg';
+
+    var response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + GEMINI_KEY, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{
+          parts: [
+            { text: "You are a dare verification judge for a party game. The player was given this dare:\n\n\"" + dareText + "\"\n\nThey uploaded an image as proof. Analyze if this is a legitimate attempt at completing the dare. Be lenient and fun — if the image shows any reasonable effort or is related to the dare, APPROVE it. Only reject if the image is completely unrelated (random photo, blank screen, or obviously fake).\n\nRespond with ONLY a JSON object, no markdown:\n{\"verified\": true or false, \"reason\": \"brief funny reason in 10 words or less\", \"confidence\": number 0 to 100}" },
+            { inline_data: { mime_type: mimeType, data: base64Data } }
+          ]
+        }]
+      })
+    });
+
+    if (!response.ok) throw new Error('API returned ' + response.status);
+    var data = await response.json();
+
+    if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+      var text = data.candidates[0].content.parts[0].text.trim();
+      text = text.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+      return JSON.parse(text);
+    }
+    return { verified: true, reason: "AI couldn't decide — you pass! 🌸", confidence: 50 };
+  } catch(e) {
+    console.error('Gemini verification error:', e);
+    return { verified: true, reason: "AI is sleeping — approved by default! 😴", confidence: 0 };
   }
 }
 
@@ -1324,19 +1382,54 @@ document.getElementById('proofFileInput').addEventListener('change', (e)=>{
   const file = e.target.files[0];
   if(!file) return;
   const reader = new FileReader();
-  reader.onload = (ev) => {
-    document.getElementById('proofThumb').src = ev.target.result;
+  reader.onload = async (ev) => {
+    const imageData = ev.target.result;
+    const dareText = document.getElementById('dareTxt').textContent || '';
+    
+    // Show image + loading spinner
+    document.getElementById('proofThumb').src = imageData;
     document.getElementById('dareProofResult').style.display = 'block';
     document.getElementById('dareActsMain').style.display = 'none';
-    // Full bonus
-    lastDareBonus = curDareObj ? curDareObj.pts : 30;
-    totalDaresCompleted++;
-    dareStreak++;
-    localStorage.setItem('bloomDaresCount', totalDaresCompleted);
-    document.getElementById('daresDoneD').textContent = totalDaresCompleted;
-    saveToLeaderboard(playerName, lastBaseScore, lastDareBonus);
-    sfxDareDone();
-    explodeFlowers(80);
+    document.getElementById('aiVerifying').style.display = 'flex';
+    document.getElementById('aiVerdict').style.display = 'none';
+    
+    // Call Gemini AI to verify
+    const result = await verifyDareProof(imageData, dareText);
+    
+    // Hide spinner, show verdict
+    document.getElementById('aiVerifying').style.display = 'none';
+    const verdictEl = document.getElementById('aiVerdict');
+    verdictEl.style.display = 'block';
+    
+    if(result.verified) {
+      // VERIFIED — full bonus!
+      lastDareBonus = curDareObj ? curDareObj.pts : 30;
+      totalDaresCompleted++;
+      dareStreak++;
+      localStorage.setItem('bloomDaresCount', totalDaresCompleted);
+      document.getElementById('daresDoneD').textContent = totalDaresCompleted;
+      saveToLeaderboard(playerName, lastBaseScore, lastDareBonus);
+      sfxDareDone();
+      explodeFlowers(80);
+      
+      verdictEl.className = 'ai-verdict verified';
+      verdictEl.innerHTML = '<div class="ai-verdict-icon">✅</div>'
+        + '<div class="ai-verdict-label">AI VERIFIED!</div>'
+        + '<div class="ai-verdict-reason">' + (result.reason || 'Looks legit!') + '</div>'
+        + '<div class="ai-verdict-bonus">+' + lastDareBonus + ' FULL BONUS EARNED 🔥</div>';
+    } else {
+      // REJECTED — no bonus
+      lastDareBonus = 0;
+      dareStreak = 0;
+      saveToLeaderboard(playerName, lastBaseScore, 0);
+      sfxClick();
+      
+      verdictEl.className = 'ai-verdict rejected';
+      verdictEl.innerHTML = '<div class="ai-verdict-icon">❌</div>'
+        + '<div class="ai-verdict-label">AI REJECTED!</div>'
+        + '<div class="ai-verdict-reason">' + (result.reason || 'Nice try tho!') + '</div>'
+        + '<div class="ai-verdict-bonus">+0 BONUS — PROOF DENIED 💀</div>';
+    }
   };
   reader.readAsDataURL(file);
   e.target.value = '';
