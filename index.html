@@ -1325,9 +1325,7 @@ async function init(){
   document.getElementById('daresDoneD').textContent=totalDaresCompleted;
 
   const v=await FilesetResolver.forVisionTasks("https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/wasm");
-  const modelPath = isMobile
-    ? "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task"
-    : "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float32/1/hand_landmarker.task";
+  const modelPath = "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task";
   HL=await HandLandmarker.createFromOptions(v,{
     baseOptions:{modelAssetPath:modelPath, delegate:"GPU"},
     numHands:1,
