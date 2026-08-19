@@ -6,10 +6,12 @@
 <title>🌸 DARE BLOOM — Flower Drawing Game & Dare Challenge</title>
 <meta name="description" content="DARE BLOOM — Draw flowers with your finger and complete wild party dares! Created by Sribendu Prasad Muduli.">
 <meta name="author" content="Sribendu Prasad Muduli">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
 <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <style>
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M5 3l14 9-6 1.5L10 20z' fill='%23FF0022' stroke='%23000' stroke-width='1'/%3E%3C/svg%3E") 5 3, auto;}
-:root{--pk:#FF0022;--vi:#4A0000;--cy:#8A0303;--am:#FF3300;--bg:#050000;--br:rgba(255,0,34,.2);--flame:#FF0000;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;cursor:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath d='M5 3l14 9-6 1.5L10 20z' fill='%23FF6B6B' stroke='%23000' stroke-width='1'/%3E%3C/svg%3E") 5 3, auto;}
+button,.btn,.btn2,.scard,.g-signin-btn,.g-signout-btn,.btn-d-proof,.btn-d-claim,.btn-d-skip,.btn-d-change,.btn-d-done,[onclick],input{cursor:pointer!important;touch-action:manipulation;}
+:root{--pk:#FF6B6B;--vi:#2B2D42;--cy:#4ECDC4;--am:#FFE66D;--bg:#0B0B0F;--br:rgba(255,107,107,.15);--flame:#FF6B6B;}
 html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);}
 body{font-family:'Space Grotesk',system-ui,sans-serif;}
 
@@ -35,7 +37,7 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;}
 .best{font-size:.75rem;color:rgba(255,255,255,.35);margin-bottom:1.8em;font-family:'Space Mono',monospace;letter-spacing:.05em;display:flex;gap:16px;justify-content:center;}
 .best span{color:var(--cy);font-weight:700;}
 .btn{display:inline-flex;align-items:center;gap:8px;padding:16px 44px;font-family:'Space Grotesk',sans-serif;font-size:.92rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:#fff;background:linear-gradient(135deg,var(--pk),var(--vi));border:none;border-radius:60px;cursor:inherit;position:relative;overflow:hidden;transition:transform .2s,box-shadow .2s;box-shadow:0 0 40px rgba(255,0,110,.35);}
-.btn::before{content:'';position:absolute;inset:-2px;border-radius:62px;background:linear-gradient(135deg,var(--pk),var(--vi),var(--cy),var(--pk));background-size:300%;z-index:-1;animation:grad 3s linear infinite;filter:blur(8px);opacity:.5;}
+.btn::before{display:none;}
 .btn:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 0 60px rgba(255,0,110,.55);}
 .btn:active{transform:scale(.97);}
 .btn2{display:inline-flex;align-items:center;gap:6px;padding:12px 26px;font-family:'Space Grotesk',sans-serif;font-size:.82rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:rgba(255,255,255,.6);background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:60px;cursor:inherit;transition:all .2s;}
@@ -91,7 +93,7 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;}
 .gD{background:rgba(255,0,110,.12);color:var(--pk);border:1px solid rgba(255,0,110,.35);}
 
 #sRes{background:rgba(3,0,8,.88);backdrop-filter:blur(18px);}
-.rcard{background:linear-gradient(160deg,rgba(7,3,18,.99),rgba(14,5,28,.99));border:1px solid rgba(255,0,110,.25);border-radius:28px;padding:32px 36px;text-align:center;max-width:460px;width:92vw;box-shadow:0 30px 80px rgba(0,0,0,.6);position:relative;overflow:hidden;animation:cIn .55s cubic-bezier(.34,1.56,.64,1) forwards;}
+.rcard{background:linear-gradient(160deg,rgba(7,3,18,.99),rgba(14,5,28,.99));border:1px solid rgba(255,107,107,.2);border-radius:4px 18px 6px 16px;padding:32px 36px;text-align:center;max-width:460px;width:92vw;box-shadow:0 20px 60px rgba(0,0,0,.5);position:relative;overflow:hidden;animation:cIn .55s cubic-bezier(.34,1.56,.64,1) forwards;}
 @keyframes cIn{from{opacity:0;transform:scale(.78) translateY(40px)}to{opacity:1;transform:scale(1) translateY(0)}}
 .rsh{font-size:.6rem;font-family:'Space Mono',monospace;color:rgba(255,0,110,.55);letter-spacing:.2em;text-transform:uppercase;margin-bottom:.4em;}
 .rsc{font-size:5.5rem;font-weight:700;line-height:1;background:linear-gradient(135deg,var(--pk),var(--vi),var(--cy));-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:cIn .8s cubic-bezier(.34,1.56,.64,1),glitch .4s ease infinite alternate;}
@@ -105,7 +107,7 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;}
 .rst small{font-size:.55rem;font-family:'Space Mono',monospace;color:rgba(255,255,255,.22);letter-spacing:.07em;text-transform:uppercase;margin-top:2px;display:block;}
 
 /* DARE CARD DESIGN */
-.dare-box{background:linear-gradient(145deg,rgba(255,59,0,.12),rgba(255,0,110,.08));border:1px solid rgba(255,59,0,.35);border-radius:18px;padding:16px 18px;margin-bottom:1.4em;text-align:left;position:relative;overflow:hidden;}
+.dare-box{background:linear-gradient(145deg,rgba(255,107,107,.07),rgba(78,205,196,.04));border:2px solid rgba(255,107,107,.2);border-radius:3px 14px 5px 12px;padding:16px 18px;margin-bottom:1.4em;text-align:left;position:relative;overflow:hidden;transform:rotate(-0.3deg);}
 .dare-box::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--flame),var(--pk),var(--am));}
 .dare-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
 .dare-lvl{font-family:'Space Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:.15em;text-transform:uppercase;padding:3px 10px;border-radius:12px;}
@@ -192,6 +194,9 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;}
 .g-user-info{display:flex;align-items:center;gap:8px;margin-bottom:1em;justify-content:center;}
 .g-user-info img{width:28px;height:28px;border-radius:50%;border:2px solid var(--pk);}
 .g-user-info span{font-family:'Space Mono',monospace;font-size:.65rem;color:rgba(255,255,255,.5);}
+/* GRAIN TEXTURE */
+body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
+#sRes{overflow-y:auto;}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
@@ -202,7 +207,7 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;}
 <video id="video" autoplay playsinline muted></video>
 <canvas id="canvas"></canvas>
 <div id="vig"></div>
-<div class="screen on" id="sLoad"><div style="text-align:center"><div class="ring"></div><div class="ltxt">loading hand tracking...</div></div></div>
+<div class="screen on" id="sLoad"><div style="text-align:center"><div style="font-size:3rem;animation:spin 2s linear infinite">🌸</div><div class="ltxt" style="margin-top:12px">camera start ho rha hai ruk...</div><div class="ltxt" style="margin-top:8px;opacity:0.25">tip: accha lighting = better tracking</div></div></div>
 <div class="screen" id="sIntro">
   <div class="min" style="max-width:600px;">
     <div class="badge">✦ WELCOME TO DARE BLOOM ✦</div>
@@ -242,13 +247,13 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;}
       <div>DARES COMPLETED: <span id="daresDoneD">0</span> 🔥</div>
     </div>
     <div style="display:flex;gap:10px;justify-content:center;margin-bottom:1.2em;flex-wrap:wrap;">
-      <button class="btn" id="careerBtn">🎮 Play Career Mode</button>
-      <button class="btn2" id="freeBtn">✏️ Shape Select</button>
+      <button class="btn" id="careerBtn">Play Career Mode</button>
+      <button class="btn2" id="freeBtn">Shape Select</button>
     </div>
     <div style="display:flex;gap:10px;justify-content:center;margin-top:.8em;flex-wrap:wrap;">
-      <button class="btn2 btn-dare" id="toggleDareBtn">🔥 Dare Mode: ACTIVE</button>
-      <button class="btn2" id="leaderboardBtn" style="background:rgba(255,215,0,.08);color:#FFD700;border-color:rgba(255,215,0,.3);">🏆 Leaderboard</button>
-      <button class="btn2" id="howToPlayBtn" style="background:rgba(255,255,255,.05);">ℹ️ How to Play</button>
+      <button class="btn2 btn-dare" id="toggleDareBtn">Dare Mode: ACTIVE</button>
+      <button class="btn2" id="leaderboardBtn" style="background:rgba(255,215,0,.08);color:#FFD700;border-color:rgba(255,215,0,.3);">Leaderboard</button>
+      <button class="btn2" id="howToPlayBtn" style="background:rgba(255,255,255,.05);">How to Play</button>
     </div>
   </div>
 </div>
@@ -324,9 +329,9 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;}
       </div>
       <div class="dare-scratch-msg" id="dareScratchMsg">🔓 DARE REVEALED — now face the consequences!</div>
       <div class="dare-acts" id="dareActsMain">
-        <button class="btn-d-proof" id="dareProofBtn" disabled>📸 Upload Proof (+FULL BONUS)</button>
-        <button class="btn-d-claim" id="dareClaimBtn" disabled>🤞 Claim (+HALF BONUS)</button>
-        <button class="btn-d-skip" id="dareSkipBtn">🙈 Skip (0 PTS)</button>
+        <button class="btn-d-proof" id="dareProofBtn" disabled>Upload Proof — full bonus</button>
+        <button class="btn-d-claim" id="dareClaimBtn" disabled>Claim without proof — half</button>
+        <button class="btn-d-skip" id="dareSkipBtn">Skip dare</button>
       </div>
       <div id="dareProofResult" style="display:none;text-align:center;margin-top:8px;">
         <img id="proofThumb" class="proof-thumb" src="" alt="proof">
@@ -788,11 +793,11 @@ const DARES = {
 };
 
 const MSGS={
- S:["💅 understood the assignment COMPLETELY. ate and left zero crumbs bestie","💀 this is actually illegal. no one draws this well with bare hands bro","🔥 MAIN CHARACTER era with these flowers no cap fr fr","✨ picasso's hotter younger sibling has entered the chat"],
- A:["😤 fine. kinda that guy/girl ngl. KINDA. don't get delulu","🙄 A grade? cute. try again and you'll probably fumble it","👀 lowkey ate but highkey could've been MORE unhinged","🎯 almost a slay. the 'almost' lives rent free in ur head"],
- B:["😐 mid. i said what i said. chronically, devastatingly mid.","🧢 B grade = showed up but didn't show OUT","💤 average enjoyer arc detected. not in flop era rn","😭 really said 'good enough' and clocked out. audacity."],
- C:["💀 bestie what IS this. not a shape, this is abstract trauma","🥔 drew a potato and had the NERVE to call it art. respect","😭 my 5yo cousin draws better. feet. blindfolded. no wifi.","🤡 thought they cooked. microwaved leftovers at best."],
- D:["🤓 you needed specs ig. book an optician appointment NOW","💀 ratio'd by a dotted line. touch grass and retry.","😭 more trauma than a taylor swift album and a half","🔥 managed to miss the ENTIRE shape. backwards talent bro","👀 drawing with your elbow?? be so fr with me rn","🌚 flowers are bussin tho! shame about... everything else lmaooo"]
+ S:["bro HOW. tera haath steady af hai","ye toh illegal level ka drawing hai yaar","doctor ka haath hai tere paas kya","main khud nhi kar paata itna accha honestly"],
+ A:["acha tha not gonna lie. thoda aur try kar S mil jaata","almost perfect bhai. ALMOST. wo 'almost' dard deta hai na?","solid effort yaar. respect. but perfectionist ban na padega","bohot close tha. ek aur round aur tu S grade le jaata"],
+ B:["theek tha. not bad not great. bilkul average vibes","B grade matlab tune try toh kiya par dil nhi lagaya","dekh bura nhi hai but tera better aa sakta hai","average category mein aagya tu. rise up king/queen"],
+ C:["ye kya tha bhai. shape toh dhang se bana le pehle","tera drawing dekh ke shape ko identity crisis ho gya","bhai haath hila rha tha ya earthquake aa rhi thi","koi nhi yaar. practice makes perfect. ya atleast decent"],
+ D:["tera haath kahan tha aur shape kahan tha. koi relation nhi","bhai tune shape dekha bhi tha ya aise hi haath hilaya","ye drawing nhi hai ye crime scene hai shape ke saath","F dena chahta tha par D tak hi options the. lucky hai tu","shape bol rha hai restraining order chahiye usse tujhse","isse accha toh mera chota bhai bhi bana leta. seriously."]
 };
 const pick=a=>a[Math.floor(Math.random()*a.length)];
 function grade(s){if(s>=90)return{g:'S',c:'gS'};if(s>=75)return{g:'A',c:'gA'};if(s>=58)return{g:'B',c:'gB'};if(s>=40)return{g:'C',c:'gC'};return{g:'D',c:'gD'};}
@@ -1131,7 +1136,7 @@ function setupScratchListeners(){
  */
 function pickDare(tier){
  const pool    = DARES[tier.replace('lvl-','')] || DARES.mild;
- const storeKey= 'bloomDareSeen_' + tier;
+ const storeKey= 'bloomDareSeen_' + tier + '_v' + pool.length;
  let seen;
  try { seen = JSON.parse(localStorage.getItem(storeKey) || '[]'); }
  catch(e){ seen = []; }
@@ -1158,13 +1163,11 @@ function pickDare(tier){
  * Score thresholds: 0-44 mild | 45-64 spicy | 65-79 hard | 80+ chaos
  */
 function getDareForScore(){
- const options = [
-  { tier:'lvl-mild',  badge:'LEVEL 1: CREEPY DARE 🌸', pts:30,  pool:'mild' },
-  { tier:'lvl-spicy', badge:'LEVEL 2: HORROR DARE 🌶️',  pts:50,  pool:'spicy' },
-  { tier:'lvl-hard',  badge:'LEVEL 3: NIGHTMARE 🔥',    pts:75,  pool:'hard' },
-  { tier:'lvl-chaos', badge:'LEVEL 4: PURE TERROR 💀',  pts:100, pool:'chaos' }
- ];
- return options[Math.floor(Math.random() * options.length)];
+ const sc = gSc();
+ if(sc >= 80) return { tier:'lvl-chaos', badge:'LEVEL 4: PURE TERROR', pts:100, pool:'chaos' };
+ if(sc >= 65) return { tier:'lvl-hard',  badge:'LEVEL 3: NIGHTMARE',   pts:75,  pool:'hard' };
+ if(sc >= 45) return { tier:'lvl-spicy', badge:'LEVEL 2: HORROR DARE', pts:50,  pool:'spicy' };
+ return { tier:'lvl-mild', badge:'LEVEL 1: CREEPY DARE', pts:30, pool:'mild' };
 }
 
 
@@ -1342,10 +1345,12 @@ async function init(){
   run=true;requestAnimationFrame(loop);show('sIntro');gSt='intro';
  } catch(err) {
   const loadEl = document.getElementById('sLoad');
-  loadEl.innerHTML = `<div style="color:#FF0022; max-width:80%; text-align:center; font-family:'Space Mono', monospace;">
-    <strong>ERROR LOADING TRACKING</strong><br><br>
-    ${err.message || err}<br><br>
-    Please ensure you are allowing camera permissions!
+  loadEl.innerHTML = `<div style="color:var(--pk); max-width:80%; text-align:center; font-family:'Space Mono', monospace;">
+    <div style="font-size:2rem;margin-bottom:12px">😵</div>
+    <strong>camera load nhi ho paya</strong><br><br>
+    <span style="color:rgba(255,255,255,.4);font-size:.75rem">${err.message || err}</span><br><br>
+    <span style="color:rgba(255,255,255,.5)">browser settings mein camera permission allow karo aur page refresh karo</span><br><br>
+    <button onclick="location.reload()" style="padding:10px 24px;background:var(--pk);color:#fff;border:none;border-radius:8px;font-weight:700;cursor:pointer">Retry</button>
   </div>`;
   console.error(err);
  }
@@ -1361,7 +1366,7 @@ document.getElementById('toggleDareBtn').addEventListener('click',()=>{
  eAC();
  dareModeActive = !dareModeActive;
  const btn = document.getElementById('toggleDareBtn');
- btn.textContent = dareModeActive ? '🔥 Dare Mode: ACTIVE' : '👁 Dare Mode: OFF';
+ btn.textContent = dareModeActive ? 'Dare Mode: ACTIVE' : 'Dare Mode: OFF';
  btn.className = dareModeActive ? 'btn2 btn-dare' : 'btn2';
 });
 
