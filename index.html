@@ -199,8 +199,8 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;o
 #sRes{overflow-y:auto;}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script async crossorigin="anonymous" src="https://cdn.clerk.com/clerk.js?publishable_key=pk_test_aW1tdW5lLWNvZC02MTYzLmNsZXJrLmFjY291bnRzLmRldiQ" type="text/javascript"></script>
 </head>
 <body>
 
@@ -224,8 +224,8 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;o
       <div id="nameError" style="font-family:'Space Mono',monospace; font-size:.6rem; color:var(--pk); margin-top:.5em; opacity:0; transition:opacity .3s;">Please enter your name to continue!</div>
     </div>
     <div style="margin-bottom:1em;text-align:center;">
-      <div style="font-family:'Space Mono',monospace;font-size:.55rem;color:rgba(255,255,255,.25);letter-spacing:.12em;margin-bottom:.6em;">OR SIGN IN TO SAVE SCORES GLOBALLY</div>
-      <button class="g-signin-btn" id="googleSignInBtn" onclick="doGoogleSignIn()"><img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G">Sign in with Google</button>
+      <div style="font-family:'Space Mono',monospace;font-size:.55rem;color:rgba(255,255,255,.25);letter-spacing:.12em;margin-bottom:.6em;">SIGN IN TO SAVE SCORES GLOBALLY</div>
+      <button class="g-signin-btn" id="clerkSignInBtn">Sign In / Sign Up</button>
       <div id="signedInInfo" style="display:none;margin-top:.8em;">
         <div class="g-user-info"><img id="userPhoto" src="" alt=""><span id="userName"></span></div>
       </div>
@@ -368,7 +368,7 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;o
 </div>
 <div style="position:fixed;bottom:10px;left:50%;transform:translateX(-50%);z-index:999;font-family:'Space Mono',monospace;font-size:.48rem;color:rgba(255,255,255,.12);letter-spacing:.2em;text-transform:uppercase;pointer-events:none;white-space:nowrap;">🌸 DARE BLOOM &nbsp;&bull;&nbsp; CREATED BY SRIBENDU PRASAD MUDULI</div>
 <script>
-// ===== FIREBASE INIT + GOOGLE SIGN-IN (non-module so it always works) =====
+// ===== FIREBASE INIT (Firestore only — auth via Clerk) =====
 firebase.initializeApp({
   apiKey: "AIzaSyBee3zwZDoMKt7DlpTMYkpZvT4u1xUkMCw",
   authDomain: "dare-bloom.firebaseapp.com",
@@ -378,19 +378,62 @@ firebase.initializeApp({
   appId: "1:76259112393:web:1bb01ea41b665c562fa418"
 });
 var db = firebase.firestore();
-var auth = firebase.auth();
-var firebaseUser = null;
+var clerkUser = null;
 var playerName = localStorage.getItem('bloomPlayerName') || '';
 
-function doGoogleSignIn(){
+// ===== CLERK AUTH =====
+async function initClerk() {
   try {
-    var provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithRedirect(provider);
-  } catch(e) {
-    alert('Sign-in error: ' + e.message);
-    console.error(e);
+    if (!window.Clerk) {
+      await new Promise(function(resolve) {
+        var check = setInterval(function() {
+          if (window.Clerk) { clearInterval(check); resolve(); }
+        }, 100);
+        setTimeout(function() { clearInterval(check); resolve(); }, 5000);
+      });
+    }
+    if (!window.Clerk) return;
+    await window.Clerk.load();
+    updateClerkUI();
+    window.Clerk.addListener(function() { updateClerkUI(); });
+  } catch(e) { console.error('Clerk init error:', e); }
+}
+
+function updateClerkUI() {
+  var user = window.Clerk && window.Clerk.user;
+  clerkUser = user;
+  var signInBtn = document.getElementById('clerkSignInBtn');
+  var signedInInfo = document.getElementById('signedInInfo');
+  var nameInput = document.getElementById('playerNameInput');
+  var introBtn = document.getElementById('introContinueBtn');
+  var menuInfo = document.getElementById('menuUserInfo');
+  if(user) {
+    if(signInBtn) signInBtn.style.display = 'none';
+    if(signedInInfo) signedInInfo.style.display = 'block';
+    document.getElementById('userPhoto').src = user.imageUrl || '';
+    document.getElementById('userName').textContent = user.fullName || (user.primaryEmailAddress && user.primaryEmailAddress.emailAddress) || 'Player';
+    if(nameInput) nameInput.value = user.fullName || user.firstName || '';
+    if(introBtn) { introBtn.style.opacity = '1'; introBtn.style.pointerEvents = 'auto'; }
+    playerName = user.fullName || user.firstName || 'Player';
+    if(menuInfo) {
+      menuInfo.style.display = 'block';
+      document.getElementById('menuUserPhoto').src = user.imageUrl || '';
+      document.getElementById('menuUserName').textContent = user.fullName || user.firstName || '';
+    }
+  } else {
+    if(signInBtn) signInBtn.style.display = 'inline-flex';
+    if(signedInInfo) signedInInfo.style.display = 'none';
+    if(menuInfo) menuInfo.style.display = 'none';
   }
 }
+
+document.addEventListener('DOMContentLoaded', function() {
+  var signInBtn = document.getElementById('clerkSignInBtn');
+  if(signInBtn) signInBtn.addEventListener('click', function() {
+    if(window.Clerk) window.Clerk.openSignIn();
+  });
+});
+initClerk();
 
 // ===== GEMINI AI DARE VERIFICATION =====
 var GEMINI_KEY = 'AQ.Ab8RN6JwKGaV42ux2H5hbv5sag0D6EXZVKwFv7jicFxGT7YWmw';
@@ -400,7 +443,6 @@ async function verifyDareProof(imageBase64, dareText) {
     var base64Data = imageBase64.replace(/^data:image\/[a-zA-Z+]+;base64,/, '');
     var mimeMatch = imageBase64.match(/^data:(image\/[a-zA-Z+]+);base64,/);
     var mimeType = mimeMatch ? mimeMatch[1] : 'image/jpeg';
-
     var response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=' + GEMINI_KEY, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -413,84 +455,44 @@ async function verifyDareProof(imageBase64, dareText) {
         }]
       })
     });
-
     if (!response.ok) throw new Error('API returned ' + response.status);
     var data = await response.json();
-
     if (data.candidates && data.candidates[0] && data.candidates[0].content) {
       var text = data.candidates[0].content.parts[0].text.trim();
       text = text.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
       return JSON.parse(text);
     }
-    return { verified: true, reason: "AI couldn't decide — you pass! 🌸", confidence: 50 };
+    return { verified: true, reason: "AI couldn't decide — you pass!", confidence: 50 };
   } catch(e) {
     console.error('Gemini verification error:', e);
-    return { verified: true, reason: "AI is sleeping — approved by default! 😴", confidence: 0 };
+    return { verified: true, reason: "AI is sleeping — approved by default!", confidence: 0 };
   }
 }
 
-// Handle redirect result when user comes back from Google
-auth.getRedirectResult().then(function(result) {
-  if(result && result.user) {
-    console.log('Signed in via redirect:', result.user.displayName);
-  }
-}).catch(function(e) {
-  console.error('Redirect sign-in error:', e);
-});
-
-auth.onAuthStateChanged(function(user) {
-  firebaseUser = user;
-  var signInBtn = document.getElementById('googleSignInBtn');
-  var signedInInfo = document.getElementById('signedInInfo');
-  var nameInput = document.getElementById('playerNameInput');
-  var introBtn = document.getElementById('introContinueBtn');
-  var menuInfo = document.getElementById('menuUserInfo');
-  
-  if(user) {
-    signInBtn.style.display = 'none';
-    signedInInfo.style.display = 'block';
-    document.getElementById('userPhoto').src = user.photoURL || '';
-    document.getElementById('userName').textContent = user.displayName || user.email;
-    nameInput.value = user.displayName || '';
-    introBtn.style.opacity = '1';
-    introBtn.style.pointerEvents = 'auto';
-    playerName = user.displayName || user.email;
-    if(menuInfo) {
-      menuInfo.style.display = 'block';
-      document.getElementById('menuUserPhoto').src = user.photoURL || '';
-      document.getElementById('menuUserName').textContent = user.displayName || '';
-    }
-  } else {
-    signInBtn.style.display = 'inline-flex';
-    signedInInfo.style.display = 'none';
-    if(menuInfo) menuInfo.style.display = 'none';
-  }
-});
-
 var signOutEl = document.getElementById('signOutBtn');
 if(signOutEl) signOutEl.addEventListener('click', function(){
-  auth.signOut();
-  firebaseUser = null;
+  if(window.Clerk) window.Clerk.signOut();
+  clerkUser = null;
 });
 </script>
 <script type="module">
-// Firebase is already initialized in the non-module script above
-// db, auth, firebaseUser, playerName are global variables
+// Firebase Firestore + Clerk user for leaderboard
+// db, clerkUser, playerName are global variables
 
 // ============ FIRESTORE LEADERBOARD ============
 async function saveToFirestore(name, baseScore, dareBonus) {
-  if(!firebaseUser) return;
+  if(!clerkUser) return;
   const total = baseScore + dareBonus;
-  const docRef = db.collection('leaderboard').doc(firebaseUser.uid);
+  const docRef = db.collection('leaderboard').doc(clerkUser.id);
   const doc = await docRef.get();
-  if(doc.exists && doc.data().total >= total) return; // Only save if higher score
+  if(doc.exists && doc.data().total >= total) return;
   await docRef.set({
     name: name,
     base: baseScore,
     bonus: dareBonus,
     total: total,
-    photoURL: firebaseUser.photoURL || '',
-    uid: firebaseUser.uid,
+    photoURL: clerkUser.imageUrl || '',
+    uid: clerkUser.id,
     updatedAt: firebase.firestore.FieldValue.serverTimestamp()
   }, { merge: true });
 }
