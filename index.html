@@ -862,6 +862,7 @@ function dfl(f){
 let gSt='menu',cMd=false,cRd=0,cOr=[],cScs=[];
 let curS=null,covM=[];
 let hits=0,miss=0,rSt=0,tLeft=TIME,isDiss=false,palSince=0,showG=true,dash=0,lTick=-1;
+let segHits=[],segMiss=[],lastSegVisited=-1; // per-segment accuracy tracking
 let dareModeActive=true, dareStreak=0, totalDaresCompleted=0, curDareBonus=0, curDareObj=null;
 const pH={},sH={};
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -870,6 +871,10 @@ const SMN=isMobile?.10:.08, SMX=isMobile?.35:.30, SPT=isMobile?50:70;
 function bldS(k){
  const d=SHP[k],sz=Math.min(W,H)*.38,pts=d.gen(W/2,H/2,sz);
  covM=new Array(SEGS).fill(false);hits=0;miss=0;
+ // Reset per-segment visit tracking for accurate accuracy
+ segHits=new Array(SEGS).fill(0);
+ segMiss=new Array(SEGS).fill(0);
+ lastSegVisited=-1;
  curS={k,d,pts};
 }
 function d2p(x,y){
@@ -878,9 +883,15 @@ function d2p(x,y){
  return{dist:mD,idx:mI};
 }
 function mCov(pi){const s=Math.min(SEGS-1,Math.floor(pi/(curS.pts.length/SEGS)));covM[s]=true;}
-const gAcc=()=>{const t=hits+miss;return t>0?hits/t*100:0;};
-const gCov=()=>covM.filter(Boolean).length/covM.length*100;
-const gSc=()=>Math.round(gAcc()*.55+gCov()*.45);
+// Accurate accuracy: count unique segment visits, not interpolation steps
+const gAcc=()=>{
+  let totalHit=0,totalMiss=0;
+  for(let i=0;i<SEGS;i++){totalHit+=segHits[i];totalMiss+=segMiss[i];}
+  const t=totalHit+totalMiss;return t>0?Math.min(100,totalHit/t*100):0;
+};
+const gCov=()=>Math.min(100,covM.filter(Boolean).length/covM.length*100);
+// Score: weighted combination — accuracy 40%, coverage 60% (coverage matters more for shape drawing)
+const gSc=()=>Math.min(100,Math.round(gAcc()*.40+gCov()*.60));
 
 function dGuide(){
  if(!showG||!curS)return;dash=(dash+1.8)%60;
@@ -1283,18 +1294,39 @@ async function loop(ts){
     let rx=(1-tip.x)*W,ry=tip.y*H;
     rx=Math.max(0,Math.min(W,rx));ry=Math.max(0,Math.min(H,ry));
     const k='h'+i;
-    if(sH[k]){const[sx,sy]=sH[k];const rd=Math.hypot(rx-sx,ry-sy);const sr=Math.min(1,rd/SPT);const sf=SMX-(SMX-SMN)*sr;rx=sx+(rx-sx)*sf;ry=sy+(ry-sy)*sf;}
+    // Exponential smoothing: fast response for big moves, smooth for small
+    if(sH[k]){
+     const[sx,sy]=sH[k];
+     const rd=Math.hypot(rx-sx,ry-sy);
+     // Alpha: 0.15 for tiny moves (very smooth), 0.75 for large jumps (responsive)
+     const alpha=Math.min(0.75,Math.max(0.15,rd/SPT));
+     rx=sx+(rx-sx)*alpha;ry=sy+(ry-sy)*alpha;
+    }
     sH[k]=[rx,ry];
     const fg=cx.createRadialGradient(rx,ry,0,rx,ry,22);fg.addColorStop(0,'rgba(255,255,255,.85)');fg.addColorStop(.4,'rgba(255,0,110,.2)');fg.addColorStop(1,'transparent');
     cx.save();cx.fillStyle=fg;cx.beginPath();cx.arc(rx,ry,22,0,6.283);cx.fill();cx.restore();
     if(pH[k]&&!isDiss){
      const[px,py]=pH[k];const dist=Math.hypot(rx-px,ry-py);
      if(dist>1){
-      const steps=Math.max(1,(dist/3)|0);
+      const steps=Math.max(1,(dist/4)|0);
+      // Track only ONE hit/miss per segment per frame (prevents inflation)
+      let frameSegSeen=new Set();
       for(let s=0;s<steps;s++){
        const t=s/steps,ix=px+(rx-px)*t,iy=py+(ry-py)*t;
        let iH=null,tc='rgba(131,56,236,.4)';
-       if(gSt==='drawing'&&curS){const{dist:d,idx:pi}=d2p(ix,iy);iH=d<=HIT;if(d<=COV)mCov(pi);if(iH)hits++;else miss++;uHUD();tc=iH?'rgba(6,214,160,.5)':'rgba(255,0,110,.35)';}
+       if(gSt==='drawing'&&curS){
+        const{dist:d,idx:pi}=d2p(ix,iy);
+        const seg=Math.min(SEGS-1,Math.floor(pi/(curS.pts.length/SEGS)));
+        iH=d<=HIT;
+        if(d<=COV)mCov(pi);
+        // Per-segment counting: only count once per segment per frame
+        if(!frameSegSeen.has(seg)){
+         frameSegSeen.add(seg);
+         if(iH){segHits[seg]++;hits++;}else{segMiss[seg]++;miss++;}
+        }
+        uHUD();
+        tc=iH?'rgba(6,214,160,.5)':'rgba(255,0,110,.35)';
+       }
        if(Math.random()<.88)spFl(ix+(Math.random()-.5)*4,iy+(Math.random()-.5)*4,iH);
        if(Math.random()<.28)spSp(ix,iy,iH===true?155:iH===false?340:290);
        if(Math.random()<.42)spTr(ix,iy,tc);
@@ -1305,7 +1337,7 @@ async function loop(ts){
    }
   }else{for(const k in pH)delete pH[k];}
   if(op>=1){if(palSince===0)palSince=ts;}else{palSince=0;}
-  if(palSince>0&&ts-palSince>600&&!isDiss){palSince=0;dissAll();if(gSt==='drawing'){hits=0;miss=0;covM.fill(false);uHUD();}}
+  if(palSince>0&&ts-palSince>600&&!isDiss){palSince=0;dissAll();if(gSt==='drawing'){hits=0;miss=0;segHits=new Array(SEGS).fill(0);segMiss=new Array(SEGS).fill(0);covM.fill(false);uHUD();}}
  }
  for(let i=trs.length-1;i>=0;i--){const t=trs[i];t.a=Math.max(0,t.a-.03);t.sz*=.95;if(t.a<=.02){trs.splice(i,1);continue;}cx.save();cx.globalAlpha=t.a;cx.fillStyle=t.col;cx.shadowColor=t.col;cx.shadowBlur=8;cx.beginPath();cx.arc(t.x,t.y,t.sz,0,6.283);cx.fill();cx.restore();}
  for(let i=fls.length-1;i>=0;i--){
@@ -1335,9 +1367,9 @@ async function init(){
     baseOptions:{modelAssetPath:modelPath, delegate:"GPU"},
     numHands:1,
     runningMode:"VIDEO",
-    minHandDetectionConfidence: isMobile ? .4 : .5,
-    minHandPresenceConfidence: isMobile ? .4 : .5,
-    minTrackingConfidence: isMobile ? .3 : .4
+    minHandDetectionConfidence: 0.4,
+    minHandPresenceConfidence: 0.5,
+    minTrackingConfidence: 0.5
   });
   const camOpts = isMobile
     ? {video:{width:{ideal:640},height:{ideal:480},facingMode:'user'}}
