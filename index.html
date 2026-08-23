@@ -1434,9 +1434,9 @@ async function renderLeaderboard(){
 
   const top10 = allScores.slice(0,10);
   const myName = playerName || '';
-  const myUID = firebaseUser ? firebaseUser.uid : null;
+  const myUID = clerkUser ? clerkUser.id : null;
 
-  // Find my entry — match by UID if signed in, else by name
+  // Find my entry — match by UID (Clerk id) if signed in, else by name
   let myRankIdx = -1;
   let myEntry = null;
   allScores.forEach((e, i) => {
@@ -1446,7 +1446,7 @@ async function renderLeaderboard(){
 
   // Player info bar
   const pInfo = document.getElementById('lbPlayerInfo');
-  const photo = firebaseUser && firebaseUser.photoURL ? '<img src="'+firebaseUser.photoURL+'" style="width:22px;height:22px;border-radius:50%;vertical-align:middle;margin-right:6px;border:1.5px solid var(--pk);">' : '';
+  const photo = clerkUser && clerkUser.imageUrl ? '<img src="'+clerkUser.imageUrl+'" style="width:22px;height:22px;border-radius:50%;vertical-align:middle;margin-right:6px;border:1.5px solid var(--pk);">' : '';
   const syncBadge = isGlobal ? ' <span style="color:#4CAF50;font-size:.6rem;">🌐 Global</span>' : ' <span style="color:rgba(255,255,255,.25);font-size:.6rem;">(local)</span>';
   const rankDisplay = myRankIdx >= 0 ? '#'+(myRankIdx+1) : 'Unranked';
   pInfo.innerHTML = myName
