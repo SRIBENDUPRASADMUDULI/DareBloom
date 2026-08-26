@@ -606,7 +606,7 @@ async function loadFirestoreLeaderboard() {
 
 
 import{HandLandmarker,FilesetResolver}from"https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/vision_bundle.mjs";
-const HIT=40,COV=70,TIME=35,SEGS=80,MXF=400,MXS=300,MXT=250;
+const HIT=30,TIME=35,SEGS=80,MXF=400,MXS=300,MXT=250;
 const SHP={
  heart:{name:'Heart',emoji:'❤️',diff:'medium',gen(cx,cy,sz){const p=[];for(let i=0;i<=360;i++){const t=i*Math.PI/180;p.push([cx+sz*.04*16*Math.pow(Math.sin(t),3),cy-sz*.04*(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))]);}return p;}},
  star:{name:'Star',emoji:'⭐',diff:'hard',gen(cx,cy,sz){const p=[],O=sz*.45,I=sz*.18,tot=10;for(let i=0;i<=360;i++){const f=i/360,x=f*tot,s=Math.floor(x),r=(s%2===0)?O-(O-I)*(x-s):I+(O-I)*(x-s),a1=s/tot*Math.PI*2-Math.PI/2,a2=(s+1)/tot*Math.PI*2-Math.PI/2,a=a1+(a2-a1)*(x-s);p.push([cx+r*Math.cos(a),cy+r*Math.sin(a)]);}return p;}},
@@ -984,8 +984,10 @@ const gAcc=()=>{
   const t=totalHit+totalMiss;return t>0?Math.min(100,totalHit/t*100):0;
 };
 const gCov=()=>Math.min(100,covM.filter(Boolean).length/covM.length*100);
-// Score: weighted combination — accuracy 40%, coverage 60% (coverage matters more for shape drawing)
-const gSc=()=>Math.min(100,Math.round(gAcc()*.40+gCov()*.60));
+// Score = geometric mean of accuracy × coverage
+// Forces BOTH to be high: half-circle perfectly = sqrt(100×50)=70
+// Full circle sloppily = sqrt(60×100)=77. Full + precise = sqrt(100×100)=100
+const gSc=()=>Math.min(100,Math.round(Math.sqrt(gAcc()*gCov())));
 
 function dGuide(){
  if(!showG||!curS)return;dash=(dash+1.8)%60;
@@ -1412,7 +1414,9 @@ async function loop(ts){
         const{dist:d,idx:pi}=d2p(ix,iy);
         const seg=Math.min(SEGS-1,Math.floor(pi/(curS.pts.length/SEGS)));
         iH=d<=HIT;
-        if(d<=COV)mCov(pi);
+        // Coverage ONLY marks when finger is precisely on path (within HIT)
+        // Old COV=70px was inflating coverage for nearby but off-path moves
+        if(iH) mCov(pi);
         // Per-segment counting: only count once per segment per frame
         if(!frameSegSeen.has(seg)){
          frameSegSeen.add(seg);
