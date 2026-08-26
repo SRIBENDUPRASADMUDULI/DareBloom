@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -357,11 +357,107 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;o
 .stand-score{font-family:var(--fm);font-size:1.25rem;color:var(--cy);font-weight:700;}
 .stand-sub{font-family:var(--fm);font-size:.48rem;color:var(--t3);}
 #partyIndicator{position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:30;display:none;background:rgba(30,203,225,.09);border:1px solid rgba(30,203,225,.18);border-radius:20px;padding:4px 14px;font-family:var(--fm);font-size:.5rem;color:var(--cy);letter-spacing:.1em;white-space:nowrap;}
+
+/* ================================================================
+   ELITE GAME POLISH — Animations, Micro-interactions, Feel
+   ================================================================ */
+
+/* --- Score pulse when value increases (HUD) --- */
+@keyframes scorePulse{0%{transform:scale(1);filter:brightness(1)}35%{transform:scale(1.22);filter:brightness(1.6) drop-shadow(0 0 16px var(--pk))}100%{transform:scale(1);filter:brightness(1)}}
+.hsc{display:inline-block;transition:none;}
+.hsc.up{animation:scorePulse .38s cubic-bezier(.34,1.56,.64,1)}
+
+/* --- Grade badge dramatic reveal --- */
+@keyframes gradeReveal{0%{transform:scale(0) rotate(-20deg);opacity:0}55%{transform:scale(1.4) rotate(6deg)}80%{transform:scale(.88) rotate(-2deg)}100%{transform:scale(1) rotate(0deg);opacity:1}}
+.rgr.reveal,.cgr.reveal{animation:gradeReveal .65s cubic-bezier(.34,1.56,.64,1) forwards}
+
+/* --- Result stats stagger in from bottom --- */
+@keyframes statSlide{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.rst.in{animation:statSlide .4s ease both;}
+.rst.in:nth-child(1){animation-delay:.1s}
+.rst.in:nth-child(2){animation-delay:.22s}
+.rst.in:nth-child(3){animation-delay:.34s}
+
+/* --- Dare box slides in --- */
+@keyframes dareSlide{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+.dare-box.in{animation:dareSlide .5s ease both}
+
+/* --- Button ripple --- */
+.btn-ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.18);transform:scale(0);animation:ripple .55s linear forwards;pointer-events:none;z-index:0;}
+@keyframes ripple{to{transform:scale(4.5);opacity:0}}
+
+/* --- Primary button shimmer on hover --- */
+.btn::before{content:'';position:absolute;top:0;left:-100%;width:40%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent);transform:skewX(-20deg);transition:left .6s ease;pointer-events:none;z-index:1;}
+.btn:hover::before{left:150%;}
+
+/* --- Shape card enhanced hover --- */
+.scard:hover{background:rgba(255,71,87,.07);border-color:rgba(255,71,87,.3);transform:translateY(-4px);box-shadow:0 12px 32px rgba(255,71,87,.12),0 0 0 1px rgba(255,71,87,.06) inset;}
+.scard:active{transform:scale(.96) translateY(0);}
+
+/* --- HUD card flash on score increase --- */
+@keyframes hudFlash{0%{border-color:rgba(30,203,225,.7);box-shadow:0 0 24px rgba(30,203,225,.3)}100%{border-color:rgba(255,71,87,.16);box-shadow:0 0 0 1px rgba(255,71,87,.05) inset,0 10px 40px rgba(0,0,0,.5)}}
+.hcard.flash{animation:hudFlash .5s ease}
+
+/* --- Streak counter pop --- */
+@keyframes streakPop{0%{transform:scale(1)}40%{transform:scale(1.5);filter:brightness(1.8)}100%{transform:scale(1);filter:brightness(1)}}
+#hStreak.pop{animation:streakPop .3s ease}
+
+/* --- Combo intensity levels --- */
+.combo-lv1 .combo-num{color:var(--am);text-shadow:0 0 16px rgba(255,211,42,.5);}
+.combo-lv2 .combo-num{color:var(--pk);text-shadow:0 0 20px rgba(255,71,87,.7);}
+.combo-lv3 .combo-num{color:#FF3B00;text-shadow:0 0 30px #FF3B00, 0 0 60px rgba(255,59,0,.4);animation:comboPop .4s ease infinite alternate;}
+
+/* --- Name input professional focus --- */
+.name-input:focus{border-color:var(--pk);box-shadow:0 0 0 3px rgba(255,71,87,.1),0 0 20px rgba(255,71,87,.12);}
+
+/* --- Party input focus --- */
+.p-input:focus{box-shadow:0 0 0 3px rgba(30,203,225,.08);}
+
+/* --- Best score animate on menu --- */
+@keyframes statReveal{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.stat-val.ready{animation:statReveal .5s ease both;}
+
+/* --- Countdown dramatic feel --- */
+#sCount::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at center,rgba(255,71,87,.12) 0%,transparent 70%);pointer-events:none;}
+@keyframes countRing{0%{opacity:.8;transform:scale(.3)}100%{opacity:0;transform:scale(2.5)}}
+.count-ring{position:absolute;width:220px;height:220px;border:2px solid rgba(255,71,87,.4);border-radius:50%;animation:countRing 1s ease-out forwards;pointer-events:none;}
+
+/* --- Game screen canvas overlay scanlines --- */
+#sGame::after{content:'';position:fixed;inset:0;z-index:3;pointer-events:none;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.015) 2px,rgba(0,0,0,.015) 4px);animation:none;}
+
+/* --- Smooth number transition --- */
+.rsc-num{font-family:var(--fh);font-size:5.5rem;font-weight:400;line-height:1;background:linear-gradient(135deg,var(--pk),var(--cy));-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:glitch .4s ease infinite alternate;}
+
+/* --- Result card inner glow (grade-specific) --- */
+.rcard.gS{box-shadow:0 24px 64px rgba(0,0,0,.6),0 0 60px rgba(255,215,0,.08) inset;}
+.rcard.gA{box-shadow:0 24px 64px rgba(0,0,0,.6),0 0 60px rgba(6,214,160,.06) inset;}
+.rcard.gB{box-shadow:0 24px 64px rgba(0,0,0,.6),0 0 60px rgba(108,58,255,.06) inset;}
+
+/* --- Menu stat cells animation --- */
+.stat-cell{animation:statReveal .5s ease both;}
+.stat-cell:nth-child(1){animation-delay:.1s}
+.stat-cell:nth-child(2){animation-delay:.2s}
+
+/* --- In-game hint pulse --- */
+@keyframes hintPulse{0%,100%{opacity:.14}50%{opacity:.28}}
+#phint{animation:hintPulse 3s ease-in-out infinite;}
+
+/* --- Shape card stagger entry --- */
+@keyframes cardEntry{from{opacity:0;transform:translateY(12px) scale(.95)}to{opacity:1;transform:none}}
+.scard.enter{animation:cardEntry .35s cubic-bezier(.4,0,.2,1) both;}
+
+/* --- Result score S-grade extra celebration --- */
+@keyframes celebrate{0%,100%{text-shadow:0 0 20px rgba(255,215,0,.5)}50%{text-shadow:0 0 50px rgba(255,215,0,.9),0 0 100px rgba(255,71,87,.3)}}
+#rSC.grade-s{animation:glitch .4s ease infinite alternate,celebrate 1.5s ease infinite;}
+
+/* --- Timer canvas glow when low --- */
+@keyframes timerPulse{0%,100%{opacity:1}50%{opacity:.7}}
+#tWrap.low canvas{animation:timerPulse .6s ease-in-out infinite;}
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-<script async crossorigin="anonymous" src="https://cdn.clerk.com/clerk.js?publishable_key=pk_test_aW1tdW5lLWNvZC02MTYzLmNsZXJrLmFjY291bnRzLmRldiQ" type="text/javascript"></script>
+<script async crossorigin="anonymous" src="https://cdn.clerk.com/clerk.js?publishable_key=sk_test_iXcSzzFyocOgubOqihmM2SE2CtIdiz43DjfJ5ZNqyJ" type="text/javascript"></script>
 </head>
 <body>
 
@@ -1118,15 +1214,30 @@ function dTimer(t){
 }
 function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));if(id)document.getElementById(id).classList.add('on');document.getElementById('hud').classList.remove('on');document.getElementById('tWrap').classList.remove('on');document.getElementById('rds').classList.remove('on');try{document.getElementById('inGameMenuBtn').style.display='none';document.getElementById('inGameRestartBtn').style.display='none';}catch(e){}if(id==='sMenu'){try{document.getElementById('crdCnt').innerHTML='';}catch(e){}}}
 
+let _lastHUDSc=0, _lastStreak=0;
 function uHUD(){
- if(gSt!=='drawing')return;
+ if(gSt!=='drawing') return;
  const sc=gSc(),ac=Math.round(gAcc()),co=Math.round(gCov());
  const{g,c}=grade(sc);
- document.getElementById('hSC').textContent=sc;
- document.getElementById('hStreak').textContent='🔥 STREAK: '+dareStreak;
- const ge=document.getElementById('hGR');ge.textContent=g;ge.className='hgr '+c;
- document.getElementById('bAcc').style.width=ac+'%';document.getElementById('vAcc').textContent=ac+'%';
- document.getElementById('bCov').style.width=co+'%';document.getElementById('vCov').textContent=co+'%';
+ const hsc=document.getElementById('hSC');
+ const hCard=document.querySelector('.hcard');
+ // Score pulse animation when score increases
+ if(sc>_lastHUDSc && _lastHUDSc>=0){
+  hsc.classList.remove('up'); void hsc.offsetWidth; hsc.classList.add('up');
+  if(hCard){ hCard.classList.remove('flash'); void hCard.offsetWidth; hCard.classList.add('flash'); }
+ }
+ _lastHUDSc=sc;
+ hsc.textContent=sc;
+ // Streak pop animation
+ const hs=document.getElementById('hStreak');
+ if(dareStreak>_lastStreak && dareStreak>0){
+  hs.classList.remove('pop'); void hs.offsetWidth; hs.classList.add('pop');
+ }
+ _lastStreak=dareStreak;
+ hs.textContent='🔥 STREAK: '+dareStreak;
+ const ge=document.getElementById('hGR'); ge.textContent=g; ge.className='hgr '+c;
+ document.getElementById('bAcc').style.width=ac+'%'; document.getElementById('vAcc').textContent=ac+'%';
+ document.getElementById('bCov').style.width=co+'%'; document.getElementById('vCov').textContent=co+'%';
 }
 
 function uRds(){
@@ -1344,7 +1455,6 @@ function setupScratchListeners(){
  * Returns a non-repeated dare string from the given tier pool.
  * Tracks seen dares in localStorage['bloomDareSeen_<tier>'].
  * Resets automatically when all dares in the tier are exhausted.
- */
 function pickDare(tier){
  const pool    = DARES[tier.replace('lvl-','')] || DARES.mild;
  const storeKey= 'bloomDareSeen_' + tier + '_v' + pool.length;
@@ -1386,45 +1496,98 @@ function getDareForScore(){
 function showRes(){
  const sc=gSc(),ac=Math.round(gAcc()),co=Math.round(gCov());
  const{g,c}=grade(sc);
- document.getElementById('rSN').textContent=curS.d.name.toUpperCase()+' '+curS.d.emoji;
- document.getElementById('rSC').textContent=sc;
- const rg=document.getElementById('rGR');rg.textContent=g;rg.className='rgr '+c;
- document.getElementById('rMsg').textContent=pick(MSGS[g]);
- document.getElementById('rAcc').textContent=ac+'%';
- document.getElementById('rCov').textContent=co+'%';
- document.getElementById('rHits').textContent=hits;
- 
- // DARE CONTAINER SETUP with scratch card
- const dareBox = document.getElementById('dareContainer');
-  if(dareModeActive){
-   dareBox.style.display = 'block';
-   curDareObj = getDareForScore();
-   document.getElementById('dareBadge').className = 'dare-lvl ' + curDareObj.tier;
-  document.getElementById('dareBadge').textContent = curDareObj.badge;
-  document.getElementById('darePts').textContent = '+' + curDareObj.pts + ' BONUS PTS';
-  // Reset canvas visibility for clean re-init
-  const canvas = document.getElementById('scratchCanvas');
-  canvas.style.transition = 'none';
-  canvas.style.display = 'block';
-  canvas.style.opacity = '1';
-  // Init scratch card after result card animation finishes (700ms)
-  setTimeout(()=>{ initScratchCard(pickDare(curDareObj.tier), curDareObj.tier); setupScratchListeners(); }, 700);
- } else {
-  dareBox.style.display = 'none';
- }
 
+ // Reset UI elements — will animate in sequentially
+ const rScEl=document.getElementById('rSC');
+ const rGrEl=document.getElementById('rGR');
+ const rCard=document.querySelector('.rcard');
+ rScEl.textContent='0'; rScEl.classList.remove('grade-s');
+ rGrEl.textContent=''; rGrEl.className='rgr '+c; rGrEl.classList.remove('reveal');
+ if(rCard){ rCard.className='rcard'; }
+ document.getElementById('rSN').textContent=curS.d.name.toUpperCase()+' '+curS.d.emoji;
+ document.getElementById('rMsg').textContent='';
+ document.getElementById('rAcc').textContent='—';
+ document.getElementById('rCov').textContent='—';
+ document.getElementById('rHits').textContent='—';
+ document.querySelectorAll('.rst').forEach(r=>r.classList.remove('in'));
+
+ // Dare setup
+ const dareBox=document.getElementById('dareContainer');
+ if(dareModeActive){
+  dareBox.style.display='block'; dareBox.style.opacity='0'; dareBox.classList.remove('in');
+  curDareObj=getDareForScore();
+  document.getElementById('dareBadge').className='dare-lvl '+curDareObj.tier;
+  document.getElementById('dareBadge').textContent=curDareObj.badge;
+  document.getElementById('darePts').textContent='+'+curDareObj.pts+' BONUS PTS';
+  const sc2=document.getElementById('scratchCanvas');
+  sc2.style.transition='none'; sc2.style.display='block'; sc2.style.opacity='1';
+ } else { dareBox.style.display='none'; }
+
+ // Game state transitions
  cScs.push({k:curS.k,sc,em:curS.d.emoji,nm:curS.d.name});
- gSt='results';syncGameUI('results');
+ gSt='results'; syncGameUI('results');
  document.getElementById('hud').classList.remove('on');
- document.getElementById('tWrap').classList.remove('on');
+ document.getElementById('tWrap').classList.remove('on','low');
  document.getElementById('rds').classList.remove('on');
  lastBaseScore=sc; lastDareBonus=0;
- // Reset combo on result
- comboCount=0; if(comboBox) comboBox.style.display='none';
- // Party mode: record score
+ comboCount=0; if(comboBox)comboBox.style.display='none';
  if(typeof partyOnResult==='function') partyOnResult(sc);
- if(!dareModeActive && typeof playerName!=='undefined' && playerName) saveToLeaderboard(playerName, sc, 0);
- show('sRes');sfxOK();
+ if(!dareModeActive&&typeof playerName!=='undefined'&&playerName) saveToLeaderboard(playerName,sc,0);
+ show('sRes'); sfxOK();
+
+ // ═══ ELITE STAGGERED REVEAL ═══════════════════════════════
+ // t+250ms  score counts up 0→final (ease-out cubic, 800ms)
+ // t+600ms  grade badge pops in with overshoot spring
+ // t+750ms  stat cells stagger in (3 × 120ms apart)
+ // t+900ms  message fades in
+ // t+1150ms dare box slides up + scratch card init
+ // ═════════════════════════════════════════════════════════
+
+ // 1. Score count-up
+ setTimeout(()=>{
+  if(gSt!=='results') return;
+  const dur=800, s0=performance.now();
+  const step=(now)=>{
+   const p=Math.min((now-s0)/dur,1);
+   const e=1-Math.pow(1-p,3);
+   rScEl.textContent=Math.round(sc*e);
+   if(p<1){ requestAnimationFrame(step); }
+   else { rScEl.textContent=sc; if(g==='S') rScEl.classList.add('grade-s'); }
+  };
+  requestAnimationFrame(step);
+ },250);
+
+ // 2. Grade reveal
+ setTimeout(()=>{
+  if(gSt!=='results') return;
+  rGrEl.textContent=g;
+  void rGrEl.offsetWidth;
+  rGrEl.classList.add('reveal');
+  if(rCard&&(g==='S'||g==='A'||g==='B')) rCard.classList.add('g'+g);
+  const pitches={S:1760,A:1320,B:1047,C:880,D:660};
+  if(typeof tone==='function') tone(pitches[g]||660,'sine',.18,.12);
+ },600);
+
+ // 3. Stats + message
+ setTimeout(()=>{
+  if(gSt!=='results') return;
+  document.getElementById('rMsg').textContent=pick(MSGS[g]);
+  document.getElementById('rAcc').textContent=ac+'%';
+  document.getElementById('rCov').textContent=co+'%';
+  document.getElementById('rHits').textContent=hits;
+  document.querySelectorAll('.rst').forEach(r=>r.classList.add('in'));
+ },750);
+
+ // 4. Dare box + scratch card
+ if(dareModeActive){
+  setTimeout(()=>{
+   if(gSt!=='results') return;
+   dareBox.style.opacity='1';
+   dareBox.classList.add('in');
+   initScratchCard(pickDare(curDareObj.tier),curDareObj.tier);
+   setupScratchListeners();
+  },1150);
+ }
 }
 
 function showCar(){
@@ -1722,12 +1885,17 @@ function updateCombo(isHit) {
     comboCount++;
     maxCombo = Math.max(maxCombo, comboCount);
     if(comboCount >= 5) {
-      comboNum.textContent = 'x' + Math.floor(comboCount / 5 + 1);
+      const mult = Math.floor(comboCount / 5 + 1);
+      comboNum.textContent = 'x' + mult;
       comboBox.style.display = 'flex';
-      // Reset animation
+      // Reset pop animation
       comboBox.style.animation = 'none';
       void comboBox.offsetWidth;
       comboBox.style.animation = 'comboPop .25s ease';
+      // Intensity classes — escalate the visual as combo grows
+      comboBox.className = mult <= 2 ? 'combo-lv1' :
+                           mult <= 4 ? 'combo-lv2' : 'combo-lv3';
+      tone(440 + comboCount * 12, 'triangle', .08, .04);
     }
   } else {
     if(comboCount >= 5) { tone(180,'sine',.2,.05); }
@@ -1736,6 +1904,7 @@ function updateCombo(isHit) {
   }
 }
 // Combo resets on palm gesture (handled in main loop) and gSt transitions
+
 
 // ============ PARTY MODE ============
 (function(){
@@ -2051,6 +2220,49 @@ document.getElementById('inGameRestartBtn').addEventListener('click', ()=>{eAC()
 
 // INITIALIZE
 init().catch(console.error);
-</script>
+// ============ ELITE UI EFFECTS ============
+document.addEventListener('DOMContentLoaded', () => {
+  // 1. Button Ripple Effect
+  document.body.addEventListener('click', e => {
+    const btn = e.target.closest('.btn, .btn2');
+    if(btn) {
+      const rect = btn.getBoundingClientRect();
+      const ripple = document.createElement('div');
+      ripple.className = 'btn-ripple';
+      ripple.style.left = (e.clientX - rect.left - 10) + 'px';
+      ripple.style.top = (e.clientY - rect.top - 10) + 'px';
+      ripple.style.width = '20px';
+      ripple.style.height = '20px';
+      btn.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 600);
+      tone(600, 'sine', 0.1, 0.05); // btn sound
+    }
+  });
+
+  // 2. Shape Card Staggered Entry
+  const shapeWrap = document.getElementById('sShapes');
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.target.classList.contains('on')) {
+        const cards = document.querySelectorAll('.scard');
+        cards.forEach((card, i) => {
+          card.classList.remove('enter');
+          void card.offsetWidth; // trigger reflow
+          card.style.animationDelay = (i * 0.05) + 's';
+          card.classList.add('enter');
+        });
+      }
+    });
+  });
+  if(shapeWrap) observer.observe(shapeWrap, { attributes: true, attributeFilter: ['class'] });
+
+  // 3. Best Score Animation
+  const bestScoreEl = document.getElementById('bestD');
+  if(bestScoreEl && localStorage.getItem('bloomBest')) {
+    setTimeout(() => {
+      bestScoreEl.classList.add('ready');
+    }, 300);
+  }
+});</script>
 </body>
 </html>
