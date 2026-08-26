@@ -197,6 +197,19 @@ body{font-family:'Space Grotesk',system-ui,sans-serif;}
 /* GRAIN TEXTURE */
 body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;opacity:.035;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");}
 #sRes{overflow-y:auto;}
+/* TUTORIAL MODAL */
+.tut-step{display:none;animation:cIn .35s ease;}
+.tut-step.active{display:block;}
+.tut-anim{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:18px;text-align:center;margin-bottom:14px;min-height:110px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.tut-anim-label{font-family:'Space Mono',monospace;font-size:.58rem;color:rgba(255,255,255,.35);letter-spacing:.1em;margin-top:6px;}
+.tut-title{font-family:'Creepster',cursive;font-size:1.4rem;color:var(--pk);margin-bottom:.4em;text-shadow:0 0 10px rgba(255,107,107,.3);}
+.tut-desc{font-size:.84rem;color:rgba(255,255,255,.6);line-height:1.55;}
+.tut-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);transition:all .3s;}
+.tut-dot.active{background:var(--cy);border-color:var(--cy);box-shadow:0 0 8px var(--cy);}
+@keyframes tutBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes tutPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+@keyframes tutShake{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+@keyframes tutCount{from{opacity:.4;transform:scale(.9)}to{opacity:1;transform:scale(1.1)}}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -254,9 +267,93 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;o
       <button class="btn2 btn-dare" id="toggleDareBtn">Dare Mode: ACTIVE</button>
       <button class="btn2" id="leaderboardBtn" style="background:rgba(255,215,0,.08);color:#FFD700;border-color:rgba(255,215,0,.3);">Leaderboard</button>
       <button class="btn2" id="howToPlayBtn" style="background:rgba(255,255,255,.05);">How to Play</button>
+      <button class="btn2" id="tutorialBtn" style="background:rgba(78,205,196,.08);color:var(--cy);border-color:rgba(78,205,196,.3);">▶ Tutorial</button>
     </div>
   </div>
 </div>
+
+<!-- TUTORIAL MODAL -->
+<div id="tutorialModal" style="display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,.92);backdrop-filter:blur(18px);align-items:center;justify-content:center;flex-direction:column;">
+  <div style="max-width:480px;width:92vw;padding:28px 24px;background:linear-gradient(160deg,rgba(10,5,25,.99),rgba(20,8,40,.99));border:1px solid rgba(78,205,196,.2);border-radius:20px;position:relative;">
+    <div style="text-align:center;margin-bottom:18px;">
+      <div style="font-family:'Creepster',cursive;font-size:2rem;color:var(--cy);text-shadow:0 0 20px var(--cy);">HOW TO PLAY</div>
+      <div style="font-family:'Space Mono',monospace;font-size:.55rem;color:rgba(255,255,255,.3);letter-spacing:.15em;">// DARE BLOOM · TUTORIAL</div>
+    </div>
+    <!-- Tutorial Steps -->
+    <div id="tutSteps">
+      <!-- Step 1 -->
+      <div class="tut-step active" data-step="0">
+        <div class="tut-anim" id="tA0">
+          <div style="font-size:3.5rem;animation:tutBounce 1s ease-in-out infinite;">☝️</div>
+          <div class="tut-anim-label">Index Finger = Draw</div>
+          <div style="position:relative;width:200px;height:100px;margin:10px auto;">
+            <svg width="200" height="100" style="overflow:visible"><path id="tutPath0" d="M20,80 Q60,20 100,50 Q140,80 180,20" fill="none" stroke="rgba(78,205,196,.4)" stroke-width="2" stroke-dasharray="4,4"/><circle id="tutDot0" cx="20" cy="80" r="8" fill="var(--cy)" filter="url(#glow)"/></svg>
+          </div>
+        </div>
+        <div class="tut-title">☝️ Draw with Index Finger</div>
+        <div class="tut-desc">Point your index finger at the screen. Move it along the glowing guide shape to trace it perfectly!</div>
+      </div>
+      <!-- Step 2 -->
+      <div class="tut-step" data-step="1">
+        <div class="tut-anim" id="tA1">
+          <div style="font-size:3.5rem;animation:tutPulse 1.2s ease-in-out infinite;">🖐️</div>
+          <div class="tut-anim-label">Open Palm = Reset</div>
+        </div>
+        <div class="tut-title">🖐 Open Palm to Erase</div>
+        <div class="tut-desc">Open your whole hand flat. After 0.6s, everything resets and you can start drawing again from scratch!</div>
+      </div>
+      <!-- Step 3 -->
+      <div class="tut-step" data-step="2">
+        <div class="tut-anim" id="tA2">
+          <div style="display:flex;justify-content:center;gap:4px;margin-bottom:8px;">
+            <span style="font-size:1.2rem;background:rgba(6,214,160,.2);border:1px solid rgba(6,214,160,.4);border-radius:8px;padding:4px 10px;font-family:monospace;color:var(--cy);">ACC</span>
+            <span style="font-size:1.2rem;background:rgba(255,183,3,.2);border:1px solid rgba(255,183,3,.4);border-radius:8px;padding:4px 10px;font-family:monospace;color:var(--am);">COV</span>
+            <span style="font-size:1.2rem;background:rgba(255,0,110,.2);border:1px solid rgba(255,0,110,.4);border-radius:8px;padding:4px 10px;font-family:monospace;color:var(--pk);">SCORE</span>
+          </div>
+          <div id="tutScoreAnim" style="font-family:'Creepster',cursive;font-size:3rem;color:var(--cy);animation:tutCount 2s ease-in-out infinite alternate;">85</div>
+        </div>
+        <div class="tut-title">📊 How Score Works</div>
+        <div class="tut-desc"><b>Accuracy</b> = how close you stay to the guide line. <b>Coverage</b> = how much of the shape you trace. Both combined = your final score!</div>
+      </div>
+      <!-- Step 4 -->
+      <div class="tut-step" data-step="3">
+        <div class="tut-anim" id="tA3">
+          <div style="font-size:2.5rem;animation:tutShake 1s ease-in-out infinite;">😈🔥💀</div>
+          <div style="background:linear-gradient(145deg,rgba(255,59,0,.15),rgba(255,0,110,.1));border:1px solid rgba(255,59,0,.4);border-radius:10px;padding:10px 14px;margin-top:10px;font-family:'Space Mono',monospace;font-size:.62rem;color:rgba(255,255,255,.8);text-align:left;">LEVEL 4: PURE TERROR<br><span style="color:rgba(255,255,255,.4)">Do a karaoke of the worst song you know... 🎤</span></div>
+        </div>
+        <div class="tut-title">😈 Dare System</div>
+        <div class="tut-desc">After each shape, you get a dare! Higher score = more extreme dare. <b>Scratch</b> to reveal it. Complete the dare for bonus points!</div>
+      </div>
+      <!-- Step 5 -->
+      <div class="tut-step" data-step="4">
+        <div class="tut-anim" id="tA4">
+          <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+            <div style="background:linear-gradient(135deg,#FFD700,#FF8C00);border-radius:8px;padding:7px 12px;font-size:.7rem;font-weight:700;color:#000;">📸 Upload Proof</div>
+            <div style="background:rgba(6,214,160,.2);border:1px solid rgba(6,214,160,.4);border-radius:8px;padding:7px 12px;font-size:.7rem;font-weight:700;color:var(--cy);">Claim Half</div>
+            <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:7px 12px;font-size:.7rem;color:rgba(255,255,255,.5);">Skip</div>
+          </div>
+          <div style="font-family:'Space Mono',monospace;font-size:.55rem;color:rgba(255,183,3,.7);margin-top:10px;text-align:center;">AI verifies your proof! 🤖</div>
+        </div>
+        <div class="tut-title">📸 Dare Proof System</div>
+        <div class="tut-desc">Upload a photo as dare proof → AI checks it → get <b>full bonus</b>! Or claim without proof for <b>half bonus</b>. Skip = 0 bonus.</div>
+      </div>
+    </div>
+    <!-- Navigation -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-top:20px;">
+      <button id="tutPrevBtn" class="btn2" style="opacity:.4;pointer-events:none;">← Prev</button>
+      <div id="tutDots" style="display:flex;gap:6px;">
+        <div class="tut-dot active"></div>
+        <div class="tut-dot"></div>
+        <div class="tut-dot"></div>
+        <div class="tut-dot"></div>
+        <div class="tut-dot"></div>
+      </div>
+      <button id="tutNextBtn" class="btn2" style="color:var(--cy);border-color:rgba(78,205,196,.4);">Next →</button>
+    </div>
+    <button id="tutCloseBtn" style="position:absolute;top:14px;right:14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.4);border-radius:50%;width:28px;height:28px;font-size:.8rem;cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
+  </div>
+</div>
+
 <div class="screen" id="sLeaderboard">
   <div style="text-align:center;max-width:520px;padding:20px;width:100%;">
     <div class="stitle">🏆 LEADERBOARD</div>
@@ -344,9 +441,6 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;o
         </div>
       </div>
       <input type="file" id="proofFileInput" accept="image/*" capture="environment" style="display:none;">
-      <div class="dare-acts" style="margin-top:8px;">
-        <button class="btn-d-change" id="dareChangeBtn">🔄 Change Dare</button>
-      </div>
     </div>
 
     <div class="rbtns">
@@ -512,7 +606,7 @@ async function loadFirestoreLeaderboard() {
 
 
 import{HandLandmarker,FilesetResolver}from"https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/vision_bundle.mjs";
-const HIT=65,COV=90,TIME=35,SEGS=80,MXF=700,MXS=500,MXT=350;
+const HIT=40,COV=70,TIME=35,SEGS=80,MXF=400,MXS=300,MXT=250;
 const SHP={
  heart:{name:'Heart',emoji:'❤️',diff:'medium',gen(cx,cy,sz){const p=[];for(let i=0;i<=360;i++){const t=i*Math.PI/180;p.push([cx+sz*.04*16*Math.pow(Math.sin(t),3),cy-sz*.04*(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))]);}return p;}},
  star:{name:'Star',emoji:'⭐',diff:'hard',gen(cx,cy,sz){const p=[],O=sz*.45,I=sz*.18,tot=10;for(let i=0;i<=360;i++){const f=i/360,x=f*tot,s=Math.floor(x),r=(s%2===0)?O-(O-I)*(x-s):I+(O-I)*(x-s),a1=s/tot*Math.PI*2-Math.PI/2,a2=(s+1)/tot*Math.PI*2-Math.PI/2,a=a1+(a2-a1)*(x-s);p.push([cx+r*Math.cos(a),cy+r*Math.sin(a)]);}return p;}},
@@ -833,7 +927,7 @@ function spFl(x,y,isH=null){
  if(fls.length>=MXF)return;
  let p=isH===true?PH[fls.length%PH.length]:isH===false?PM[fls.length%PM.length]:PF[fls.length%PF.length];
  sfxSp(isH);
- fls.push({x,y,sz:13+Math.random()*18,p,pt:5+(Math.random()<.3?1:0),r:Math.random()*6.283,sc:.01,gt:0,a:0,st:0,vx:0,vy:0,ds:0,dd:0,wp:Math.random()*6.283,ss:1.5+Math.random()*4});
+ fls.push({x,y,sz:7+Math.random()*9,p,pt:5+(Math.random()<.3?1:0),r:Math.random()*6.283,sc:.01,gt:0,a:0,st:0,vx:0,vy:0,ds:0,dd:0,wp:Math.random()*6.283,ss:1.5+Math.random()*3});
 }
 function spSp(x,y,h){if(sps.length>=MXS)return;sps.push({x,y,vx:(Math.random()-.5)*3.5,vy:-1.5-Math.random()*3,a:1,sz:1.5+Math.random()*3,h});}
 function spTr(x,y,col){if(trs.length>=MXT)return;trs.push({x,y,a:.7,sz:4+Math.random()*8,col});}
@@ -1327,7 +1421,7 @@ async function loop(ts){
         uHUD();
         tc=iH?'rgba(6,214,160,.5)':'rgba(255,0,110,.35)';
        }
-       if(Math.random()<.88)spFl(ix+(Math.random()-.5)*4,iy+(Math.random()-.5)*4,iH);
+       if(Math.random()<.55)spFl(ix+(Math.random()-.5)*4,iy+(Math.random()-.5)*4,iH);
        if(Math.random()<.28)spSp(ix,iy,iH===true?155:iH===false?340:290);
        if(Math.random()<.42)spTr(ix,iy,tc);
       }
@@ -1429,6 +1523,47 @@ document.getElementById('introContinueBtn').addEventListener('click', ()=>{
   localStorage.setItem('bloomPlayerName', playerName);
   eAC();show('sMenu');gSt='menu';
 });
+
+// ============ TUTORIAL MODAL ============
+(function(){
+  let tutStep=0;
+  const TOTAL=5;
+  const modal=document.getElementById('tutorialModal');
+  const steps=document.querySelectorAll('.tut-step');
+  const dots=document.querySelectorAll('.tut-dot');
+  const prevBtn=document.getElementById('tutPrevBtn');
+  const nextBtn=document.getElementById('tutNextBtn');
+  function goTo(n){
+    steps[tutStep].classList.remove('active');dots[tutStep].classList.remove('active');
+    tutStep=Math.max(0,Math.min(TOTAL-1,n));
+    steps[tutStep].classList.add('active');dots[tutStep].classList.add('active');
+    prevBtn.style.opacity=tutStep===0?'.4':'1';prevBtn.style.pointerEvents=tutStep===0?'none':'auto';
+    if(tutStep===TOTAL-1){nextBtn.textContent="▶ Let's Play!";nextBtn.style.color='var(--pk)';nextBtn.style.borderColor='rgba(255,107,107,.4)';}
+    else{nextBtn.textContent='Next →';nextBtn.style.color='var(--cy)';nextBtn.style.borderColor='rgba(78,205,196,.4)';}
+  }
+  let tutRaf=null;
+  function animTutDot(){
+    const dot=document.getElementById('tutDot0');const path=document.getElementById('tutPath0');
+    if(!dot||!path)return;
+    const len=path.getTotalLength();let t=0,dir=1;
+    function frame(){const pt=path.getPointAtLength(t);dot.setAttribute('cx',pt.x);dot.setAttribute('cy',pt.y);t+=dir*1.5;if(t>=len)dir=-1;if(t<=0)dir=1;tutRaf=requestAnimationFrame(frame);}
+    frame();
+  }
+  document.getElementById('tutorialBtn').addEventListener('click',()=>{
+    eAC();tutStep=0;
+    steps.forEach(s=>s.classList.remove('active'));dots.forEach(d=>d.classList.remove('active'));
+    steps[0].classList.add('active');dots[0].classList.add('active');
+    prevBtn.style.opacity='.4';prevBtn.style.pointerEvents='none';
+    nextBtn.textContent='Next →';nextBtn.style.color='var(--cy)';
+    modal.style.display='flex';
+    if(tutRaf)cancelAnimationFrame(tutRaf);
+    setTimeout(animTutDot,100);
+  });
+  document.getElementById('tutCloseBtn').addEventListener('click',()=>{modal.style.display='none';if(tutRaf){cancelAnimationFrame(tutRaf);tutRaf=null;}});
+  prevBtn.addEventListener('click',()=>{eAC();goTo(tutStep-1);});
+  nextBtn.addEventListener('click',()=>{eAC();if(tutStep===TOTAL-1){modal.style.display='none';if(tutRaf){cancelAnimationFrame(tutRaf);tutRaf=null;}}else goTo(tutStep+1);});
+  modal.addEventListener('click',(e)=>{if(e.target===modal){modal.style.display='none';if(tutRaf){cancelAnimationFrame(tutRaf);tutRaf=null;}}});
+})();
 
 // ============ LEADERBOARD ============
 function getLeaderboard(){
@@ -1602,18 +1737,6 @@ document.getElementById('dareSkipBtn').addEventListener('click',()=>{
   saveToLeaderboard(playerName, lastBaseScore, 0);
 });
 
-document.getElementById('dareChangeBtn').addEventListener('click', ()=>{
-  eAC(); sfxClick();
-  const activeLvl = Array.from(document.getElementById('dareBadge').classList).find(c=>c.startsWith('lvl-'));
-  const tier = activeLvl || 'lvl-mild';
-  const pool = DARES[tier.replace('lvl-','')] || DARES.mild;
-  const dareText = pool[Math.floor(Math.random()*pool.length)];
-  document.getElementById('dareProofResult').style.display = 'none';
-  var dActsM = document.getElementById('dareActsMain');
-  if(dActsM) dActsM.style.display = 'flex';
-  initScratchCard(dareText, tier);
-  setupScratchListeners();
-});
 
 document.getElementById('inGameMenuBtn').addEventListener('click', ()=>{eAC();show('sMenu');gSt='menu';});
 document.getElementById('inGameRestartBtn').addEventListener('click', ()=>{eAC();startCD(curS.k);});
