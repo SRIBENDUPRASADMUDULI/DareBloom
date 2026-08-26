@@ -453,6 +453,84 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;o
 /* --- Timer canvas glow when low --- */
 @keyframes timerPulse{0%,100%{opacity:1}50%{opacity:.7}}
 #tWrap.low canvas{animation:timerPulse .6s ease-in-out infinite;}
+
+/* ================================================================
+   sINTRO — Game-quality How to Play screen
+   ================================================================ */
+#sIntro{background:linear-gradient(160deg,#04000A 0%,#100025 50%,#060018 100%);overflow:hidden;}
+#sIntro::before{content:'';position:absolute;width:800px;height:800px;background:radial-gradient(circle,rgba(108,58,255,.3),rgba(255,71,87,.12),transparent);top:-300px;right:-300px;border-radius:50%;filter:blur(120px);opacity:.35;pointer-events:none;}
+#sIntro::after{content:'';position:absolute;width:600px;height:600px;background:radial-gradient(circle,rgba(30,203,225,.2),transparent);bottom:-200px;left:-200px;border-radius:50%;filter:blur(100px);opacity:.25;pointer-events:none;}
+
+.intro-panel{position:relative;z-index:1;width:92vw;max-width:580px;text-align:center;display:flex;flex-direction:column;align-items:center;}
+
+/* Eyebrow */
+.intro-eyebrow{font-family:var(--fm);font-size:.55rem;letter-spacing:.32em;text-transform:uppercase;color:rgba(255,71,87,.6);margin-bottom:.5em;display:flex;align-items:center;gap:12px;}
+.intro-eyebrow::before,.intro-eyebrow::after{content:'';flex:1;height:1px;max-width:50px;}
+.intro-eyebrow::before{background:linear-gradient(90deg,transparent,rgba(255,71,87,.4));}
+.intro-eyebrow::after{background:linear-gradient(90deg,rgba(255,71,87,.4),transparent);}
+
+/* Title */
+.intro-title{font-family:var(--fh);font-size:clamp(3rem,9vw,5.5rem);font-weight:400;line-height:.9;background:linear-gradient(135deg,#FF4757 0%,#FF6B7A 25%,#1ECBE1 60%,#FFD32A 100%);background-size:200% 200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:grad 5s ease-in-out infinite;margin-bottom:.2em;}
+
+/* Tagline */
+.intro-tagline{font-family:var(--fm);font-size:.62rem;color:var(--t3);letter-spacing:.14em;margin-bottom:1.8em;}
+
+/* 2x2 Rules Grid */
+.intro-rules-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%;margin-bottom:1.5em;}
+.intro-rule-card{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px 12px;text-align:left;display:flex;align-items:flex-start;gap:10px;transition:border-color .2s,background .2s;}
+.intro-rule-card:hover{background:rgba(255,71,87,.05);border-color:rgba(255,71,87,.2);}
+.intro-rule-icon{font-size:1.5rem;flex-shrink:0;line-height:1;margin-top:2px;}
+.intro-rule-body{}
+.intro-rule-title{font-family:var(--fb);font-size:.82rem;font-weight:700;color:var(--t1);margin-bottom:3px;}
+.intro-rule-desc{font-family:var(--fb);font-size:.7rem;color:var(--t2);line-height:1.45;}
+
+/* Setup section */
+.intro-setup{width:100%;margin-bottom:1.4em;}
+.intro-name-row{display:flex;justify-content:center;margin-bottom:.4em;}
+.name-input{display:block;width:100%;max-width:340px;margin:0 auto;}
+
+/* Auth inside intro */
+.intro-auth{margin-top:1em;display:flex;flex-direction:column;align-items:center;gap:.6em;}
+.auth-user{display:flex;align-items:center;gap:8px;justify-content:center;padding:6px 14px;background:var(--b1);border:1px solid var(--b2);border-radius:10px;}
+.auth-avatar{width:26px;height:26px;border-radius:50%;border:1px solid var(--pk);}
+
+/* CTA row — symmetrical */
+.intro-cta-row{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;}
+.intro-cta-main{flex:1;max-width:280px;}
+
+/* ================================================================
+   sMenu — Fix title visibility and overall appearance
+   ================================================================ */
+/* Force the title and tagline to be visible with solid bright colors */
+#sMenu .game-title{
+  font-family:var(--fh);
+  font-size:clamp(4rem,13vw,8rem);
+  font-weight:400;
+  line-height:.88;
+  color:#FF4757;
+  background:linear-gradient(135deg,#FF4757 0%,#FF87A0 25%,#1ECBE1 55%,#FFD32A 100%);
+  background-size:200% 200%;
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
+  animation:grad 5s ease-in-out infinite;
+  margin-bottom:.25em;
+  display:block;
+}
+#sMenu .game-eyebrow{color:rgba(255,107,107,.8);letter-spacing:.3em;}
+#sMenu .game-tagline{color:rgba(255,255,255,.5);font-size:.62rem;margin-bottom:1.6em;}
+/* Stats visible */
+#sMenu .menu-stats{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.12);}
+#sMenu .stat-val{color:var(--cy);font-size:1.3rem;}
+#sMenu .stat-lbl{color:rgba(255,255,255,.4);font-size:.5rem;}
+/* Credit line */
+#sMenu .menu-credit{color:rgba(255,255,255,.28);margin-top:1.4em;}
+
+/* ================================================================
+   Result Screen — Menu button style
+   ================================================================ */
+#resToMenuBtn{background:rgba(255,255,255,.04)!important;border-color:rgba(255,255,255,.1)!important;color:rgba(255,255,255,.4)!important;}
+#resToMenuBtn:hover{background:rgba(255,255,255,.09)!important;color:var(--t1)!important;}
 </style>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -466,28 +544,57 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;o
 <div id="vig"></div>
 <div class="screen on" id="sLoad"><div style="text-align:center"><div style="font-size:3rem;animation:spin 2s linear infinite">🌸</div><div class="ltxt" style="margin-top:12px">camera start ho rha hai ruk...</div><div class="ltxt" style="margin-top:8px;opacity:0.25">tip: accha lighting = better tracking</div></div></div>
 <div class="screen" id="sIntro">
-  <div class="min" style="max-width:600px;">
-    <div class="badge">✦ WELCOME TO DARE BLOOM ✦</div>
-    <div class="logo" style="font-size:clamp(3rem,8vw,5rem); margin-bottom:0.5em;">HOW TO PLAY</div>
-    <div style="text-align:left; font-family:'Space Grotesk',sans-serif; font-size:.95rem; color:rgba(255,255,255,0.7); line-height:1.5; margin-bottom:1.5em;">
-      <p style="margin-bottom:.8em;">☝️ <strong>Draw with your index finger</strong> to trace shapes on screen.</p>
-      <p style="margin-bottom:.8em;">✋ <strong>Open palm</strong> to erase and start over.</p>
-      <p style="margin-bottom:.8em;">😈 <strong>Dare System:</strong> Complete dares & upload proof for bonus points!</p>
-      <p style="margin-bottom:.8em;">📸 <strong>Proof = More Points:</strong> Upload proof for FULL bonus, claim without for half, skip for zero.</p>
+  <div class="intro-panel">
+    <div class="intro-eyebrow">HOW TO PLAY</div>
+    <div class="intro-title">DARE BLOOM</div>
+    <div class="intro-tagline">Draw &middot; Dare &middot; Dominate</div>
+    <div class="intro-rules-grid">
+      <div class="intro-rule-card">
+        <div class="intro-rule-icon">&#9757;&#65039;</div>
+        <div class="intro-rule-body">
+          <div class="intro-rule-title">Draw</div>
+          <div class="intro-rule-desc">Use your index finger to trace shapes on the camera screen</div>
+        </div>
+      </div>
+      <div class="intro-rule-card">
+        <div class="intro-rule-icon">&#9995;&#65039;</div>
+        <div class="intro-rule-body">
+          <div class="intro-rule-title">Erase</div>
+          <div class="intro-rule-desc">Open your full palm to wipe everything and start fresh</div>
+        </div>
+      </div>
+      <div class="intro-rule-card">
+        <div class="intro-rule-icon">&#128520;</div>
+        <div class="intro-rule-body">
+          <div class="intro-rule-title">Dare</div>
+          <div class="intro-rule-desc">Complete dares after each shape for massive bonus points</div>
+        </div>
+      </div>
+      <div class="intro-rule-card">
+        <div class="intro-rule-icon">&#128248;</div>
+        <div class="intro-rule-body">
+          <div class="intro-rule-title">Proof = Points</div>
+          <div class="intro-rule-desc">Upload proof = FULL bonus &bull; Claim = half &bull; Skip = zero</div>
+        </div>
+      </div>
     </div>
-    <div style="margin-bottom:1.5em; text-align:center;">
+    <div class="intro-setup">
       <label class="name-label">ENTER YOUR NAME TO PLAY</label>
       <input type="text" id="playerNameInput" class="name-input" placeholder="Your name..." maxlength="20" autocomplete="off">
       <div id="nameError" class="name-error">Please enter your name to continue!</div>
-    </div>
-    <div style="margin-bottom:1em;text-align:center;">
-      <div class="auth-label">SIGN IN TO SAVE SCORES GLOBALLY</div>
-      <button class="g-signin-btn" id="clerkSignInBtn">Sign In / Sign Up</button>
-      <div id="signedInInfo" class="auth-user" style="display:none">
-        <div class="g-user-info"><img id="userPhoto" src="" alt=""><span id="userName"></span></div>
+      <div class="intro-auth">
+        <div class="auth-label">SIGN IN TO SAVE SCORES GLOBALLY</div>
+        <button class="g-signin-btn" id="clerkSignInBtn">Sign In / Sign Up</button>
+        <div id="signedInInfo" class="auth-user" style="display:none">
+          <img id="userPhoto" class="auth-avatar" src="" alt="">
+          <span id="userName"></span>
+        </div>
       </div>
     </div>
-    <button class="btn" id="introContinueBtn" style="opacity:.5; pointer-events:none;">Enter the Nightmare →</button>
+    <div class="intro-cta-row">
+      <button class="btn2" onclick="show('sMenu')">&#8592; Menu</button>
+      <button class="btn intro-cta-main" id="introContinueBtn" style="opacity:.5;pointer-events:none;">Enter the Nightmare &#8594;</button>
+    </div>
   </div>
 </div>
 <div class="screen" id="sMenu">
@@ -747,8 +854,9 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;o
     </div>
 
     <div class="rbtns">
-      <button class="btn" id="nextBtn">Next →</button>
-      <button class="btn2" id="retryBtn">↩ Retry</button>
+      <button class="btn" id="nextBtn">Next &#8594;</button>
+      <button class="btn2" id="retryBtn">&#8617; Retry</button>
+      <button class="btn2" id="resToMenuBtn">&#8962; Menu</button>
     </div>
   </div>
 </div>
