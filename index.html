@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -608,12 +608,22 @@ async function loadFirestoreLeaderboard() {
 import{HandLandmarker,FilesetResolver}from"https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/vision_bundle.mjs";
 const HIT=30,TIME=35,SEGS=80,MXF=400,MXS=300,MXT=250;
 const SHP={
- heart:{name:'Heart',emoji:'❤️',diff:'medium',gen(cx,cy,sz){const p=[];for(let i=0;i<=360;i++){const t=i*Math.PI/180;p.push([cx+sz*.04*16*Math.pow(Math.sin(t),3),cy-sz*.04*(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))]);}return p;}},
- star:{name:'Star',emoji:'⭐',diff:'hard',gen(cx,cy,sz){const p=[],O=sz*.45,I=sz*.18,tot=10;for(let i=0;i<=360;i++){const f=i/360,x=f*tot,s=Math.floor(x),r=(s%2===0)?O-(O-I)*(x-s):I+(O-I)*(x-s),a1=s/tot*Math.PI*2-Math.PI/2,a2=(s+1)/tot*Math.PI*2-Math.PI/2,a=a1+(a2-a1)*(x-s);p.push([cx+r*Math.cos(a),cy+r*Math.sin(a)]);}return p;}},
  circle:{name:'Circle',emoji:'⭕',diff:'easy',gen(cx,cy,sz){const p=[],r=sz*.43;for(let i=0;i<=360;i++){const t=i*Math.PI/180;p.push([cx+r*Math.cos(t-Math.PI/2),cy+r*Math.sin(t-Math.PI/2)]);}return p;}},
- infinity:{name:'Infinity',emoji:'♾️',diff:'hard',gen(cx,cy,sz){const p=[],a=sz*.42;for(let i=0;i<=360;i++){const t=i*Math.PI/180,d=1+Math.sin(t)*Math.sin(t);p.push([cx+a*Math.cos(t)/d,cy+a*Math.sin(t)*Math.cos(t)/d]);}return p;}},
+ triangle:{name:'Triangle',emoji:'🔺',diff:'easy',gen(cx,cy,sz){const p=[],r=sz*.44,vts=[[cx,cy-r],[cx+r*.866,cy+r*.5],[cx-r*.866,cy+r*.5],[cx,cy-r]];for(let i=0;i<vts.length-1;i++){const[x1,y1]=vts[i],[x2,y2]=vts[i+1];for(let s=0;s<120;s++){const t=s/120;p.push([x1+(x2-x1)*t,y1+(y2-y1)*t]);}}return p;}},
+ diamond:{name:'Diamond',emoji:'💎',diff:'easy',gen(cx,cy,sz){const p=[],w=sz*.35,h=sz*.46,vts=[[cx,cy-h],[cx+w,cy],[cx,cy+h],[cx-w,cy],[cx,cy-h]];for(let i=0;i<vts.length-1;i++){const[x1,y1]=vts[i],[x2,y2]=vts[i+1];for(let s=0;s<90;s++){const t=s/90;p.push([x1+(x2-x1)*t,y1+(y2-y1)*t]);}}return p;}},
+ wave:{name:'Wave',emoji:'〰️',diff:'easy',gen(cx,cy,sz){const p=[],w=sz*.9,A=sz*.25;for(let i=0;i<=360;i++){const f=i/360;p.push([cx-w/2+w*f,cy+A*Math.sin(f*Math.PI*5)]);}return p;}},
+ pentagon:{name:'Pentagon',emoji:'⬠',diff:'medium',gen(cx,cy,sz){const p=[],r=sz*.43,n=5,vts=[];for(let i=0;i<=n;i++)vts.push([cx+r*Math.cos(i/n*Math.PI*2-Math.PI/2),cy+r*Math.sin(i/n*Math.PI*2-Math.PI/2)]);for(let i=0;i<vts.length-1;i++){const[x1,y1]=vts[i],[x2,y2]=vts[i+1];for(let s=0;s<72;s++){const t=s/72;p.push([x1+(x2-x1)*t,y1+(y2-y1)*t]);}}return p;}},
+ hexagon:{name:'Hexagon',emoji:'⬡',diff:'medium',gen(cx,cy,sz){const p=[],r=sz*.43,n=6,vts=[];for(let i=0;i<=n;i++)vts.push([cx+r*Math.cos(i/n*Math.PI*2-Math.PI/6),cy+r*Math.sin(i/n*Math.PI*2-Math.PI/6)]);for(let i=0;i<vts.length-1;i++){const[x1,y1]=vts[i],[x2,y2]=vts[i+1];for(let s=0;s<60;s++){const t=s/60;p.push([x1+(x2-x1)*t,y1+(y2-y1)*t]);}}return p;}},
+ heart:{name:'Heart',emoji:'❤️',diff:'medium',gen(cx,cy,sz){const p=[];for(let i=0;i<=360;i++){const t=i*Math.PI/180;p.push([cx+sz*.04*16*Math.pow(Math.sin(t),3),cy-sz*.04*(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t))]);}return p;}},
+ arrow:{name:'Arrow',emoji:'➡️',diff:'medium',gen(cx,cy,sz){const p=[],w=sz*.38,sh=sz*.16,ah=sz*.37,aw=sz*.44,vts=[[cx-w,cy-sh],[cx,cy-sh],[cx,cy-ah],[cx+aw,cy],[cx,cy+ah],[cx,cy+sh],[cx-w,cy+sh],[cx-w,cy-sh]];for(let i=0;i<vts.length-1;i++){const[x1,y1]=vts[i],[x2,y2]=vts[i+1];const steps=Math.max(30,Math.round(Math.hypot(x2-x1,y2-y1)/2));for(let s=0;s<steps;s++){const t=s/steps;p.push([x1+(x2-x1)*t,y1+(y2-y1)*t]);}}return p;}},
+ zigzag:{name:'Zigzag',emoji:'〽️',diff:'medium',gen(cx,cy,sz){const p=[],peaks=5,w=sz*.85,A=sz*.35;for(let i=0;i<=500;i++){const f=i/500,x=cx-w/2+w*f,n=f*peaks,s=Math.floor(n),fr=n-s,y=cy+(s%2===0?-A+2*A*fr:A-2*A*fr);p.push([x,y]);}return p;}},
  spiral:{name:'Spiral',emoji:'🌀',diff:'medium',gen(cx,cy,sz){const p=[],R=sz*.43,tot=3*360;for(let i=0;i<=tot;i++){const t=i*Math.PI/180,r=R*(i/tot);p.push([cx+r*Math.cos(t-Math.PI/2),cy+r*Math.sin(t-Math.PI/2)]);}return p;}},
- wave:{name:'Wave',emoji:'〰️',diff:'easy',gen(cx,cy,sz){const p=[],w=sz*.9,A=sz*.25;for(let i=0;i<=360;i++){const f=i/360;p.push([cx-w/2+w*f,cy+A*Math.sin(f*Math.PI*5)]);}return p;}}
+ star:{name:'Star',emoji:'⭐',diff:'hard',gen(cx,cy,sz){const p=[],O=sz*.45,I=sz*.18,tot=10;for(let i=0;i<=360;i++){const f=i/360,x=f*tot,s=Math.floor(x),r=(s%2===0)?O-(O-I)*(x-s):I+(O-I)*(x-s),a1=s/tot*Math.PI*2-Math.PI/2,a2=(s+1)/tot*Math.PI*2-Math.PI/2,a=a1+(a2-a1)*(x-s);p.push([cx+r*Math.cos(a),cy+r*Math.sin(a)]);}return p;}},
+ infinity:{name:'Infinity',emoji:'♾️',diff:'hard',gen(cx,cy,sz){const p=[],a=sz*.42;for(let i=0;i<=360;i++){const t=i*Math.PI/180,d=1+Math.sin(t)*Math.sin(t);p.push([cx+a*Math.cos(t)/d,cy+a*Math.sin(t)*Math.cos(t)/d]);}return p;}},
+ crescent:{name:'Crescent',emoji:'🌙',diff:'hard',gen(cx,cy,sz){const p=[],R=sz*.43,r=sz*.33,ox=sz*.15;for(let i=-150;i<=150;i++){const t=i*Math.PI/180;p.push([cx+R*Math.cos(t),cy+R*Math.sin(t)]);}for(let i=150;i>=-150;i--){const t=i*Math.PI/180;p.push([cx+ox+r*Math.cos(t),cy+r*Math.sin(t)]);}return p;}},
+ flower:{name:'Flower',emoji:'🌺',diff:'hard',gen(cx,cy,sz){const p=[],R=sz*.42,r=sz*.18;for(let i=0;i<=720;i++){const t=i/720*Math.PI*2,rad=r+(R-r)*Math.pow(Math.cos(3*t),2);p.push([cx+rad*Math.cos(t),cy+rad*Math.sin(t)]);}return p;}},
+ trefoil:{name:'Trefoil',emoji:'☘️',diff:'hard',gen(cx,cy,sz){const p=[],sc=sz*.13;for(let i=0;i<=360;i++){const t=i*Math.PI/180;p.push([cx+sc*(Math.sin(t)+2*Math.sin(2*t)),cy+sc*(Math.cos(t)-2*Math.cos(2*t))]);}return p;}},
+ lissajous:{name:'Lissajous',emoji:'🎭',diff:'hard',gen(cx,cy,sz){const p=[],A=sz*.42;for(let i=0;i<=720;i++){const t=i/720*Math.PI*2;p.push([cx+A*Math.sin(3*t+Math.PI/4),cy+A*Math.sin(2*t)]);}return p;}}
 };
 const KEYS = Object.keys(SHP);
 
