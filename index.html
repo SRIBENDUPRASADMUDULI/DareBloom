@@ -210,6 +210,42 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;o
 @keyframes tutPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
 @keyframes tutShake{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
 @keyframes tutCount{from{opacity:.4;transform:scale(.9)}to{opacity:1;transform:scale(1.1)}}
+/* EMOJI REACTIONS */
+#reactPanel{position:fixed;right:10px;top:50%;transform:translateY(-50%);z-index:500;display:none;flex-direction:column;gap:7px;}
+.react-btn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:50%;width:46px;height:46px;font-size:1.4rem;cursor:pointer;transition:transform .15s,background .15s;display:flex;align-items:center;justify-content:center;padding:0;}
+.react-btn:hover{transform:scale(1.3);background:rgba(255,255,255,.18);}
+.react-btn:active{transform:scale(.9);}
+.react-float{position:fixed;pointer-events:none;z-index:600;animation:floatUp 1.8s ease-out forwards;}
+@keyframes floatUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-220px) scale(1.6)}}
+
+/* COMBO STREAK */
+#comboBox{position:fixed;left:50%;transform:translateX(-50%);top:18px;z-index:500;display:none;flex-direction:column;align-items:center;animation:comboPop .25s ease;}
+.combo-num{font-family:'Creepster',cursive;font-size:2.6rem;line-height:1;color:var(--am);text-shadow:0 0 20px rgba(255,183,3,.8);}
+.combo-lbl{font-family:'Space Mono',monospace;font-size:.5rem;color:rgba(255,183,3,.7);letter-spacing:.2em;}
+@keyframes comboPop{0%{transform:translateX(-50%) scale(.6)}60%{transform:translateX(-50%) scale(1.15)}100%{transform:translateX(-50%) scale(1)}}
+
+/* PARTY MODE */
+#partyModal{display:none;position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,.93);backdrop-filter:blur(20px);align-items:center;justify-content:center;}
+.party-card{max-width:440px;width:92vw;background:linear-gradient(160deg,rgba(10,5,25,.99),rgba(25,10,50,.99));border:1px solid rgba(78,205,196,.25);border-radius:22px;padding:30px 24px;}
+.party-title{font-family:'Creepster',cursive;font-size:2rem;color:var(--cy);text-align:center;text-shadow:0 0 20px var(--cy);margin-bottom:4px;}
+.party-sub{font-family:'Space Mono',monospace;font-size:.52rem;color:rgba(255,255,255,.3);letter-spacing:.15em;text-align:center;margin-bottom:20px;}
+.p-input{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:10px 14px;color:#fff;font-family:'Space Grotesk',sans-serif;font-size:.9rem;width:100%;box-sizing:border-box;margin-bottom:8px;}
+.p-input:focus{outline:none;border-color:rgba(78,205,196,.5);}
+.player-chip{display:inline-flex;align-items:center;gap:6px;background:rgba(78,205,196,.12);border:1px solid rgba(78,205,196,.25);border-radius:20px;padding:5px 12px;font-family:'Space Mono',monospace;font-size:.65rem;color:var(--cy);margin:4px;}
+/* Turn Banner */
+#turnBanner{position:fixed;inset:0;z-index:8000;background:rgba(0,0,0,.88);display:none;align-items:center;justify-content:center;flex-direction:column;}
+.turn-name{font-family:'Creepster',cursive;font-size:3.5rem;color:var(--cy);text-shadow:0 0 30px var(--cy);animation:cIn .4s ease;}
+.turn-sub{font-family:'Space Mono',monospace;font-size:.7rem;color:rgba(255,255,255,.4);letter-spacing:.2em;margin-top:8px;}
+/* Final Standings */
+#standingsModal{display:none;position:fixed;inset:0;z-index:9600;background:rgba(0,0,0,.95);backdrop-filter:blur(22px);align-items:center;justify-content:center;}
+.stand-card{max-width:440px;width:92vw;background:linear-gradient(160deg,rgba(10,5,25,.99),rgba(25,5,40,.99));border:1px solid rgba(255,215,0,.2);border-radius:22px;padding:28px 22px;}
+.stand-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:12px;margin-bottom:8px;background:rgba(255,255,255,.04);}
+.stand-row.first{background:rgba(255,215,0,.1);border:1px solid rgba(255,215,0,.2);}
+.stand-rank{font-family:'Creepster',cursive;font-size:1.6rem;width:32px;text-align:center;}
+.stand-name{font-family:'Space Grotesk',sans-serif;font-size:.95rem;color:#fff;flex:1;}
+.stand-score{font-family:'Creepster',cursive;font-size:1.4rem;color:var(--cy);}
+/* Party active indicator */
+#partyIndicator{position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:30;display:none;background:rgba(78,205,196,.12);border:1px solid rgba(78,205,196,.25);border-radius:20px;padding:4px 14px;font-family:'Space Mono',monospace;font-size:.55rem;color:var(--cy);letter-spacing:.1em;}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -268,7 +304,66 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;o
       <button class="btn2" id="leaderboardBtn" style="background:rgba(255,215,0,.08);color:#FFD700;border-color:rgba(255,215,0,.3);">Leaderboard</button>
       <button class="btn2" id="howToPlayBtn" style="background:rgba(255,255,255,.05);">How to Play</button>
       <button class="btn2" id="tutorialBtn" style="background:rgba(78,205,196,.08);color:var(--cy);border-color:rgba(78,205,196,.3);">▶ Tutorial</button>
+      <button class="btn2" id="partyModeBtn" style="background:rgba(255,107,107,.1);color:var(--pk);border-color:rgba(255,107,107,.3);">👥 Party Mode</button>
     </div>
+  </div>
+</div>
+
+<!-- ===== EMOJI REACTION PANEL (visible during gameplay) ===== -->
+<div id="reactPanel">
+  <button class="react-btn" data-e="🔥" title="Fire!">🔥</button>
+  <button class="react-btn" data-e="😱" title="OMG!">😱</button>
+  <button class="react-btn" data-e="😂" title="LOL">😂</button>
+  <button class="react-btn" data-e="💀" title="Dead">💀</button>
+  <button class="react-btn" data-e="👏" title="Clap">👏</button>
+  <button class="react-btn" data-e="🌸" title="Flower">🌸</button>
+</div>
+
+<!-- ===== COMBO BOX (appears mid-game when on a streak) ===== -->
+<div id="comboBox">
+  <div class="combo-num" id="comboNum">x3</div>
+  <div class="combo-lbl">COMBO STREAK 🔥</div>
+</div>
+
+<!-- ===== PARTY ACTIVE INDICATOR ===== -->
+<div id="partyIndicator">👥 PARTY MODE · <span id="partyTurnLabel">P1's Turn</span></div>
+
+<!-- ===== TURN BANNER (shown between party turns) ===== -->
+<div id="turnBanner">
+  <div class="turn-name" id="turnName">PLAYER 1</div>
+  <div class="turn-sub">your turn — get ready!</div>
+  <button class="btn" id="turnStartBtn" style="margin-top:24px;">▶ Start My Turn</button>
+</div>
+
+<!-- ===== PARTY MODE SETUP MODAL ===== -->
+<div id="partyModal">
+  <div class="party-card">
+    <div class="party-title">👥 PARTY MODE</div>
+    <div class="party-sub">// UP TO 4 PLAYERS · TAKE TURNS · FINAL STANDINGS</div>
+    <div id="partyPlayerInputs">
+      <input class="p-input" id="pName1" placeholder="Player 1 name (required)" maxlength="16">
+      <input class="p-input" id="pName2" placeholder="Player 2 name (required)" maxlength="16">
+      <input class="p-input" id="pName3" placeholder="Player 3 name (optional)" maxlength="16">
+      <input class="p-input" id="pName4" placeholder="Player 4 name (optional)" maxlength="16">
+    </div>
+    <div style="margin:10px 0 6px;font-family:'Space Mono',monospace;font-size:.55rem;color:rgba(255,255,255,.3);letter-spacing:.1em;">ROUNDS PER PLAYER</div>
+    <div style="display:flex;gap:8px;margin-bottom:18px;">
+      <button class="btn2 rnd-sel active-rnd" data-r="1" id="rnd1">1 shape</button>
+      <button class="btn2 rnd-sel" data-r="3" id="rnd3">3 shapes</button>
+      <button class="btn2 rnd-sel" data-r="5" id="rnd5">5 shapes</button>
+    </div>
+    <button class="btn" id="partyStartBtn" style="width:100%;">🎮 Start Party!</button>
+    <button id="partyCancelBtn" style="background:none;border:none;color:rgba(255,255,255,.3);font-size:.75rem;cursor:pointer;width:100%;text-align:center;margin-top:12px;">Cancel</button>
+  </div>
+</div>
+
+<!-- ===== FINAL STANDINGS MODAL ===== -->
+<div id="standingsModal">
+  <div class="stand-card">
+    <div style="font-family:'Creepster',cursive;font-size:2rem;color:#FFD700;text-align:center;text-shadow:0 0 20px rgba(255,215,0,.5);margin-bottom:4px;">🏆 FINAL STANDINGS</div>
+    <div style="font-family:'Space Mono',monospace;font-size:.52rem;color:rgba(255,255,255,.3);letter-spacing:.15em;text-align:center;margin-bottom:18px;">// PARTY OVER — WHO DREW BEST?</div>
+    <div id="standingsList"></div>
+    <button class="btn" id="standingsCloseBtn" style="width:100%;margin-top:16px;">Back to Menu</button>
   </div>
 </div>
 
@@ -1193,6 +1288,10 @@ function showRes(){
  document.getElementById('tWrap').classList.remove('on');
  document.getElementById('rds').classList.remove('on');
  lastBaseScore=sc; lastDareBonus=0;
+ // Reset combo on result
+ comboCount=0; if(comboBox) comboBox.style.display='none';
+ // Party mode: record score
+ if(typeof partyOnResult==='function') partyOnResult(sc);
  if(!dareModeActive && typeof playerName!=='undefined' && playerName) saveToLeaderboard(playerName, sc, 0);
  show('sRes');sfxOK();
 }
@@ -1298,6 +1397,7 @@ async function loop(ts){
          frameSegSeen.add(seg);
          if(iH){segHits[seg]++;hits++;}else{segMiss[seg]++;miss++;}
         }
+        updateCombo(iH); // combo streak tracking
         uHUD();
         tc=iH?'rgba(6,214,160,.5)':'rgba(255,0,110,.35)';
        }
@@ -1378,7 +1478,12 @@ document.getElementById('toggleDareBtn').addEventListener('click',()=>{
  btn.className = dareModeActive ? 'btn2 btn-dare' : 'btn2';
 });
 
-document.getElementById('nextBtn').addEventListener('click',()=>{eAC();if(cMd){cRd++;fls.length=0;sps.length=0;trs.length=0;if(cRd>=cOr.length)showCar();else startCD(cOr[cRd]);}else show('sShapes');});
+document.getElementById('nextBtn').addEventListener('click',()=>{
+  eAC();
+  // Party mode intercepts — if handled, skip normal flow
+  if(typeof partyNextAction==='function' && partyNextAction()) return;
+  if(cMd){cRd++;fls.length=0;sps.length=0;trs.length=0;if(cRd>=cOr.length)showCar();else startCD(cOr[cRd]);}else show('sShapes');
+});
 document.getElementById('retryBtn').addEventListener('click',()=>{eAC();fls.length=0;sps.length=0;trs.length=0;startCD(curS.k);});
 document.getElementById('againBtn').addEventListener('click',()=>{eAC();show('sMenu');gSt='menu';});
 document.getElementById('gbtn').addEventListener('click',()=>{eAC();showG=!showG;document.getElementById('gbtn').textContent=showG?'❤️ guide':'👁 off';});
@@ -1443,6 +1548,193 @@ document.getElementById('introContinueBtn').addEventListener('click', ()=>{
   prevBtn.addEventListener('click',()=>{eAC();goTo(tutStep-1);});
   nextBtn.addEventListener('click',()=>{eAC();if(tutStep===TOTAL-1){modal.style.display='none';if(tutRaf){cancelAnimationFrame(tutRaf);tutRaf=null;}}else goTo(tutStep+1);});
   modal.addEventListener('click',(e)=>{if(e.target===modal){modal.style.display='none';if(tutRaf){cancelAnimationFrame(tutRaf);tutRaf=null;}}});
+})();
+
+// ============ EMOJI REACTIONS ============
+(function(){
+  const panel = document.getElementById('reactPanel');
+  function spawnReaction(emoji) {
+    const el = document.createElement('div');
+    el.className = 'react-float';
+    el.textContent = emoji;
+    const xPct = 20 + Math.random() * 55;
+    const sz = 1.8 + Math.random() * 1.4;
+    el.style.cssText = `left:${xPct}%;bottom:22%;font-size:${sz}rem;`;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 1900);
+    eAC();
+    tone(300 + Math.random()*300, 'sine', .1, .04);
+  }
+  document.querySelectorAll('.react-btn').forEach(btn => {
+    btn.addEventListener('click', () => spawnReaction(btn.dataset.e));
+  });
+  // Show/hide panel based on game state
+  const _origShow = window.show;
+  // We hook into game state changes via a polling check
+  setInterval(() => {
+    panel.style.display = (gSt === 'drawing') ? 'flex' : 'none';
+  }, 400);
+})();
+
+// ============ COMBO STREAK ============
+let comboCount = 0, maxCombo = 0;
+const comboBox = document.getElementById('comboBox');
+const comboNum = document.getElementById('comboNum');
+function updateCombo(isHit) {
+  if(gSt !== 'drawing') return;
+  if(isHit) {
+    comboCount++;
+    maxCombo = Math.max(maxCombo, comboCount);
+    if(comboCount >= 5) {
+      comboNum.textContent = 'x' + Math.floor(comboCount / 5 + 1);
+      comboBox.style.display = 'flex';
+      // Reset animation
+      comboBox.style.animation = 'none';
+      void comboBox.offsetWidth;
+      comboBox.style.animation = 'comboPop .25s ease';
+    }
+  } else {
+    if(comboCount >= 5) { tone(180,'sine',.2,.05); }
+    comboCount = 0;
+    comboBox.style.display = 'none';
+  }
+}
+// Reset combo when shape resets
+const _origDissAll = window.dissAll;
+// Hook via bldS — reset combo on new shape
+const _bldSOrig = window.bldS;
+
+// ============ PARTY MODE ============
+(function(){
+  let partyPlayers = []; // [{name, scores:[], totalScore:0}]
+  let partyRounds = 1;
+  let partyCurrentPlayer = 0;
+  let partyCurrentRound = 0; // round index for current player
+  let partyShapesForPlayer = []; // shapes to play this player's turn
+  let isPartyMode = false;
+
+  const partyModal = document.getElementById('partyModal');
+  const standingsModal = document.getElementById('standingsModal');
+  const turnBanner = document.getElementById('turnBanner');
+  const indicator = document.getElementById('partyIndicator');
+  const rndBtns = document.querySelectorAll('.rnd-sel');
+
+  // Round selection
+  rndBtns.forEach(b => {
+    b.addEventListener('click', () => {
+      rndBtns.forEach(x => { x.style.color='';x.style.borderColor='';x.style.background='rgba(255,255,255,.05)'; });
+      b.style.color='var(--cy)'; b.style.borderColor='rgba(78,205,196,.4)'; b.style.background='rgba(78,205,196,.08)';
+      partyRounds = parseInt(b.dataset.r);
+    });
+  });
+
+  document.getElementById('partyModeBtn').addEventListener('click', () => {
+    eAC(); partyModal.style.display = 'flex';
+  });
+  document.getElementById('partyCancelBtn').addEventListener('click', () => {
+    partyModal.style.display = 'none';
+  });
+
+  document.getElementById('partyStartBtn').addEventListener('click', () => {
+    const names = ['pName1','pName2','pName3','pName4']
+      .map(id => document.getElementById(id).value.trim())
+      .filter(n => n.length > 0);
+    if(names.length < 2) {
+      document.getElementById('pName2').style.borderColor = 'rgba(255,107,107,.6)';
+      document.getElementById('pName2').focus();
+      return;
+    }
+    eAC();
+    partyPlayers = names.map(name => ({ name, scores: [], totalScore: 0 }));
+    partyCurrentPlayer = 0;
+    partyRounds = parseInt(document.querySelector('.rnd-sel[style*="var(--cy)"]')?.dataset.r || '1');
+    isPartyMode = true;
+    partyModal.style.display = 'none';
+    indicator.style.display = 'block';
+    showTurnBanner(0);
+  });
+
+  function showTurnBanner(pIdx) {
+    const p = partyPlayers[pIdx];
+    document.getElementById('turnName').textContent = p.name.toUpperCase();
+    document.getElementById('partyTurnLabel').textContent = p.name + "'s Turn";
+    turnBanner.style.display = 'flex';
+  }
+
+  document.getElementById('turnStartBtn').addEventListener('click', () => {
+    eAC();
+    turnBanner.style.display = 'none';
+    // Pick random shapes for this player's turn
+    const allKeys = Object.keys(SHP);
+    partyShapesForPlayer = [];
+    const shuffled = allKeys.sort(() => Math.random() - .5);
+    for(let i = 0; i < partyRounds; i++) partyShapesForPlayer.push(shuffled[i % shuffled.length]);
+    partyCurrentRound = 0;
+    // Override playerName for this turn
+    playerName = partyPlayers[partyCurrentPlayer].name;
+    // Start career mode with these shapes
+    startPartyRound();
+  });
+
+  function startPartyRound() {
+    const shapeKey = partyShapesForPlayer[partyCurrentRound];
+    cMd = false; // Disable built-in career mode
+    gSt = 'countdown';
+    show('sGame');
+    startCD(shapeKey);
+  }
+
+  // Called after each shape result is shown (hook into the result flow)
+  // We intercept when sRes is shown while in party mode
+  window.partyOnResult = function(baseScore) {
+    if(!isPartyMode) return;
+    partyPlayers[partyCurrentPlayer].scores.push(baseScore);
+    partyPlayers[partyCurrentPlayer].totalScore += baseScore;
+  };
+
+  window.partyNextAction = function() {
+    if(!isPartyMode) return false;
+    partyCurrentRound++;
+    if(partyCurrentRound < partyRounds) {
+      // Next shape for same player
+      setTimeout(() => startPartyRound(), 500);
+      return true;
+    } else {
+      // Next player or show standings
+      partyCurrentPlayer++;
+      if(partyCurrentPlayer < partyPlayers.length) {
+        playerName = partyPlayers[partyCurrentPlayer].name;
+        setTimeout(() => showTurnBanner(partyCurrentPlayer), 400);
+        return true;
+      } else {
+        // ALL DONE — show standings
+        setTimeout(() => showFinalStandings(), 400);
+        return true;
+      }
+    }
+  };
+
+  function showFinalStandings() {
+    isPartyMode = false;
+    indicator.style.display = 'none';
+    const sorted = [...partyPlayers].sort((a,b) => b.totalScore - a.totalScore);
+    const medals = ['🥇','🥈','🥉','4️⃣'];
+    const list = document.getElementById('standingsList');
+    list.innerHTML = sorted.map((p, i) => `
+      <div class="stand-row${i===0?' first':''}">
+        <div class="stand-rank">${medals[i]||'·'}</div>
+        <div class="stand-name">${p.name}<br><span style="font-size:.65rem;color:rgba(255,255,255,.35);font-family:'Space Mono',monospace">${partyRounds > 1 ? p.scores.join(' + ') + ' pts' : ''}</span></div>
+        <div class="stand-score">${p.totalScore}</div>
+      </div>
+    `).join('');
+    show('sMenu'); gSt = 'menu';
+    standingsModal.style.display = 'flex';
+    sfxOK();
+  }
+
+  document.getElementById('standingsCloseBtn').addEventListener('click', () => {
+    standingsModal.style.display = 'none';
+  });
 })();
 
 // ============ LEADERBOARD ============
