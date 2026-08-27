@@ -1563,6 +1563,7 @@ function setupScratchListeners(){
  * Returns a non-repeated dare string from the given tier pool.
  * Tracks seen dares in localStorage['bloomDareSeen_<tier>'].
  * Resets automatically when all dares in the tier are exhausted.
+ */
 function pickDare(tier){
  const pool    = DARES[tier.replace('lvl-','')] || DARES.mild;
  const storeKey= 'bloomDareSeen_' + tier + '_v' + pool.length;
