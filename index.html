@@ -843,7 +843,7 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;o
           <div style="background:linear-gradient(145deg,rgba(255,59,0,.15),rgba(255,0,110,.1));border:1px solid rgba(255,59,0,.4);border-radius:10px;padding:10px 14px;margin-top:10px;font-family:'Space Mono',monospace;font-size:.62rem;color:rgba(255,255,255,.8);text-align:left;">LEVEL 4: PURE TERROR<br><span style="color:rgba(255,255,255,.4)">Do a karaoke of the worst song you know... 🎤</span></div>
         </div>
         <div class="tut-title">😈 Dare System</div>
-        <div class="tut-desc">After each shape, you get a dare! Higher score = more extreme dare. <b>Scratch</b> to reveal it. Complete the dare for bonus points!</div>
+        <div class="tut-desc">After each shape, you get a dare! <b>Lower score = more extreme dare</b> — so playing badly comes with consequences! Scratch the card to reveal your dare, then choose to do it or skip.</div>
       </div>
       <!-- Step 5 -->
       <div class="tut-step" data-step="4">
@@ -1168,11 +1168,11 @@ const SHP={
 };
 const KEYS = Object.keys(SHP);
 
-// DARE TIERS SYSTEM — 160 DARES (Higher Score = More Extreme & Spicy!)
-// LEVEL 1: MILD (score 0-44) — Silly, awkward, harmless fun
-// LEVEL 2: SPICY (score 45-64) — Cringey social dares
-// LEVEL 3: EXTREME (score 65-79) — Bold, embarrassing, hard to back out of
-// LEVEL 4: CHAOS (score 80+) — Nuclear chaos dares 💀
+// DARE TIERS SYSTEM — 160 DARES (Lower Score = More Extreme & Spicy!)
+// LEVEL 1: MILD  (score 75-100) — Silly, awkward, harmless fun (reward for playing well)
+// LEVEL 2: SPICY (score 45-74)  — Cringey social dares
+// LEVEL 3: HARD  (score 21-44)  — Bold, embarrassing, hard to back out of
+// LEVEL 4: CHAOS (score 0-20)   — Nuclear chaos dares 💀 (punishment for bad score!)
 const DARES = {
  mild: [
   "🌸 Text the 3rd person in your recent chats: 'I miss you' with zero context. Don't explain.",
@@ -1701,14 +1701,15 @@ function pickDare(tier){
 /**
  * getDareForScore(score)
  * Maps game score to dare tier and metadata.
- * Score thresholds: 0-44 mild | 45-64 spicy | 65-79 hard | 80+ chaos
+ * REVERSED: Low score = harder dare (punishment for failing!)
+ * Score thresholds: 0-20 chaos | 21-44 hard | 45-74 spicy | 75+ mild
  */
 function getDareForScore(){
  const sc = gSc();
- if(sc >= 80) return { tier:'lvl-chaos', badge:'LEVEL 4: PURE TERROR', pts:100, pool:'chaos' };
- if(sc >= 65) return { tier:'lvl-hard',  badge:'LEVEL 3: NIGHTMARE',   pts:75,  pool:'hard' };
- if(sc >= 45) return { tier:'lvl-spicy', badge:'LEVEL 2: HORROR DARE', pts:50,  pool:'spicy' };
- return { tier:'lvl-mild', badge:'LEVEL 1: CREEPY DARE', pts:30, pool:'mild' };
+ if(sc >= 75) return { tier:'lvl-mild',  badge:'LEVEL 1: EASY DARE',    pts:30,  pool:'mild'  };
+ if(sc >= 45) return { tier:'lvl-spicy', badge:'LEVEL 2: HORROR DARE',  pts:50,  pool:'spicy' };
+ if(sc >= 21) return { tier:'lvl-hard',  badge:'LEVEL 3: NIGHTMARE',    pts:75,  pool:'hard'  };
+ return { tier:'lvl-chaos', badge:'LEVEL 4: PURE TERROR', pts:100, pool:'chaos' };
 }
 
 
