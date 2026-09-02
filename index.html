@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -498,37 +498,122 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;o
 .intro-cta-row{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;}
 .intro-cta-main{flex:1;max-width:280px;}
 
+
 /* ================================================================
-   sMenu — Fix title visibility and overall appearance
+   sMenu — FULL REDESIGN: All menu classes defined here
    ================================================================ */
-/* Force the title and tagline to be visible with solid bright colors */
-#sMenu .game-title{
+
+/* Container */
+.min{
+  position:relative;z-index:1;
+  text-align:center;
+  max-width:500px;
+  width:92vw;
+  display:flex;flex-direction:column;align-items:center;
+}
+
+/* Eyebrow badge — "✦ dare bloom · party dare edition ✦" */
+.badge{
+  display:inline-flex;align-items:center;gap:10px;
+  font-family:var(--fm);
+  font-size:.52rem;
+  letter-spacing:.28em;
+  text-transform:uppercase;
+  color:rgba(255,71,87,.6);
+  margin-bottom:1em;
+}
+.badge::before,.badge::after{
+  content:'';flex:1;height:1px;width:44px;
+}
+.badge::before{background:linear-gradient(90deg,transparent,rgba(255,71,87,.5));}
+.badge::after{background:linear-gradient(90deg,rgba(255,71,87,.5),transparent);}
+
+/* Main logo — DARE BLOOM */
+.logo{
   font-family:var(--fh);
-  font-size:clamp(4rem,13vw,8rem);
+  font-size:clamp(4.2rem,14vw,8rem);
   font-weight:400;
   line-height:.88;
-  color:#FF4757;
-  background:linear-gradient(135deg,#FF4757 0%,#FF87A0 25%,#1ECBE1 55%,#FFD32A 100%);
+  background:linear-gradient(135deg,#FF4757 0%,#FF87A0 22%,#1ECBE1 55%,#FFD32A 100%);
   background-size:200% 200%;
   -webkit-background-clip:text;
   background-clip:text;
   -webkit-text-fill-color:transparent;
-  animation:grad 5s ease-in-out infinite;
+  animation:grad 5s ease-in-out infinite,glitch .55s ease infinite alternate;
+  letter-spacing:.04em;
   margin-bottom:.25em;
   display:block;
+  filter:drop-shadow(0 0 32px rgba(255,71,87,.25));
 }
-#sMenu .game-eyebrow{color:rgba(255,107,107,.8);letter-spacing:.3em;}
-#sMenu .game-tagline{color:rgba(255,255,255,.5);font-size:.62rem;margin-bottom:1.6em;}
-/* Stats visible */
-#sMenu .menu-stats{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.12);}
-#sMenu .stat-val{color:var(--cy);font-size:1.3rem;}
-#sMenu .stat-lbl{color:rgba(255,255,255,.4);font-size:.5rem;}
-/* Credit line */
-#sMenu .menu-credit{color:rgba(255,255,255,.28);margin-top:1.4em;}
 
-/* ================================================================
-   Result Screen — Menu button style
-   ================================================================ */
+/* Tagline under logo */
+.lsub{
+  font-family:var(--fm);
+  font-size:.56rem;
+  color:rgba(255,255,255,.38);
+  letter-spacing:.1em;
+  margin-bottom:1.6em;
+  line-height:1.7;
+  max-width:340px;
+}
+
+/* Best score / dares strip */
+.best{
+  display:flex;
+  gap:0;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:12px;
+  overflow:hidden;
+  background:rgba(255,255,255,.025);
+  margin-bottom:1.4em;
+  width:100%;
+  max-width:340px;
+}
+.best > div{
+  flex:1;
+  padding:10px 14px;
+  font-family:var(--fm);
+  font-size:.52rem;
+  color:rgba(255,255,255,.35);
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  border-right:1px solid rgba(255,255,255,.06);
+  text-align:center;
+  line-height:1.7;
+}
+.best > div:last-child{ border-right:none; }
+.best span{
+  display:block;
+  font-family:var(--fm);
+  font-size:1.15rem;
+  font-weight:700;
+  color:var(--cy);
+  letter-spacing:.04em;
+  margin-bottom:2px;
+}
+
+/* Creator credit */
+.credit-line{
+  font-family:var(--fm);
+  font-size:.46rem;
+  color:rgba(255,255,255,.2);
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  margin-bottom:.9em;
+}
+.credit-line span{color:var(--cy);}
+
+/* Compatibility: old inline credit div inside .min */
+#sMenu > .min > div[style*="Space Mono"]{
+  font-family:var(--fm)!important;
+  font-size:.46rem!important;
+  color:rgba(255,255,255,.2)!important;
+  letter-spacing:.18em!important;
+  margin-bottom:.9em!important;
+}
+#sMenu > .min > div[style*="Space Mono"] span{color:var(--cy)!important;}
+
+/* Result screen menu button */
 #resToMenuBtn{background:rgba(255,255,255,.04)!important;border-color:rgba(255,255,255,.1)!important;color:rgba(255,255,255,.4)!important;}
 #resToMenuBtn:hover{background:rgba(255,255,255,.09)!important;color:var(--t1)!important;}
 </style>
@@ -599,28 +684,54 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;o
 </div>
 <div class="screen" id="sMenu">
   <div class="min">
-    <div class="badge">✦ dare bloom · party dare edition ✦</div>
+
+    <!-- Eyebrow label -->
+    <div class="badge">✦ dare bloom &middot; party dare edition ✦</div>
+
+    <!-- Main title -->
     <div class="logo">DARE BLOOM</div>
-    <div class="lsub">// draw shapes with ur finger · complete dares or face chaos 💀</div>
-    <div id="menuUserInfo" style="display:none;margin-bottom:.6em;">
+
+    <!-- Tagline -->
+    <div class="lsub">draw shapes with ur finger &middot; complete dares or face chaos 💀</div>
+
+    <!-- Signed-in user bar (shown by JS) -->
+    <div id="menuUserInfo" style="display:none;margin-bottom:.8em;width:100%;max-width:340px;">
       <div class="g-user-info"><img id="menuUserPhoto" src="" alt=""><span id="menuUserName"></span><button class="g-signout-btn" id="signOutBtn">Sign Out</button></div>
     </div>
-    <div style="font-family:'Space Mono',monospace;font-size:.55rem;color:rgba(255,255,255,.22);letter-spacing:.18em;text-transform:uppercase;margin-bottom:.8em;">Created by <span style="color:var(--cy);">Sribendu Prasad Muduli</span></div>
+
+    <!-- Creator credit -->
+    <div class="credit-line">Created by <span>Sribendu Prasad Muduli</span></div>
+
+    <!-- Stats strip -->
     <div class="best">
-      <div>BEST SCORE: <span id="bestD">—</span></div>
-      <div>DARES COMPLETED: <span id="daresDoneD">0</span> 🔥</div>
+      <div>
+        <span id="bestD">—</span>
+        Best Score
+      </div>
+      <div>
+        <span id="daresDoneD">0</span>
+        Dares Done 🔥
+      </div>
     </div>
-    <div style="display:flex;gap:10px;justify-content:center;margin-bottom:1.2em;flex-wrap:wrap;">
-      <button class="btn" id="careerBtn">Play Career Mode</button>
-      <button class="btn2" id="freeBtn">Shape Select</button>
+
+    <!-- Primary CTA row -->
+    <div style="display:flex;gap:10px;justify-content:center;margin-bottom:1em;flex-wrap:wrap;width:100%;">
+      <button class="btn" id="careerBtn" style="flex:1;min-width:160px;max-width:220px;">🔥 Play Career Mode</button>
+      <button class="btn2" id="freeBtn" style="flex:1;min-width:120px;">&#x2B21; Shape Select</button>
     </div>
-    <div style="display:flex;gap:10px;justify-content:center;margin-top:.8em;flex-wrap:wrap;">
-      <button class="btn2 btn-dare" id="toggleDareBtn">Dare Mode: ACTIVE</button>
-      <button class="btn2" id="leaderboardBtn" style="background:rgba(255,215,0,.08);color:#FFD700;border-color:rgba(255,215,0,.3);">Leaderboard</button>
-      <button class="btn2" id="howToPlayBtn" style="background:rgba(255,255,255,.05);">How to Play</button>
-      <button class="btn2" id="tutorialBtn" style="background:rgba(78,205,196,.08);color:var(--cy);border-color:rgba(78,205,196,.3);">▶ Tutorial</button>
-      <button class="btn2" id="partyModeBtn" style="background:rgba(255,107,107,.1);color:var(--pk);border-color:rgba(255,107,107,.3);">👥 Party Mode</button>
+
+    <!-- Divider -->
+    <div style="width:100%;max-width:340px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);margin:.4em 0 .9em;"></div>
+
+    <!-- Secondary nav row -->
+    <div style="display:flex;gap:7px;justify-content:center;flex-wrap:wrap;">
+      <button class="btn2 btn-dare" id="toggleDareBtn">&#x26A1; Dare Mode: ACTIVE</button>
+      <button class="btn2 btn-gold" id="leaderboardBtn">&#x1F3C6; Leaderboard</button>
+      <button class="btn2" id="howToPlayBtn">&#x2753; How to Play</button>
+      <button class="btn2 btn-teal" id="tutorialBtn">&#x25B6; Tutorial</button>
+      <button class="btn2 btn-red" id="partyModeBtn">&#x1F465; Party Mode</button>
     </div>
+
   </div>
 </div>
 
@@ -1877,7 +1988,7 @@ document.getElementById('toggleDareBtn').addEventListener('click',()=>{
  eAC();
  dareModeActive = !dareModeActive;
  const btn = document.getElementById('toggleDareBtn');
- btn.textContent = dareModeActive ? 'Dare Mode: ACTIVE' : 'Dare Mode: OFF';
+ btn.textContent = dareModeActive ? '⚡ Dare Mode: ACTIVE' : '⚡ Dare Mode: OFF';
  btn.className = dareModeActive ? 'btn2 btn-dare' : 'btn2';
 });
 
@@ -1888,8 +1999,13 @@ document.getElementById('nextBtn').addEventListener('click',()=>{
   if(cMd){cRd++;fls.length=0;sps.length=0;trs.length=0;if(cRd>=cOr.length)showCar();else startCD(cOr[cRd]);}else show('sShapes');
 });
 document.getElementById('retryBtn').addEventListener('click',()=>{eAC();fls.length=0;sps.length=0;trs.length=0;startCD(curS.k);});
+
+// ✅ FIX: Menu button on result screen — was missing its event listener
+document.getElementById('resToMenuBtn').addEventListener('click',()=>{eAC();show('sMenu');gSt='menu';syncGameUI('menu');});
+
 document.getElementById('againBtn').addEventListener('click',()=>{eAC();show('sMenu');gSt='menu';syncGameUI('menu');});
 document.getElementById('gbtn').addEventListener('click',()=>{eAC();showG=!showG;document.getElementById('gbtn').textContent=showG?'❤️ guide':'👁 off';});
+
 // ============ NAME GATE ============
 if(!playerName) playerName = localStorage.getItem('bloomPlayerName') || '';
 const nameInput = document.getElementById('playerNameInput');
