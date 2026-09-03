@@ -667,17 +667,6 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;o
       <label class="name-label">ENTER YOUR NAME TO PLAY</label>
       <input type="text" id="playerNameInput" class="name-input" placeholder="Your name..." maxlength="20" autocomplete="off">
       <div id="nameError" class="name-error">Please enter your name to continue!</div>
-      <div class="intro-auth">
-        <div class="auth-label">SIGN IN TO SAVE SCORES GLOBALLY</div>
-        <button class="g-signin-btn" id="clerkSignInBtn">
-          <svg width="18" height="18" viewBox="0 0 18 18" xmlns="http://www.w3.org/2000/svg"><path d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.874 2.684-6.615z" fill="#4285F4"/><path d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.258c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z" fill="#34A853"/><path d="M3.964 10.707A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.707V4.961H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.039l3.007-2.332z" fill="#FBBC05"/><path d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.961L3.964 6.293C4.672 4.166 6.656 3.58 9 3.58z" fill="#EA4335"/></svg>
-          Sign in with Google
-        </button>
-        <div id="signedInInfo" class="auth-user" style="display:none">
-          <img id="userPhoto" class="auth-avatar" src="" alt="">
-          <span id="userName"></span>
-        </div>
-      </div>
     </div>
     <div class="intro-cta-row">
       <button class="btn2" onclick="show('sMenu')">&#8592; Menu</button>
@@ -697,10 +686,6 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;o
     <!-- Tagline -->
     <div class="lsub">draw shapes with ur finger &middot; complete dares or face chaos 💀</div>
 
-    <!-- Signed-in user bar (shown by JS) -->
-    <div id="menuUserInfo" style="display:none;margin-bottom:.8em;width:100%;max-width:340px;">
-      <div class="g-user-info"><img id="menuUserPhoto" src="" alt=""><span id="menuUserName"></span><button class="g-signout-btn" id="signOutBtn">Sign Out</button></div>
-    </div>
 
     <!-- Creator credit -->
     <div class="credit-line">Created by <span>Sribendu Prasad Muduli</span></div>
@@ -996,81 +981,9 @@ firebase.initializeApp({
   messagingSenderId: "76259112393",
   appId: "1:76259112393:web:1bb01ea41b665c562fa418"
 });
-var db   = firebase.firestore();
-var auth = firebase.auth();
-var clerkUser  = null;   // kept as alias for firebaseUser
+var db = firebase.firestore();
+var clerkUser = true;   // always "logged in" — scores save by player name, no auth needed
 var playerName = localStorage.getItem('bloomPlayerName') || '';
-
-// ===== FIREBASE GOOGLE AUTH =====
-var provider = new firebase.auth.GoogleAuthProvider();
-
-function $(id){ return document.getElementById(id); }
-
-function updateAuthUI(user) {
-  clerkUser = user;   // alias so saveToFirestore still works
-  if (user) {
-    var name = user.displayName || user.email || 'Player';
-    playerName = name;
-    localStorage.setItem('bloomPlayerName', name);
-    // Intro screen
-    if($('clerkSignInBtn'))  $('clerkSignInBtn').style.display  = 'none';
-    if($('signedInInfo'))    $('signedInInfo').style.display    = 'flex';
-    if($('userPhoto'))       $('userPhoto').src                 = user.photoURL || '';
-    if($('userName'))        $('userName').textContent          = name;
-    if($('playerNameInput') && !$('playerNameInput').value)
-                             $('playerNameInput').value         = name;
-    var introBtn = $('introContinueBtn');
-    if(introBtn){ introBtn.style.opacity='1'; introBtn.style.pointerEvents='auto'; }
-    // Menu screen
-    if($('menuUserInfo'))    $('menuUserInfo').style.display    = 'flex';
-    if($('menuUserPhoto'))   $('menuUserPhoto').src             = user.photoURL || '';
-    if($('menuUserName'))    $('menuUserName').textContent      = name;
-  } else {
-    clerkUser  = null;
-    playerName = localStorage.getItem('bloomPlayerName') || '';
-    if($('clerkSignInBtn'))  $('clerkSignInBtn').style.display  = 'inline-flex';
-    if($('signedInInfo'))    $('signedInInfo').style.display    = 'none';
-    if($('menuUserInfo'))    $('menuUserInfo').style.display    = 'none';
-  }
-}
-
-// Listen for auth state changes (fires on page load + login/logout)
-auth.onAuthStateChanged(function(user){ updateAuthUI(user); });
-
-// Button wiring — runs immediately (DOM is already ready since script is after body elements)
-// Also handles DOMContentLoaded as safety net
-function wireAuthButtons() {
-  var signInBtn  = document.getElementById('clerkSignInBtn');
-  var signOutBtn = document.getElementById('signOutBtn');
-
-  if(signInBtn && !signInBtn._fbwired) {
-    signInBtn._fbwired = true;
-    signInBtn.addEventListener('click', function(){
-      auth.signInWithPopup(provider).catch(function(e){
-        console.warn('Google sign-in error:', e.code, e.message);
-        if(e.code === 'auth/popup-blocked'){
-          alert('Popup blocked! Browser ne block kar diya. Please popup allow karo.');
-        } else if(e.code === 'auth/unauthorized-domain'){
-          alert('Domain authorized nahi hai. Firebase Console mein dare-bloom.vercel.app add karo.');
-        }
-      });
-    });
-  }
-
-  if(signOutBtn && !signOutBtn._fbwired) {
-    signOutBtn._fbwired = true;
-    signOutBtn.addEventListener('click', function(){
-      auth.signOut().then(function(){ updateAuthUI(null); });
-    });
-  }
-}
-
-// Wire immediately (script runs after DOM in body)
-wireAuthButtons();
-// Safety net for any edge cases
-if(document.readyState === 'loading'){
-  document.addEventListener('DOMContentLoaded', wireAuthButtons);
-}
 
 
 // ===== GEMINI AI DARE VERIFICATION =====
@@ -1113,22 +1026,28 @@ async function verifyDareProof(imageBase64, dareText) {
 // Firebase Firestore + Clerk user for leaderboard
 // db, clerkUser, playerName are global variables
 
-// ============ FIRESTORE LEADERBOARD ============
+// ============ FIRESTORE LEADERBOARD (no login needed) ============
 async function saveToFirestore(name, baseScore, dareBonus) {
-  if(!clerkUser) return;   // clerkUser is now the Firebase user object
+  if(!name) return;
   const total = baseScore + dareBonus;
-  const docRef = db.collection('leaderboard').doc(clerkUser.uid);
-  const doc = await docRef.get();
-  if(doc.exists && doc.data().total >= total) return;
-  await docRef.set({
-    name: name,
-    base: baseScore,
-    bonus: dareBonus,
-    total: total,
-    photoURL: clerkUser.photoURL || '',
-    uid: clerkUser.uid,
-    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-  }, { merge: true });
+  // Use name as doc key (slugified so same player updates their own record)
+  const docId = name.trim().toLowerCase().replace(/[^a-z0-9]/g,'_').substring(0,30)
+                + '_' + name.trim().length;
+  const docRef = db.collection('leaderboard').doc(docId);
+  try {
+    const doc = await docRef.get();
+    if(doc.exists && doc.data().total >= total) return; // keep best score only
+    await docRef.set({
+      name: name,
+      base: baseScore,
+      bonus: dareBonus,
+      total: total,
+      photoURL: '',
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+  } catch(e) {
+    console.warn('Firestore save error:', e.message);
+  }
 }
 
 async function loadFirestoreLeaderboard() {
