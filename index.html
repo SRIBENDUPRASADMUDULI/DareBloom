@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>🌸 DARE BLOOM — Flower Drawing Game & Dare Challenge</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#04020c">
+<link rel="apple-touch-icon" href="icon.svg">
 <meta name="description" content="DARE BLOOM — Draw flowers with your finger and complete wild party dares! Created by Sribendu Prasad Muduli.">
 <meta name="author" content="Sribendu Prasad Muduli">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
@@ -2869,5 +2872,19 @@ document.addEventListener('DOMContentLoaded', () => {
     </div>
   </div>
 </div>
+
+<script>
+// PWA Service Worker Registration
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      console.log('Service Worker registered', reg);
+    }).catch(err => {
+      console.error('Service Worker registration failed:', err);
+    });
+  });
+}
+</script>
+
 </body>
 </html>
