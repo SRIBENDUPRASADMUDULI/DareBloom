@@ -1134,6 +1134,7 @@ async function verifyDareProof(imageBase64, dareText) {
 async function saveToFirestore(name, baseScore, dareBonus) {
   if(!name) return;
   const total = baseScore + dareBonus;
+  if(total < 1) return; // never save 0-score runs — prevents accidental overwrites
   // Use Firebase UID when logged in for accurate tracking, else name-slug for guests
   const docId = clerkUser
     ? clerkUser.uid
