@@ -627,7 +627,26 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;o
 <video id="video" autoplay playsinline muted></video>
 <canvas id="canvas"></canvas>
 <div id="vig"></div>
-<div class="screen on" id="sLoad"><div style="text-align:center"><div style="font-size:3rem;animation:spin 2s linear infinite">🌸</div><div class="ltxt" style="margin-top:12px">camera start ho rha hai ruk...</div><div class="ltxt" style="margin-top:8px;opacity:0.25">tip: accha lighting = better tracking</div></div></div>
+<div class="screen on" id="sLoad"><div style="text-align:center">
+  <div style="font-size:3rem;animation:spin 2s linear infinite">🌸</div>
+  <div class="ltxt" style="margin-top:12px">camera start ho rha hai ruk...</div>
+  <div class="ltxt" style="margin-top:8px;opacity:0.25">tip: accha lighting = better tracking</div>
+  <!-- Privacy trust badges -->
+  <div style="margin-top:28px;display:flex;flex-wrap:wrap;justify-content:center;gap:10px;max-width:320px;margin-left:auto;margin-right:auto;">
+    <div style="display:flex;align-items:center;gap:6px;background:rgba(6,214,160,.1);border:1px solid rgba(6,214,160,.3);border-radius:20px;padding:5px 12px;font-family:'Space Mono',monospace;font-size:.52rem;color:rgba(6,214,160,.9);">
+      📷 Camera stays on your device
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;background:rgba(6,214,160,.1);border:1px solid rgba(6,214,160,.3);border-radius:20px;padding:5px 12px;font-family:'Space Mono',monospace;font-size:.52rem;color:rgba(6,214,160,.9);">
+      🚫 No video recorded or uploaded
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;background:rgba(255,183,3,.08);border:1px solid rgba(255,183,3,.25);border-radius:20px;padding:5px 12px;font-family:'Space Mono',monospace;font-size:.52rem;color:rgba(255,183,3,.85);">
+      🔒 Scores saved via Google Auth
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;background:rgba(255,183,3,.08);border:1px solid rgba(255,183,3,.25);border-radius:20px;padding:5px 12px;font-family:'Space Mono',monospace;font-size:.52rem;color:rgba(255,183,3,.85);">
+      🙈 No personal data sold
+    </div>
+  </div>
+</div></div>
 <div class="screen" id="sIntro">
   <div class="intro-panel">
     <div class="intro-eyebrow">HOW TO PLAY</div>
@@ -684,6 +703,14 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;o
           <span id="userName" style="color:#fff;font-size:.82rem;font-weight:600;"></span>
           <button id="googleSignOutBtn" class="g-signout-btn">Sign Out</button>
         </div>
+      </div>
+
+      <!-- Privacy assurance strip -->
+      <div style="margin-top:12px;display:flex;flex-wrap:wrap;justify-content:center;gap:7px;">
+        <span style="font-family:'Space Mono',monospace;font-size:.46rem;color:rgba(6,214,160,.8);background:rgba(6,214,160,.08);border:1px solid rgba(6,214,160,.25);border-radius:12px;padding:3px 9px;">📷 Camera = your device only</span>
+        <span style="font-family:'Space Mono',monospace;font-size:.46rem;color:rgba(6,214,160,.8);background:rgba(6,214,160,.08);border:1px solid rgba(6,214,160,.25);border-radius:12px;padding:3px 9px;">🚫 No video stored or uploaded</span>
+        <span style="font-family:'Space Mono',monospace;font-size:.46rem;color:rgba(255,183,3,.8);background:rgba(255,183,3,.06);border:1px solid rgba(255,183,3,.2);border-radius:12px;padding:3px 9px;">🔒 Login via Google — not us</span>
+        <span onclick="document.getElementById('privacyModal').style.display='flex'" style="font-family:'Space Mono',monospace;font-size:.46rem;color:rgba(255,255,255,.4);background:transparent;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:3px 9px;cursor:pointer;text-decoration:underline;">ℹ️ Full Privacy Policy</span>
       </div>
     </div>
     <div class="intro-cta-row">
@@ -2523,5 +2550,78 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 300);
   }
 });</script>
+
+<!-- ═══ PRIVACY POLICY MODAL ═══════════════════════════════════ -->
+<div id="privacyModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(4,2,12,.92);backdrop-filter:blur(18px);align-items:center;justify-content:center;padding:20px;" onclick="if(event.target===this)this.style.display='none'">
+  <div style="max-width:480px;width:100%;background:rgba(15,10,30,.98);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:28px 24px;max-height:85vh;overflow-y:auto;position:relative;">
+    <button onclick="document.getElementById('privacyModal').style.display='none'" style="position:absolute;top:14px;right:16px;background:none;border:none;color:rgba(255,255,255,.4);font-size:1.3rem;cursor:pointer;line-height:1;">✕</button>
+    <div style="font-family:'Space Mono',monospace;font-size:.52rem;color:rgba(255,183,3,.8);letter-spacing:.15em;margin-bottom:6px;">🔒 PRIVACY POLICY</div>
+    <div style="font-family:'Creepster',cursive;font-size:1.4rem;color:#fff;margin-bottom:4px;">DARE BLOOM</div>
+    <div style="font-family:'Space Mono',monospace;font-size:.46rem;color:rgba(255,255,255,.3);margin-bottom:20px;">Last updated: September 2026</div>
+
+    <!-- Camera -->
+    <div style="background:rgba(6,214,160,.07);border:1px solid rgba(6,214,160,.2);border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+      <div style="font-family:'Space Mono',monospace;font-size:.58rem;color:#06D6A0;font-weight:700;margin-bottom:6px;">📷 CAMERA ACCESS</div>
+      <div style="font-family:'Space Mono',monospace;font-size:.48rem;color:rgba(255,255,255,.7);line-height:1.7;">
+        Your camera is used <b>only for hand tracking</b> — to detect your index finger position on screen. <br><br>
+        ✅ Video NEVER leaves your device<br>
+        ✅ Nothing is recorded or stored<br>
+        ✅ AI runs locally in your browser (WebAssembly)<br>
+        ✅ Camera turns off when you leave the game
+      </div>
+    </div>
+
+    <!-- Data collected -->
+    <div style="background:rgba(255,183,3,.06);border:1px solid rgba(255,183,3,.2);border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+      <div style="font-family:'Space Mono',monospace;font-size:.58rem;color:#FFB703;font-weight:700;margin-bottom:6px;">📊 DATA WE COLLECT</div>
+      <div style="font-family:'Space Mono',monospace;font-size:.48rem;color:rgba(255,255,255,.7);line-height:1.7;">
+        If you <b>sign in with Google</b>, we store in Firebase Firestore:<br>
+        • Your display name<br>
+        • Your Google profile photo URL<br>
+        • Your game scores (leaderboard only)<br><br>
+        If you play as a <b>guest</b> (no sign-in):<br>
+        • Only the name you typed + your scores<br>
+        • Stored locally in your browser (localStorage)<br><br>
+        ❌ We do NOT collect: passwords, emails, location, contacts, or any sensitive info.
+      </div>
+    </div>
+
+    <!-- Google Auth -->
+    <div style="background:rgba(66,133,244,.07);border:1px solid rgba(66,133,244,.2);border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+      <div style="font-family:'Space Mono',monospace;font-size:.58rem;color:#4285F4;font-weight:700;margin-bottom:6px;">🔑 GOOGLE SIGN-IN</div>
+      <div style="font-family:'Space Mono',monospace;font-size:.48rem;color:rgba(255,255,255,.7);line-height:1.7;">
+        Sign-in is handled entirely by <b>Google Firebase Auth</b> — we never see your password.<br><br>
+        ✅ Industry-standard OAuth 2.0<br>
+        ✅ You can sign out anytime<br>
+        ✅ Governed by Google's Privacy Policy
+      </div>
+    </div>
+
+    <!-- Third parties -->
+    <div style="background:rgba(255,71,87,.06);border:1px solid rgba(255,71,87,.18);border-radius:10px;padding:14px 16px;margin-bottom:12px;">
+      <div style="font-family:'Space Mono',monospace;font-size:.58rem;color:var(--pk,#FF4757);font-weight:700;margin-bottom:6px;">🤝 THIRD-PARTY SERVICES</div>
+      <div style="font-family:'Space Mono',monospace;font-size:.48rem;color:rgba(255,255,255,.7);line-height:1.7;">
+        • <b>Firebase (Google)</b> — Auth + Leaderboard database<br>
+        • <b>MediaPipe (Google)</b> — Local hand tracking model<br>
+        • <b>Gemini AI (Google)</b> — Dare proof verification (image only, not stored)<br><br>
+        ❌ No data is sold to advertisers. Ever.
+      </div>
+    </div>
+
+    <!-- Delete data -->
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px 16px;margin-bottom:20px;">
+      <div style="font-family:'Space Mono',monospace;font-size:.58rem;color:rgba(255,255,255,.7);font-weight:700;margin-bottom:6px;">🗑️ DELETE YOUR DATA</div>
+      <div style="font-family:'Space Mono',monospace;font-size:.48rem;color:rgba(255,255,255,.55);line-height:1.7;">
+        To delete your leaderboard entry, contact:<br>
+        <span style="color:#06D6A0;">sribenduprasadmuduli@gmail.com</span><br><br>
+        Guest data can be cleared by clearing your browser's localStorage.
+      </div>
+    </div>
+
+    <button onclick="document.getElementById('privacyModal').style.display='none'" style="width:100%;padding:10px;background:linear-gradient(135deg,rgba(6,214,160,.2),rgba(6,214,160,.1));border:1px solid rgba(6,214,160,.35);border-radius:10px;color:#06D6A0;font-family:'Space Mono',monospace;font-size:.56rem;cursor:pointer;letter-spacing:.1em;">
+      ✅ I UNDERSTAND — CLOSE
+    </button>
+  </div>
+</div>
 </body>
 </html>
