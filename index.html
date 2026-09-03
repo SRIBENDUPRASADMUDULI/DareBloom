@@ -705,17 +705,26 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;o
         </div>
       </div>
 
-      <!-- Privacy assurance strip -->
+      <!-- Privacy & legal strip -->
       <div style="margin-top:12px;display:flex;flex-wrap:wrap;justify-content:center;gap:7px;">
         <span style="font-family:'Space Mono',monospace;font-size:.46rem;color:rgba(6,214,160,.8);background:rgba(6,214,160,.08);border:1px solid rgba(6,214,160,.25);border-radius:12px;padding:3px 9px;">📷 Camera = your device only</span>
         <span style="font-family:'Space Mono',monospace;font-size:.46rem;color:rgba(6,214,160,.8);background:rgba(6,214,160,.08);border:1px solid rgba(6,214,160,.25);border-radius:12px;padding:3px 9px;">🚫 No video stored or uploaded</span>
         <span style="font-family:'Space Mono',monospace;font-size:.46rem;color:rgba(255,183,3,.8);background:rgba(255,183,3,.06);border:1px solid rgba(255,183,3,.2);border-radius:12px;padding:3px 9px;">🔒 Login via Google — not us</span>
-        <span onclick="document.getElementById('privacyModal').style.display='flex'" style="font-family:'Space Mono',monospace;font-size:.46rem;color:rgba(255,255,255,.4);background:transparent;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:3px 9px;cursor:pointer;text-decoration:underline;">ℹ️ Full Privacy Policy</span>
+        <span onclick="document.getElementById('privacyModal').style.display='flex'" style="font-family:'Space Mono',monospace;font-size:.46rem;color:rgba(255,255,255,.4);background:transparent;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:3px 9px;cursor:pointer;text-decoration:underline;">ℹ️ Privacy Policy</span>
+        <span onclick="document.getElementById('termsModal').style.display='flex'" style="font-family:'Space Mono',monospace;font-size:.46rem;color:rgba(255,255,255,.4);background:transparent;border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:3px 9px;cursor:pointer;text-decoration:underline;">📜 Terms &amp; Conditions</span>
       </div>
     </div>
     <div class="intro-cta-row">
       <button class="btn2" onclick="show('sMenu')">&#8592; Menu</button>
-      <button class="btn intro-cta-main" id="introContinueBtn" style="opacity:.5;pointer-events:none;">Enter the Nightmare &#8594;</button>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+        <div style="font-family:'Space Mono',monospace;font-size:.42rem;color:rgba(255,255,255,.28);text-align:center;max-width:220px;line-height:1.5;">
+          By playing, you agree to our
+          <span onclick="document.getElementById('termsModal').style.display='flex'" style="color:rgba(255,183,3,.6);cursor:pointer;text-decoration:underline;">Terms &amp; Conditions</span>
+          and
+          <span onclick="document.getElementById('privacyModal').style.display='flex'" style="color:rgba(255,183,3,.6);cursor:pointer;text-decoration:underline;">Privacy Policy</span>
+        </div>
+        <button class="btn intro-cta-main" id="introContinueBtn" style="opacity:.5;pointer-events:none;">Enter the Nightmare &#8594;</button>
+      </div>
     </div>
   </div>
 </div>
@@ -2623,5 +2632,134 @@ document.addEventListener('DOMContentLoaded', () => {
     </button>
   </div>
 </div>
+<!-- ═══ TERMS & CONDITIONS MODAL ═══════════════════════════════ -->
+<div id="termsModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(4,2,12,.92);backdrop-filter:blur(18px);align-items:center;justify-content:center;padding:20px;" onclick="if(event.target===this)this.style.display='none'">
+  <div style="max-width:500px;width:100%;background:rgba(15,10,30,.98);border:1px solid rgba(255,183,3,.2);border-radius:18px;padding:28px 24px;max-height:88vh;overflow-y:auto;position:relative;">
+    <button onclick="document.getElementById('termsModal').style.display='none'" style="position:absolute;top:14px;right:16px;background:none;border:none;color:rgba(255,255,255,.4);font-size:1.3rem;cursor:pointer;">✕</button>
+
+    <div style="font-family:'Space Mono',monospace;font-size:.52rem;color:rgba(255,183,3,.85);letter-spacing:.15em;margin-bottom:4px;">📜 TERMS &amp; CONDITIONS</div>
+    <div style="font-family:'Creepster',cursive;font-size:1.4rem;color:#fff;margin-bottom:4px;">DARE BLOOM</div>
+    <div style="font-family:'Space Mono',monospace;font-size:.44rem;color:rgba(255,255,255,.3);margin-bottom:22px;">Effective: September 2026 · By playing, you accept these terms.</div>
+
+    <!-- 1. Ownership & Copyright -->
+    <div style="background:rgba(255,183,3,.06);border:1px solid rgba(255,183,3,.18);border-radius:10px;padding:14px 16px;margin-bottom:11px;">
+      <div style="font-family:'Space Mono',monospace;font-size:.56rem;color:#FFB703;font-weight:700;margin-bottom:7px;">1. © COPYRIGHT &amp; OWNERSHIP</div>
+      <div style="font-family:'Space Mono',monospace;font-size:.46rem;color:rgba(255,255,255,.7);line-height:1.75;">
+        DareBloom — including all code, design, graphics, game logic, dare content, UI, and branding — is the exclusive intellectual property of <b>Sribendu Prasad Muduli</b>.<br><br>
+        ✅ You may play the game for personal/party use.<br>
+        ❌ You may NOT copy, clone, redistribute, resell, or publish this game (or any part of it) without explicit written permission from the creator.<br>
+        ❌ You may NOT claim this work as your own.<br><br>
+        Unauthorized reproduction or distribution may result in legal action under Indian and international copyright law.
+      </div>
+    </div>
+
+    <!-- 2. Age -->
+    <div style="background:rgba(108,58,255,.07);border:1px solid rgba(108,58,255,.2);border-radius:10px;padding:14px 16px;margin-bottom:11px;">
+      <div style="font-family:'Space Mono',monospace;font-size:.56rem;color:#a78bfa;font-weight:700;margin-bottom:7px;">2. AGE REQUIREMENT</div>
+      <div style="font-family:'Space Mono',monospace;font-size:.46rem;color:rgba(255,255,255,.7);line-height:1.75;">
+        This game is intended for users aged <b>13 and above</b>. Some dares may involve social interactions, physical actions, or humorous challenges that may not be suitable for younger players.<br><br>
+        By playing, you confirm you are 13+ or have parental consent.
+      </div>
+    </div>
+
+    <!-- 3. Dare Disclaimer (MOST IMPORTANT) -->
+    <div style="background:rgba(255,71,87,.08);border:1px solid rgba(255,71,87,.25);border-radius:10px;padding:14px 16px;margin-bottom:11px;">
+      <div style="font-family:'Space Mono',monospace;font-size:.56rem;color:#FF4757;font-weight:700;margin-bottom:7px;">3. ⚠️ DARE DISCLAIMER — READ CAREFULLY</div>
+      <div style="font-family:'Space Mono',monospace;font-size:.46rem;color:rgba(255,255,255,.7);line-height:1.75;">
+        All dares in DareBloom are <b>voluntary party challenges</b>. Participation is entirely your choice.<br><br>
+        ❌ <b>Sribendu Prasad Muduli / DareBloom is NOT liable</b> for:<br>
+        • Any physical injury, embarrassment, or harm resulting from completing a dare<br>
+        • Any social consequences (fights, awkward situations, relationship issues)<br>
+        • Any damage to property while attempting a dare<br>
+        • Any third-party reactions to dares performed on or near them<br><br>
+        ✅ You always have the right to <b>skip any dare</b>.<br>
+        ✅ Use common sense — do not do anything dangerous, illegal, or that could harm yourself or others.<br><br>
+        <b>If you perform a dare, you do so entirely at your own risk.</b>
+      </div>
+    </div>
+
+    <!-- 4. AI & Camera -->
+    <div style="background:rgba(6,214,160,.06);border:1px solid rgba(6,214,160,.18);border-radius:10px;padding:14px 16px;margin-bottom:11px;">
+      <div style="font-family:'Space Mono',monospace;font-size:.56rem;color:#06D6A0;font-weight:700;margin-bottom:7px;">4. AI VERIFICATION &amp; CAMERA</div>
+      <div style="font-family:'Space Mono',monospace;font-size:.46rem;color:rgba(255,255,255,.7);line-height:1.75;">
+        • Camera is used solely for hand gesture tracking. No video is stored or transmitted.<br>
+        • Dare proof images submitted for AI verification are sent to Google Gemini API for analysis only. They are <b>not stored</b> by us.<br>
+        • AI verification results are automated and may not always be accurate. The creator is not responsible for incorrect AI decisions.
+      </div>
+    </div>
+
+    <!-- 5. Leaderboard -->
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px 16px;margin-bottom:11px;">
+      <div style="font-family:'Space Mono',monospace;font-size:.56rem;color:rgba(255,255,255,.7);font-weight:700;margin-bottom:7px;">5. LEADERBOARD &amp; USER CONTENT</div>
+      <div style="font-family:'Space Mono',monospace;font-size:.46rem;color:rgba(255,255,255,.55);line-height:1.75;">
+        • Your name and score may appear publicly on the leaderboard.<br>
+        • Do not use offensive, hateful, or impersonating names — such entries may be removed without notice.<br>
+        • The creator reserves the right to remove any leaderboard entry at their discretion.
+      </div>
+    </div>
+
+    <!-- 6. No Warranty -->
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px 16px;margin-bottom:11px;">
+      <div style="font-family:'Space Mono',monospace;font-size:.56rem;color:rgba(255,255,255,.7);font-weight:700;margin-bottom:7px;">6. NO WARRANTY</div>
+      <div style="font-family:'Space Mono',monospace;font-size:.46rem;color:rgba(255,255,255,.55);line-height:1.75;">
+        DareBloom is provided "as is" without warranties of any kind. The creator does not guarantee uninterrupted access, error-free gameplay, or permanent availability of the leaderboard. The service may be modified or discontinued at any time.
+      </div>
+    </div>
+
+    <!-- 7. Governing Law -->
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px 16px;margin-bottom:20px;">
+      <div style="font-family:'Space Mono',monospace;font-size:.56rem;color:rgba(255,255,255,.7);font-weight:700;margin-bottom:7px;">7. GOVERNING LAW &amp; CONTACT</div>
+      <div style="font-family:'Space Mono',monospace;font-size:.46rem;color:rgba(255,255,255,.55);line-height:1.75;">
+        These Terms are governed by the laws of <b>India</b>. Any disputes shall be subject to the jurisdiction of courts in Odisha, India.<br><br>
+        For any concerns, DMCA notices, or data deletion requests:<br>
+        <span style="color:#06D6A0;">sribenduprasadmuduli@gmail.com</span>
+      </div>
+    </div>
+
+    <button onclick="document.getElementById('termsModal').style.display='none'" style="width:100%;padding:11px;background:linear-gradient(135deg,rgba(255,183,3,.2),rgba(255,183,3,.08));border:1px solid rgba(255,183,3,.35);border-radius:10px;color:#FFB703;font-family:'Space Mono',monospace;font-size:.56rem;cursor:pointer;letter-spacing:.1em;">
+      ✅ I UNDERSTAND — CLOSE
+    </button>
+  </div>
+</div>
+
+<!-- ═══ FIRST-VISIT TERMS ACCEPTANCE ═══════════════════════════ -->
+<div id="firstVisitModal" style="display:none;position:fixed;inset:0;z-index:10000;background:rgba(4,2,12,.97);backdrop-filter:blur(24px);align-items:center;justify-content:center;padding:20px;">
+  <div style="max-width:420px;width:100%;background:rgba(15,10,30,.99);border:1px solid rgba(255,183,3,.3);border-radius:18px;padding:28px 24px;text-align:center;">
+    <div style="font-size:2.5rem;margin-bottom:10px;">🌸</div>
+    <div style="font-family:'Creepster',cursive;font-size:1.6rem;color:#fff;margin-bottom:4px;">DARE BLOOM</div>
+    <div style="font-family:'Space Mono',monospace;font-size:.52rem;color:rgba(255,183,3,.8);letter-spacing:.1em;margin-bottom:18px;">WELCOME — BEFORE YOU PLAY</div>
+    <div style="font-family:'Space Mono',monospace;font-size:.46rem;color:rgba(255,255,255,.6);line-height:1.8;margin-bottom:20px;text-align:left;background:rgba(255,255,255,.04);border-radius:10px;padding:14px 16px;">
+      By clicking <b>"I Agree &amp; Play"</b> you confirm:<br><br>
+      ✅ You are <b>13 years or older</b><br>
+      ✅ All dares are <b>voluntary</b> — you can skip any<br>
+      ✅ You take <b>full responsibility</b> for dare actions<br>
+      ✅ DareBloom is <b>not liable</b> for any dare outcomes<br>
+      ✅ Camera is used <b>only on your device</b> — never stored<br>
+      ✅ You have read and accept our
+      <span onclick="document.getElementById('termsModal').style.display='flex'" style="color:rgba(255,183,3,.8);cursor:pointer;text-decoration:underline;">Terms &amp; Conditions</span>
+      and
+      <span onclick="document.getElementById('privacyModal').style.display='flex'" style="color:rgba(255,183,3,.8);cursor:pointer;text-decoration:underline;">Privacy Policy</span>
+    </div>
+    <button id="agreeAndPlayBtn" style="width:100%;padding:13px;background:linear-gradient(135deg,#FF4757,#6C3AFF);border:none;border-radius:12px;color:#fff;font-family:'Space Mono',monospace;font-size:.62rem;font-weight:700;cursor:pointer;letter-spacing:.08em;margin-bottom:10px;">
+      🎮 I AGREE &amp; PLAY
+    </button>
+    <div style="font-family:'Space Mono',monospace;font-size:.4rem;color:rgba(255,255,255,.2);">
+      You only see this once. Acceptance is stored locally.
+    </div>
+  </div>
+</div>
+
+<script>
+// First-visit T&C acceptance — show only if not accepted before
+(function(){
+  if(!localStorage.getItem('bloomTCAccepted')){
+    document.getElementById('firstVisitModal').style.display='flex';
+  }
+  document.getElementById('agreeAndPlayBtn').addEventListener('click', function(){
+    localStorage.setItem('bloomTCAccepted','1');
+    document.getElementById('firstVisitModal').style.display='none';
+  });
+})();
+</script>
 </body>
 </html>
