@@ -929,6 +929,7 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;o
 <div id="rds"></div>
 <button class="btn2" id="gbtn">❤️ guide</button>
 <div style="position:fixed; top:24px; right:20px; z-index:25; display:flex; gap:10px;">
+  <button class="btn2" id="doneDrawingBtn" style="display:none; padding:8px 18px; font-size:0.7rem; background:rgba(6,214,160,0.18); color:#06D6A0; border-color:rgba(6,214,160,0.4); font-weight:700;">✅ Done Drawing</button>
   <button class="btn2" id="inGameRestartBtn" style="display:none; padding:8px 16px; font-size:0.7rem; background:rgba(255,183,3,0.15); color:var(--am); border-color:rgba(255,183,3,0.3);">🔄 Restart Shape</button>
   <button class="btn2" id="inGameMenuBtn" style="display:none; padding:8px 16px; font-size:0.7rem; background:rgba(255,0,110,0.15); color:var(--pk); border-color:rgba(255,0,110,0.3);">✖ Quit to Menu</button>
 </div>
@@ -1170,7 +1171,7 @@ async function loadFirestoreLeaderboard() {
 
 
 import{HandLandmarker,FilesetResolver}from"https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.18/vision_bundle.mjs";
-const HIT=30,TIME=35,SEGS=80,MXF=400,MXS=300,MXT=250;
+const HIT=40,TIME=35,SEGS=80,MXF=400,MXS=300,MXT=250;
 const SHP={
  circle:{name:'Circle',emoji:'⭕',diff:'easy',gen(cx,cy,sz){const p=[],r=sz*.43;for(let i=0;i<=360;i++){const t=i*Math.PI/180;p.push([cx+r*Math.cos(t-Math.PI/2),cy+r*Math.sin(t-Math.PI/2)]);}return p;}},
  triangle:{name:'Triangle',emoji:'🔺',diff:'easy',gen(cx,cy,sz){const p=[],r=sz*.44,vts=[[cx,cy-r],[cx+r*.866,cy+r*.5],[cx-r*.866,cy+r*.5],[cx,cy-r]];for(let i=0;i<vts.length-1;i++){const[x1,y1]=vts[i],[x2,y2]=vts[i+1];for(let s=0;s<120;s++){const t=s/120;p.push([x1+(x2-x1)*t,y1+(y2-y1)*t]);}}return p;}},
@@ -1866,6 +1867,7 @@ function startG(){
  document.getElementById('tWrap').classList.add('on');
  document.getElementById('inGameMenuBtn').style.display='flex';
  document.getElementById('inGameRestartBtn').style.display='flex';
+ document.getElementById('doneDrawingBtn').style.display='flex';
  document.getElementById('hud').classList.add('on');
  document.getElementById('gbtn').textContent='❤️ guide';
  uRds();uHUD();
@@ -1907,8 +1909,8 @@ async function loop(ts){
     if(sH[k]){
      const[sx,sy]=sH[k];
      const rd=Math.hypot(rx-sx,ry-sy);
-     // Alpha: 0.15 for tiny moves (very smooth), 0.75 for large jumps (responsive)
-     const alpha=Math.min(0.75,Math.max(0.15,rd/SPT));
+      // Alpha: 0.2 for tiny moves (stable), 0.85 for large jumps (responsive)
+     const alpha=Math.min(0.85,Math.max(0.20,rd/SPT));
      rx=sx+(rx-sx)*alpha;ry=sy+(ry-sy)*alpha;
     }
     sH[k]=[rx,ry];
@@ -1979,9 +1981,9 @@ async function init(){
     baseOptions:{modelAssetPath:modelPath, delegate:"GPU"},
     numHands:1,
     runningMode:"VIDEO",
-    minHandDetectionConfidence: 0.4,
-    minHandPresenceConfidence: 0.5,
-    minTrackingConfidence: 0.5
+    minHandDetectionConfidence: 0.6,
+    minHandPresenceConfidence:  0.6,
+    minTrackingConfidence:      0.6
   });
   const camOpts = isMobile
     ? {video:{width:{ideal:640},height:{ideal:480},facingMode:'user'}}
@@ -2430,8 +2432,7 @@ document.getElementById('proofFileInput').addEventListener('change', (e)=>{
       lastDareBonus = 0;
       dareStreak = 0;
       saveToLeaderboard(playerName, lastBaseScore, 0);
-      sfxClick();
-      
+      sfxSkip();
       verdictEl.className = 'ai-verdict rejected';
       verdictEl.innerHTML = '<div class="ai-verdict-icon">❌</div>'
         + '<div class="ai-verdict-label">AI REJECTED!</div>'
@@ -2456,16 +2457,24 @@ document.getElementById('dareClaimBtn').addEventListener('click', ()=>{
 });
 
 document.getElementById('dareSkipBtn').addEventListener('click',()=>{
-  eAC(); sfxClick();
+  eAC(); sfxSkip();
   dareStreak = 0;
   lastDareBonus = 0;
-  document.getElementById('dareActsMain').innerHTML = '<div style="font-family:\'Space Mono\',monospace;font-size:.7rem;color:rgba(255,255,255,.3);text-align:center;padding:8px;">\ud83d\udc14 SKIPPED — 0 bonus points</div>';
+  document.getElementById('dareActsMain').innerHTML = '<div style="font-family:\'Space Mono\',monospace;font-size:.7rem;color:rgba(255,255,255,.3);text-align:center;padding:8px;">🐔 SKIPPED — 0 bonus points</div>';
   saveToLeaderboard(playerName, lastBaseScore, 0);
 });
 
 
 document.getElementById('inGameMenuBtn').addEventListener('click', ()=>{eAC();show('sMenu');gSt='menu';syncGameUI('menu');});
 document.getElementById('inGameRestartBtn').addEventListener('click', ()=>{eAC();startCD(curS.k);});
+document.getElementById('doneDrawingBtn').addEventListener('click', ()=>{
+  if(gSt!=='drawing') return;
+  eAC(); sfxOK();
+  gSt='done';
+  document.getElementById('tWrap').classList.remove('on');
+  document.getElementById('doneDrawingBtn').style.display='none';
+  setTimeout(showRes, 400);
+});
 
 // INITIALIZE
 init().catch(console.error);
