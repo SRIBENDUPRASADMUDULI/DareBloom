@@ -1037,19 +1037,40 @@ function updateAuthUI(user) {
 // Listen for auth state changes (fires on page load + login/logout)
 auth.onAuthStateChanged(function(user){ updateAuthUI(user); });
 
-// Button wiring
-document.addEventListener('DOMContentLoaded', function() {
-  var signInBtn  = $('clerkSignInBtn');
-  var signOutBtn = $('signOutBtn');
-  if(signInBtn) signInBtn.addEventListener('click', function(){
-    auth.signInWithPopup(provider).catch(function(e){
-      console.warn('Google sign-in error:', e.message);
+// Button wiring — runs immediately (DOM is already ready since script is after body elements)
+// Also handles DOMContentLoaded as safety net
+function wireAuthButtons() {
+  var signInBtn  = document.getElementById('clerkSignInBtn');
+  var signOutBtn = document.getElementById('signOutBtn');
+
+  if(signInBtn && !signInBtn._fbwired) {
+    signInBtn._fbwired = true;
+    signInBtn.addEventListener('click', function(){
+      auth.signInWithPopup(provider).catch(function(e){
+        console.warn('Google sign-in error:', e.code, e.message);
+        if(e.code === 'auth/popup-blocked'){
+          alert('Popup blocked! Browser ne block kar diya. Please popup allow karo.');
+        } else if(e.code === 'auth/unauthorized-domain'){
+          alert('Domain authorized nahi hai. Firebase Console mein dare-bloom.vercel.app add karo.');
+        }
+      });
     });
-  });
-  if(signOutBtn) signOutBtn.addEventListener('click', function(){
-    auth.signOut().then(function(){ updateAuthUI(null); });
-  });
-});
+  }
+
+  if(signOutBtn && !signOutBtn._fbwired) {
+    signOutBtn._fbwired = true;
+    signOutBtn.addEventListener('click', function(){
+      auth.signOut().then(function(){ updateAuthUI(null); });
+    });
+  }
+}
+
+// Wire immediately (script runs after DOM in body)
+wireAuthButtons();
+// Safety net for any edge cases
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', wireAuthButtons);
+}
 
 
 // ===== GEMINI AI DARE VERIFICATION =====
