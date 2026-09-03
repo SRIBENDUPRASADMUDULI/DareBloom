@@ -648,6 +648,9 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;o
   </div>
 </div></div>
 <div class="screen" id="sIntro">
+  <!-- Small back button top-left -->
+  <button onclick="show('sMenu')" style="position:absolute;top:18px;left:18px;z-index:10;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:rgba(255,255,255,.5);font-family:'Space Mono',monospace;font-size:.65rem;padding:7px 14px;cursor:pointer;">&#8592; Back</button>
+
   <div class="intro-panel">
     <div class="intro-eyebrow">HOW TO PLAY</div>
     <div class="intro-title">DARE BLOOM</div>
@@ -682,6 +685,7 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;o
         </div>
       </div>
     </div>
+
     <div class="intro-setup">
       <label class="name-label">ENTER YOUR NAME TO PLAY</label>
       <input type="text" id="playerNameInput" class="name-input" placeholder="Your name..." maxlength="20" autocomplete="off">
@@ -705,7 +709,7 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;o
         </div>
       </div>
 
-      <!-- Legal links — clean row only -->
+      <!-- Legal links -->
       <div style="margin-top:14px;display:flex;justify-content:center;align-items:center;gap:16px;">
         <span onclick="document.getElementById('privacyModal').style.display='flex'" style="font-family:'Space Grotesk',sans-serif;font-size:.8rem;font-weight:600;color:rgba(255,255,255,.5);cursor:pointer;text-decoration:underline;">ℹ️ Privacy Policy</span>
         <span style="color:rgba(255,255,255,.15);font-size:1.1rem;">·</span>
@@ -713,18 +717,15 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;o
       </div>
     </div>
 
-    <!-- CTA Row -->
-    <div class="intro-cta-row">
-      <button class="btn2" onclick="show('sMenu')">&#8592; Menu</button>
-      <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-        <div style="font-family:'Space Grotesk',sans-serif;font-size:.75rem;font-weight:500;color:rgba(255,255,255,.38);text-align:center;line-height:1.6;">
-          By playing you agree to our
-          <span onclick="document.getElementById('termsModal').style.display='flex'" style="color:rgba(255,183,3,.9);cursor:pointer;text-decoration:underline;font-weight:700;">T&amp;C</span>
-          &amp;
-          <span onclick="document.getElementById('privacyModal').style.display='flex'" style="color:rgba(255,183,3,.9);cursor:pointer;text-decoration:underline;font-weight:700;">Privacy Policy</span>
-        </div>
-        <button class="btn intro-cta-main" id="introContinueBtn" style="opacity:.5;pointer-events:none;">Enter the Nightmare &#8594;</button>
+    <!-- CTA — centered, full width button -->
+    <div style="display:flex;flex-direction:column;align-items:center;gap:10px;margin-top:8px;">
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:.75rem;font-weight:500;color:rgba(255,255,255,.35);text-align:center;line-height:1.6;">
+        By playing you agree to our
+        <span onclick="document.getElementById('termsModal').style.display='flex'" style="color:rgba(255,183,3,.9);cursor:pointer;text-decoration:underline;font-weight:700;">T&amp;C</span>
+        &amp;
+        <span onclick="document.getElementById('privacyModal').style.display='flex'" style="color:rgba(255,183,3,.9);cursor:pointer;text-decoration:underline;font-weight:700;">Privacy Policy</span>
       </div>
+      <button class="btn intro-cta-main" id="introContinueBtn" style="opacity:.5;pointer-events:none;width:100%;max-width:340px;text-align:center;">Enter the Nightmare &#8594;</button>
     </div>
 
   </div>
