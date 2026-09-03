@@ -783,6 +783,7 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;o
       <button class="btn2" id="howToPlayBtn">&#x2753; How to Play</button>
       <button class="btn2 btn-teal" id="tutorialBtn">&#x25B6; Tutorial</button>
       <button class="btn2 btn-red" id="partyModeBtn">&#x1F465; Party Mode</button>
+      <button class="btn2" onclick="document.getElementById('supportModal').style.display='flex'" style="background:linear-gradient(135deg,rgba(255,183,3,.2),rgba(255,71,87,.15));border-color:rgba(255,183,3,.4);color:#FFB703;font-weight:700;">💰 Support Us</button>
     </div>
 
   </div>
@@ -2786,5 +2787,87 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 })();
 </script>
+
+<!-- ═══ SUPPORT / MONETIZATION MODAL ═══════════════════════════ -->
+<div id="supportModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(4,2,12,.93);backdrop-filter:blur(20px);align-items:center;justify-content:center;padding:20px;" onclick="if(event.target===this)this.style.display='none'">
+  <div style="max-width:460px;width:100%;background:rgba(15,10,30,.99);border:1px solid rgba(255,183,3,.25);border-radius:20px;padding:28px 22px;max-height:90vh;overflow-y:auto;position:relative;">
+    <button onclick="document.getElementById('supportModal').style.display='none'" style="position:absolute;top:14px;right:16px;background:none;border:none;color:rgba(255,255,255,.4);font-size:1.3rem;cursor:pointer;">✕</button>
+
+    <!-- Header -->
+    <div style="text-align:center;margin-bottom:22px;">
+      <div style="font-size:2.2rem;margin-bottom:6px;">🌸</div>
+      <div style="font-family:'Creepster',cursive;font-size:1.5rem;color:#fff;margin-bottom:4px;">DARE BLOOM</div>
+      <div style="font-family:'Space Mono',monospace;font-size:.52rem;color:rgba(255,183,3,.8);letter-spacing:.12em;">SUPPORT THE CREATOR</div>
+      <div style="font-family:'Space Grotesk',sans-serif;font-size:.75rem;color:rgba(255,255,255,.4);margin-top:8px;line-height:1.6;">This game is built solo by a 2nd-year student.<br>Your support keeps it alive and growing! 🙏</div>
+    </div>
+
+    <!-- TIER 1 — Free Tip -->
+    <div style="background:rgba(6,214,160,.08);border:1px solid rgba(6,214,160,.25);border-radius:14px;padding:16px 18px;margin-bottom:12px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <div>
+          <div style="font-family:'Space Mono',monospace;font-size:.6rem;color:#06D6A0;font-weight:700;letter-spacing:.1em;">☕ BUY ME A CHAI</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:.72rem;color:rgba(255,255,255,.6);margin-top:3px;">Any amount — just a gesture</div>
+        </div>
+        <div style="font-family:'Creepster',cursive;font-size:1.3rem;color:#06D6A0;">FREE<br><span style="font-size:.7rem;color:rgba(6,214,160,.6);">your choice</span></div>
+      </div>
+      <!-- UPI Links -->
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        <a href="upi://pay?pa=sribenduprasadmuduli@okaxis&pn=Sribendu+Prasad+Muduli&tn=DareBloom+Support&am=49&cu=INR" style="display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(6,214,160,.15);border:1px solid rgba(6,214,160,.3);border-radius:10px;padding:10px;text-decoration:none;color:#06D6A0;font-family:'Space Mono',monospace;font-size:.6rem;font-weight:700;letter-spacing:.06em;">
+          💳 PAY ₹49 via UPI (PhonePe / GPay / Paytm)
+        </a>
+        <a href="upi://pay?pa=sribenduprasadmuduli@okaxis&pn=Sribendu+Prasad+Muduli&tn=DareBloom+Support&am=99&cu=INR" style="display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(6,214,160,.1);border:1px solid rgba(6,214,160,.2);border-radius:10px;padding:10px;text-decoration:none;color:rgba(6,214,160,.8);font-family:'Space Mono',monospace;font-size:.6rem;font-weight:700;letter-spacing:.06em;">
+          💳 PAY ₹99 via UPI
+        </a>
+        <div style="font-family:'Space Mono',monospace;font-size:.46rem;color:rgba(255,255,255,.3);text-align:center;margin-top:2px;">UPI ID: sribenduprasadmuduli@okaxis</div>
+      </div>
+    </div>
+
+    <!-- TIER 2 — Premium License -->
+    <div style="background:linear-gradient(135deg,rgba(255,183,3,.1),rgba(255,71,87,.08));border:1px solid rgba(255,183,3,.35);border-radius:14px;padding:16px 18px;margin-bottom:12px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:10px;right:12px;background:linear-gradient(135deg,#FFB703,#FF4757);border-radius:6px;padding:3px 9px;font-family:'Space Mono',monospace;font-size:.44rem;color:#fff;font-weight:700;">BEST SELLER</div>
+      <div style="margin-bottom:10px;">
+        <div style="font-family:'Space Mono',monospace;font-size:.6rem;color:#FFB703;font-weight:700;letter-spacing:.1em;">🎮 PARTY GROUP LICENSE</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:.72rem;color:rgba(255,255,255,.6);margin-top:3px;">For college fests, house parties, friend groups</div>
+      </div>
+      <ul style="font-family:'Space Grotesk',sans-serif;font-size:.7rem;color:rgba(255,255,255,.7);line-height:1.9;padding-left:16px;margin-bottom:14px;">
+        <li>Unlimited players on 1 device</li>
+        <li>Custom dare pack with your group's inside jokes</li>
+        <li>Your group name shown on leaderboard</li>
+        <li>Priority bug fixes for your session</li>
+        <li>1 month premium support via WhatsApp</li>
+      </ul>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div style="font-family:'Creepster',cursive;font-size:1.6rem;color:#FFB703;">₹499<span style="font-size:.8rem;color:rgba(255,183,3,.5);">/group</span></div>
+        <div style="font-family:'Space Mono',monospace;font-size:.48rem;color:rgba(255,255,255,.3);text-decoration:line-through;">₹999</div>
+      </div>
+      <a href="https://wa.me/91XXXXXXXXXX?text=Hi%20Sribendu!%20I%20want%20to%20buy%20DareBloom%20Party%20License%20(Rs.499)" target="_blank" style="display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(135deg,#FFB703,#FF8C00);border:none;border-radius:10px;padding:12px;text-decoration:none;color:#000;font-family:'Space Mono',monospace;font-size:.62rem;font-weight:700;letter-spacing:.06em;">
+        📲 BUY NOW — WhatsApp Order
+      </a>
+    </div>
+
+    <!-- TIER 3 — Custom Build -->
+    <div style="background:rgba(108,58,255,.08);border:1px solid rgba(108,58,255,.25);border-radius:14px;padding:16px 18px;margin-bottom:18px;">
+      <div style="margin-bottom:10px;">
+        <div style="font-family:'Space Mono',monospace;font-size:.6rem;color:#a78bfa;font-weight:700;letter-spacing:.1em;">🛠️ CUSTOM BUILD</div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-size:.72rem;color:rgba(255,255,255,.6);margin-top:3px;">Want a game built for your event / startup?</div>
+      </div>
+      <ul style="font-family:'Space Grotesk',sans-serif;font-size:.7rem;color:rgba(255,255,255,.7);line-height:1.9;padding-left:16px;margin-bottom:14px;">
+        <li>Fully branded with your logo + colors</li>
+        <li>Custom dares, shapes, scoring rules</li>
+        <li>Deployed on your own domain</li>
+        <li>Full source code handover</li>
+      </ul>
+      <a href="mailto:sribenduprasadmuduli@gmail.com?subject=DareBloom Custom Build Inquiry" style="display:flex;align-items:center;justify-content:center;gap:8px;background:rgba(108,58,255,.2);border:1px solid rgba(108,58,255,.4);border-radius:10px;padding:11px;text-decoration:none;color:#a78bfa;font-family:'Space Mono',monospace;font-size:.6rem;font-weight:700;letter-spacing:.06em;">
+        📧 EMAIL FOR CUSTOM QUOTE
+      </a>
+    </div>
+
+    <!-- Footer note -->
+    <div style="text-align:center;font-family:'Space Mono',monospace;font-size:.46rem;color:rgba(255,255,255,.25);line-height:1.7;">
+      Made with 💀 by Sribendu Prasad Muduli<br>
+      All payments are secure · No refunds on digital licenses
+    </div>
+  </div>
+</div>
 </body>
 </html>
